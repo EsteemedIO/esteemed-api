@@ -1,0 +1,39 @@
+service: esteemed-profile
+
+# Configuration variables
+custom:
+  secrets:
+    slackToken: ${file(secrets.yml):slackToken}
+    slackTokenBot: ${file(secrets.yml):slackTokenBot}
+    slackSigning: ${file(secrets.yml):slackSigning}
+    allowedChannels: ${file(secrets.yml):allowedChannels}
+    firebaseApp: ${file(secrets.yml):firebaseApp}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  environment:
+    SLACK_TOKEN: ${self:custom.secrets.slackToken}
+    SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
+    SLACK_SIGNING_SECRET: ${self:custom.secrets.slackSigning}
+    SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
+    FIREBASE_APP: ${self:custom.secrets.firebaseApp}
+
+functions:
+  getProfiles:
+    handler: src/profiles.handler
+    events:
+      - http:
+          path: profiles
+          method: get
+          cors: true
+  getProfileDialog:
+    handler: src/profileDialog.handler
+    events:
+      - http:
+          path: dialog
+          method: post
+          cors: true
+
+plugins:
+  - serverless-offline

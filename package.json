@@ -1,0 +1,20 @@
+{
+  "name": "esteemed-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "develop": "NODE_ENV=development sls offline start",
+    "deploy": "sls deploy"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "firebase-admin": "^8.10.0",
+    "query-string": "^6.12.1"
+  },
+  "devDependencies": {
+    "serverless-offline": "^6.1.4"
+  }
+}
