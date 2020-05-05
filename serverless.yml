@@ -37,6 +37,13 @@ functions:
           path: dialog
           method: post
           cors: true
+  slackEvents:
+    handler: src/slackEvents.handler
+    events:
+      - http:
+          path: slackEvents
+          method: post
+          cors: true
 
 plugins:
   - serverless-offline
