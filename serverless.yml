@@ -8,6 +8,9 @@ custom:
     slackSigning: ${file(secrets.yml):slackSigning}
     allowedChannels: ${file(secrets.yml):allowedChannels}
     firebaseApp: ${file(secrets.yml):firebaseApp}
+  ngrokTunnel:
+    tunnels:
+      - port: 3000
 
 provider:
   name: aws
@@ -37,3 +40,4 @@ functions:
 
 plugins:
   - serverless-offline
+  - serverless-ngrok-tunnel
