@@ -3,6 +3,131 @@ module.exports = [
     "type": "section",
     "text": {
       "type": "mrkdwn",
+      "text": "Please choose a role Title that best fits your background and experience."
+    },
+    "accessory": {
+      "type": "static_select",
+      "placeholder": {
+        "type": "plain_text",
+        "text": "Title",
+      },
+      "action_id": "title",
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Architect",
+          },
+          "value": "architect"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Art Director",
+          },
+          "value": "art_director"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Backend Developer"
+          },
+          "value": "backend"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Frontend Developer"
+          },
+          "value": "frontend"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Full-Stack Developer"
+          },
+          "value": "full_stack"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Project Manager"
+          },
+          "value": "pm"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "QA Tester"
+          },
+          "value": "qa_tester"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "System Administrator",
+          },
+          "value": "sys_admin"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "UX Designer",
+          },
+          "value": "ux_designer"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Visual Designer",
+          },
+          "value": "visual_designer"
+        },
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "Are you expert with any popular Website Builders?"
+    },
+    "accessory": {
+      "type": "multi_static_select",
+      "placeholder": {
+        "type": "plain_text",
+        "text": "Select items",
+      },
+      "action_id": "builders",
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Wix",
+          },
+          "value": "wix"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Squarespace",
+          },
+          "value": "squarespace"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Shopify",
+          },
+          "value": "shopify"
+        }
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
       "text": "Which code languages do work with? Choose as many as you like."
     },
     "accessory": {
@@ -135,39 +260,76 @@ module.exports = [
     "type": "section",
     "text": {
       "type": "mrkdwn",
-      "text": "Are you expert with any popular Website Builders?"
+      "text": "Are you authorized to work full-time in the country you are applying?"
     },
     "accessory": {
-      "type": "multi_static_select",
+      "type": "static_select",
       "placeholder": {
         "type": "plain_text",
-        "text": "Select items",
+        "text": "Citizenship Status",
       },
-      "action_id": "builders",
+      "action_id": "citizen",
       "options": [
         {
           "text": {
             "type": "plain_text",
-            "text": "Wix",
+            "text": "I am a citizen",
           },
-          "value": "wix"
+          "value": "citizen"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Squarespace",
+            "text": "I am in need of sponsorship",
           },
-          "value": "squarespace"
+          "value": "not_citizen"
         },
-        {
-          "text": {
-            "type": "plain_text",
-            "text": "Shopify",
-          },
-          "value": "shopify"
-        }
       ]
     }
-  }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "English Proficiency",
+    },
+    "accessory": {
+      "type": "static_select",
+      "placeholder": {
+        "type": "plain_text",
+        "text": "Choose your level",
+      },
+      "action_id": "english",
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Elementary"
+          },
+          "value": "elementary"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Intermediate"
+          },
+          "value": "intermediate"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Native"
+          },
+          "value": "native"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Proficient"
+          },
+          "value": "proficient"
+        },
+      ]
+    }
+  },
 ]
-
