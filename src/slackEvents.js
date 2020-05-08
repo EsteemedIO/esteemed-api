@@ -7,13 +7,16 @@ const getProfileHome = require('./event/getProfileHome')
 
 exports.handler = async event => {
   try {
-    // Verify domain with Slack.
-    //return { statusCode: 200, body: JSON.parse(event.body).challenge }
-
-    const payload = JSON.parse(event.body).event
+    const body = JSON.parse(event.body)
+    const payload = body.event
     const slackSignature = event.headers['X-Slack-Signature']
     const timestamp = event.headers['X-Slack-Request-Timestamp']
     const verified = await verifyRequest(slackSignature, event.body, timestamp)
+
+    // Verify domain with Slack.
+    if (body.challenge) {
+      return { statusCode: 200, body: JSON.parse(event.body).challenge }
+    }
 
     // Return errors if request validation fails.
     if (verified.statusCode == 400) return verified

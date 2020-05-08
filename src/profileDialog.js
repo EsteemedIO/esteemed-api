@@ -19,7 +19,7 @@ exports.handler = async (event) => {
 
     if (payload.view && payload.view.type == 'home' && payload.type && payload.type == 'block_actions') {
       // Update Home page options.
-      if (payload.actions[0].type == 'multi_static_select') {
+      if (payload.actions[0].type == 'multi_static_select' || payload.actions[0].type == 'static_select') {
         return await updateProfileHome(payload)
       }
 
@@ -60,8 +60,17 @@ const updateProfileHome = async payload => {
 
   //if (errors.length > 0) return { statusCode: 200, body: JSON.stringify({ errors: errors }) }
 
+  const type = payload.actions[0].type
   const action_id = payload.actions[0].action_id
-  const values = payload.actions[0].selected_options
+  let values = []
+
+  if (type == 'static_select') {
+    values = payload.actions[0].selected_option
+  }
+  else if (type == 'multi_static_select') {
+    values = payload.actions[0].selected_options
+  }
+
   let data = {}
   data[action_id] = values
 
