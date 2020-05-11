@@ -128,7 +128,7 @@ module.exports = [
     "type": "section",
     "text": {
       "type": "mrkdwn",
-      "text": "Which code languages do work with? Choose as many as you like."
+      "text": "Which coding languages do you work with? Choose as many as you like."
     },
     "accessory": {
       "type": "multi_static_select",
