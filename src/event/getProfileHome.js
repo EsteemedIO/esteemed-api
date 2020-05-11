@@ -15,7 +15,7 @@ module.exports = async user => {
   // Get default blocks.
   let blocks = defaultBlocks
 
-  if (profile.cms) {
+  if (profile.cms && profile.cms.length > 0) {
     // Add Drupal button if they're a Drupal developer.
     const is_drupal_dev = (profile.cms.filter(cms => cms.value == 'drupal').length === 1)
     if (is_drupal_dev) blocks = [...blocks, ...drupalBlocks(drupal_base_url, user)]
