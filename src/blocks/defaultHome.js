@@ -90,6 +90,136 @@ module.exports = [
     "type": "section",
     "text": {
       "type": "mrkdwn",
+      "text": "What are some of your top skills? (Select up to 5)"
+    },
+    "accessory": {
+      "type": "multi_static_select",
+      "placeholder": {
+        "type": "plain_text",
+        "text": "Select skills",
+      },
+      "action_id": "skills",
+      "max_selected_items": 5,
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "APIs",
+          },
+          "value": "api"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Adobe Creative Suite",
+          },
+          "value": "adobe_creative_suite"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Bootstrap",
+          },
+          "value": "bootstrap"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "CLI",
+          },
+          "value": "cli"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Communication",
+          },
+          "value": "communication"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Custom Themes",
+          },
+          "value": "custom_themes"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "eCommerce",
+          },
+          "value": "ecommerce"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Git-flow",
+          },
+          "value": "gitflow"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "GitHub",
+          },
+          "value": "github"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "jQuery",
+          },
+          "value": "jquery"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "LAMP Stack",
+          },
+          "value": "lamp"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "MariaDB / MySQL",
+          },
+          "value": "mysql"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "Mobile Design",
+          },
+          "value": "mobile_design"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "SASS",
+          },
+          "value": "sass"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "SEO",
+          },
+          "value": "seo"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "UI / UX",
+          },
+          "value": "ui"
+        },
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
       "text": "Are you expert with any popular Website Builders?"
     },
     "accessory": {
