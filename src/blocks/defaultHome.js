@@ -3,15 +3,15 @@ module.exports = [
     "type": "section",
     "text": {
       "type": "mrkdwn",
-      "text": "Please choose a role Title that best fits your background and experience."
+      "text": "Please choose the role titles that best fit your background and experience."
     },
     "accessory": {
-      "type": "static_select",
+      "type": "multi_static_select",
       "placeholder": {
         "type": "plain_text",
-        "text": "Title",
+        "text": "Titles",
       },
-      "action_id": "title",
+      "action_id": "titles",
       "options": [
         {
           "text": {
