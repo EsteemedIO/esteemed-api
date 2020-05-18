@@ -23,12 +23,14 @@ exports.handler = async event => {
         const name = user.real_name.split(' ')
         const first = name[0]
         const last = name[1] ? ' ' + name[1][0] + '.' : ''
-        const languages = profiles[user.id] ? profiles[user.id].languages.map(lang => lang.text.text) : []
+        const titles = (profiles[user.id] && profiles[user.id].titles) ? profiles[user.id].titles.map(title => title.text.text) : []
+        const languages = (profiles[user.id] && profiles[user.id].languages) ? profiles[user.id].languages.map(lang => lang.text.text) : []
 
         return {
           id: user.id,
           name: first + last,
           image: user.profile.image_512,
+          titles: titles,
           english: profiles[user.id] ? profiles[user.id].english_proficiency : '',
           citizenship: profiles[user.id] ? profiles[user.id].citizenship : '',
           drupal_bio: profiles[user.id] ? profiles[user.id].drupal_bio : '',
