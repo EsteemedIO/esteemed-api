@@ -6,6 +6,7 @@ const api = require('./api')()
 const { profilesRef } = require('./firebase')
 const verifyRequest = require('./verifyRequest')
 const getProfileHome = require('./event/getProfileHome')
+const travisBuild = require('./travis')
 
 exports.handler = async (event) => {
   try {
@@ -84,6 +85,8 @@ const updateProfileHome = async payload => {
     .then(res => console.log(res))
     .catch(e => console.log(e))
 
+  travisBuild()
+
   await getProfileHome(payload.user.id)
 
   return { statusCode: 200, body: '' }
@@ -134,6 +137,8 @@ const updateDrupalProfile = async payload => {
   await profilesRef().doc(payload.user.id).set(payload.submission, { merge: true })
     .then(res => console.log(res))
     .catch(e => console.log(e))
+
+  travisBuild()
 
   return { statusCode: 200, body: '' }
 }
@@ -195,6 +200,8 @@ const updateWPProfile = async payload => {
   await profilesRef().doc(payload.user.id).set(payload.submission, { merge: true })
     .then(res => console.log(res))
     .catch(e => console.log(e))
+
+  travisBuild()
 
   return { statusCode: 200, body: '' }
 }

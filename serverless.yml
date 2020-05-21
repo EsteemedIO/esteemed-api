@@ -8,6 +8,7 @@ custom:
     slackSigning: ${file(secrets.yml):slackSigning}
     allowedChannels: ${file(secrets.yml):allowedChannels}
     firebaseApp: ${file(secrets.yml):firebaseApp}
+    travisToken: ${file(secrets.yml):travisToken}
   ngrokTunnel:
     tunnels:
       - port: 3000
@@ -21,6 +22,7 @@ provider:
     SLACK_SIGNING_SECRET: ${self:custom.secrets.slackSigning}
     SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
     FIREBASE_APP: ${self:custom.secrets.firebaseApp}
+    TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
 
 functions:
   getProfiles:
