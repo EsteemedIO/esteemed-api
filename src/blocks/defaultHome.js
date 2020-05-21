@@ -390,6 +390,73 @@ module.exports = [
     "type": "section",
     "text": {
       "type": "mrkdwn",
+      "text": "Enter the date you are available for at least part time hours"
+    },
+    "accessory": {
+      "type": "datepicker",
+      "action_id": "date_available",
+      "placeholder": {
+        "type": "plain_text",
+        "text": "Select a date"
+      }
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "How many hours per week are you available?"
+    },
+    "accessory": {
+      "type": "static_select",
+      "placeholder": {
+        "type": "plain_text",
+        "text": "Availability",
+      },
+      "action_id": "availability",
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "10 hours per week"
+          },
+          "value": "10hours"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "20 hours per week"
+          },
+          "value": "20hours"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "30 hours per week"
+          },
+          "value": "30hours"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "40 hours"
+          },
+          "value": "40hours"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "text": "As needed, Open to offers"
+          },
+          "value": "open"
+        },
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
       "text": "Are you authorized to work full-time in the country you are applying?"
     },
     "accessory": {

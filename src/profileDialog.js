@@ -19,7 +19,9 @@ exports.handler = async (event) => {
 
     if (payload.view && payload.view.type == 'home' && payload.type && payload.type == 'block_actions') {
       // Update Home page options.
-      if (payload.actions[0].type == 'multi_static_select' || payload.actions[0].type == 'static_select') {
+      if (payload.actions[0].type == 'multi_static_select'
+        || payload.actions[0].type == 'datepicker'
+        || payload.actions[0].type == 'static_select') {
         return await updateProfileHome(payload)
       }
 
@@ -69,6 +71,9 @@ const updateProfileHome = async payload => {
   }
   else if (type == 'multi_static_select') {
     values = payload.actions[0].selected_options
+  }
+  else if (type == 'datepicker') {
+    values = payload.actions[0].selected_date
   }
 
   let data = {}

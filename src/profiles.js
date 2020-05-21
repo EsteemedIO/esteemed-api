@@ -34,6 +34,7 @@ exports.handler = async event => {
 
         if (fb_profile) {
           profile = { ...profile, ...{
+            'availability': flattenSlackField(fb_profile, 'availability'),
             'english': flattenSlackField(fb_profile, 'english'),
             'titles': flattenSlackFieldArray(fb_profile, 'titles'),
             'languages': flattenSlackFieldArray(fb_profile, 'languages'),

@@ -61,6 +61,9 @@ const initialOptions = (blocks, profile) => {
         if (block.accessory.type == 'static_select') {
           block.accessory.initial_option = initial_option
         }
+        else if (block.accessory.type == 'datepicker') {
+          block.accessory.initial_date = initial_option
+        }
         else {
           block.accessory.initial_options = initial_option
         }
