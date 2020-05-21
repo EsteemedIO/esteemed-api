@@ -40,6 +40,7 @@ exports.handler = async event => {
             'skills': flattenSlackFieldArray(fb_profile, 'skills'),
             'citizenship': flattenSlackField(fb_profile, 'citizen'),
             'drupal_bio': profiles[user.id] ? profiles[user.id].drupal_bio : '',
+            'wp_experience': profiles[user.id] ? profiles[user.id].wp_experience : '',
             'wp_bio': profiles[user.id] ? profiles[user.id].wp_bio : '',
           }}
         }

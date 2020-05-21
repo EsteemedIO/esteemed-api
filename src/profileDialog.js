@@ -145,12 +145,32 @@ const getWPProfileDialog = async payload => {
       submit_label: 'Save',
       elements: [
         {
-          "label": "WP Bio",
+          "label": "WP bio",
           "type": "textarea",
           "name": "wp_bio",
           "value": profile.wp_bio || '',
           "placeholder": "I'm awesome at WordPress because...",
         },
+        {
+          "label": "Experience level",
+          "type": "select",
+          "name": "wp_experience",
+          "placeholder": "Choose your experience level...",
+          "options": [
+            {
+              "label": "Entry Level",
+              "value": "Entry Level",
+            },
+            {
+              "label": "Intermediate",
+              "value": "Intermediate",
+            },
+            {
+              "label": "Expert/Advanced",
+              "value": "Expert/Advanced",
+            }
+          ]
+        }
       ]
     })
   }
