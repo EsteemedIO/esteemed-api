@@ -23,20 +23,28 @@ exports.handler = async event => {
         const name = user.real_name.split(' ')
         const first = name[0]
         const last = name[1] ? ' ' + name[1][0] + '.' : ''
-        const titles = (profiles[user.id] && profiles[user.id].titles) ? profiles[user.id].titles.map(title => title.text.text) : []
-        const languages = (profiles[user.id] && profiles[user.id].languages) ? profiles[user.id].languages.map(lang => lang.text.text) : []
 
-        return {
+        let profile = {
           id: user.id,
           name: first + last,
           image: user.profile.image_512,
-          titles: titles,
-          english: profiles[user.id] ? profiles[user.id].english_proficiency : '',
-          citizenship: profiles[user.id] ? profiles[user.id].citizenship : '',
-          drupal_bio: profiles[user.id] ? profiles[user.id].drupal_bio : '',
-          wp_bio: profiles[user.id] ? profiles[user.id].wp_bio : '',
-          languages: languages,
         }
+
+        const fb_profile = profiles[user.id]
+
+        if (fb_profile) {
+          profile = { ...profile, ...{
+            'english': english_proficiency = flattenSlackField(fb_profile, 'english'),
+            'titles': titles = flattenSlackFieldArray(fb_profile, 'titles'),
+            'languages': flattenSlackFieldArray(fb_profile, 'languages'),
+            'skills': flattenSlackFieldArray(fb_profile, 'skills'),
+            'citizenship': flattenSlackField(fb_profile, 'citizen'),
+            'drupal_bio': profiles[user.id] ? profiles[user.id].drupal_bio : '',
+            'wp_bio': profiles[user.id] ? profiles[user.id].wp_bio : '',
+          }}
+        }
+
+        return profile
       }))
 
     return {
@@ -52,6 +60,9 @@ exports.handler = async event => {
     return { statusCode: 400, body: JSON.stringify(e) }
   }
 }
+
+const flattenSlackField = (profile, field) => (profile && profile[field]) ? profile[field].text.text: ''
+const flattenSlackFieldArray = (profile, field) => (profile && profile[field]) ? profile[field].map(i => ({ text: i.text.text, value: i.value })) : []
 
 const loadUsers = () => {
   return api.get('users.list')
