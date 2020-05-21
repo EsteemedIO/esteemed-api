@@ -1,3 +1,4 @@
+const axios = require('axios')
 const { profilesRef } = require('../firebase')
 const api = require('../api')()
 
@@ -40,9 +41,12 @@ module.exports = async user => {
   }
 
   // Update home view.
-  return await api.post('views.publish', null, { params: home })
+  return await axios.post('https://slack.com/api/views.publish', home, { headers: {
+    'Authorization': 'Bearer ' + process.env.SLACK_TOKEN_BOT,
+    'Content-Type': 'application/json',
+    }})
     .then(data => {
-//      console.log('response: ', data)
+      //console.log('response: ', data.data)
       return { statusCode: 200, body: '' }
     })
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
