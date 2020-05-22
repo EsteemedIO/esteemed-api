@@ -132,6 +132,9 @@ const updateDrupalProfile = async payload => {
 
   if (errors.length > 0) return { statusCode: 200, body: JSON.stringify({ errors: errors }) }
 
+  // Normalize URL if users enter www subdomain.
+  payload.submission.drupal_profile = 'https://drupal.org' + url.parse(payload.submission.drupal_profile).pathname
+
   // Update profile data.
   await profilesRef().doc(payload.user.id).set(payload.submission, { merge: true })
     .then(res => console.log(res))
@@ -218,7 +221,7 @@ const verifyData = async submission => {
     const drupal = url.parse(submission.drupal_profile)
 
     // Apply heuristics.
-    const drupal_valid = (drupal.host == 'drupal.org') && (drupal.pathname.split('/')[1] == 'u')
+    const drupal_valid = (drupal.host == 'drupal.org' || drupal.host == 'www.drupal.org') && (drupal.pathname.split('/')[1] == 'u')
 
     // Capture errors.
     if (!drupal_valid) errors.push({ "name": "drupal_profile", "error": "This is not a valid Drupal URL" })
