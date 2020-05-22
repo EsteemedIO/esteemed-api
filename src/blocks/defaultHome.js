@@ -420,28 +420,28 @@ module.exports = [
             "type": "plain_text",
             "text": "10 hours per week"
           },
-          "value": "10hours"
+          "value": "hours_10"
         },
         {
           "text": {
             "type": "plain_text",
             "text": "20 hours per week"
           },
-          "value": "20hours"
+          "value": "hours_20"
         },
         {
           "text": {
             "type": "plain_text",
             "text": "30 hours per week"
           },
-          "value": "30hours"
+          "value": "hours_30"
         },
         {
           "text": {
             "type": "plain_text",
             "text": "40 hours"
           },
-          "value": "40hours"
+          "value": "hours_40"
         },
         {
           "text": {
