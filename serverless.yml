@@ -25,6 +25,13 @@ provider:
     TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
 
 functions:
+  getConfiguration:
+    handler: src/configuration.handler
+    events:
+      - http:
+          path: config
+          method: get
+          cors: true
   getProfiles:
     handler: src/profiles.handler
     events:
