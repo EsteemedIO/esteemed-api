@@ -1,4 +1,3 @@
-const axios = require('axios')
 const qs = require('query-string')
 const url = require('url')
 
