@@ -67,10 +67,10 @@ const updateProfileHome = async payload => {
   let values = []
 
   if (type == 'static_select') {
-    values = payload.actions[0].selected_option
+    values = payload.actions[0].selected_option.value
   }
   else if (type == 'multi_static_select') {
-    values = payload.actions[0].selected_options
+    values = payload.actions[0].selected_options.map(option => option.value)
   }
   else if (type == 'datepicker') {
     values = payload.actions[0].selected_date

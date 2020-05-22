@@ -34,12 +34,12 @@ exports.handler = async event => {
 
         if (fb_profile) {
           profile = { ...profile, ...{
-            'availability': flattenSlackField(fb_profile, 'availability'),
-            'english': flattenSlackField(fb_profile, 'english'),
-            'titles': flattenSlackFieldArray(fb_profile, 'titles'),
-            'languages': flattenSlackFieldArray(fb_profile, 'languages'),
-            'skills': flattenSlackFieldArray(fb_profile, 'skills'),
-            'citizenship': flattenSlackField(fb_profile, 'citizen'),
+            'availability': fb_profile.availability ? fb_profile.availability : '',
+            'english': fb_profile.english ? fb_profile.english : '',
+            'titles': fb_profile.titles ? fb_profile.titles : [],
+            'languages': fb_profile.languages ? fb_profile.languages : [],
+            'skills': fb_profile.skills ? fb_profile.skills : [],
+            'citizenship': fb_profile.citizen ? fb_profile.citizen : '',
             'drupal_bio': profiles[user.id] ? profiles[user.id].drupal_bio : '',
             'wp_experience': profiles[user.id] ? profiles[user.id].wp_experience : '',
             'wp_bio': profiles[user.id] ? profiles[user.id].wp_bio : '',
@@ -62,9 +62,6 @@ exports.handler = async event => {
     return { statusCode: 400, body: JSON.stringify(e) }
   }
 }
-
-const flattenSlackField = (profile, field) => (profile && profile[field]) ? profile[field].text.text: ''
-const flattenSlackFieldArray = (profile, field) => (profile && profile[field]) ? profile[field].map(i => ({ text: i.text.text, value: i.value })) : []
 
 const loadUsers = () => {
   return api.get('users.list')

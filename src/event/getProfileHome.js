@@ -55,17 +55,17 @@ module.exports = async user => {
 const initialOptions = (blocks, profile) => {
   return blocks.reduce((accum, block) => {
     if (block.accessory && profile[block.accessory.action_id] !== undefined) {
-      const initial_option = profile[block.accessory.action_id]
+      const value = profile[block.accessory.action_id]
 
-      if (initial_option.length > 0 || initial_option.value) {
+      if (value.length > 0 || value.value) {
         if (block.accessory.type == 'static_select') {
-          block.accessory.initial_option = initial_option
+          block.accessory.initial_option = block.accessory.options.find(option => option.value == value)
         }
         else if (block.accessory.type == 'datepicker') {
-          block.accessory.initial_date = initial_option
+          block.accessory.initial_date = value
         }
         else {
-          block.accessory.initial_options = initial_option
+          block.accessory.initial_options = block.accessory.options.filter(option => value.includes(option.value))
         }
       }
     }
