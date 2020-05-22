@@ -1,5 +1,5 @@
 module.exports = (base_url, id) => {
-  const url = base_url + id
+  const url = base_url + 'profile/' + id.toLowerCase()
   const link = '<' + url + '|' + 'View my Wordpress Profile>'
 
   return [

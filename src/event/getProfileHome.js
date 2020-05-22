@@ -7,7 +7,7 @@ const drupalBlocks = require('../blocks/drupal')
 const wpBlocks = require('../blocks/wp')
 
 const drupal_base_url = 'https://app.drupalcontractors.com/'
-const wp_base_url = 'https://app.wpcontractors.com/'
+const wp_base_url = 'https://wpcontractors.github.io/'
 
 module.exports = async user => {
   // Get values.
