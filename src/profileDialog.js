@@ -171,15 +171,15 @@ const getWPProfileDialog = async payload => {
           "options": [
             {
               "label": "Entry Level",
-              "value": "Entry Level",
+              "value": "entry",
             },
             {
               "label": "Intermediate",
-              "value": "Intermediate",
+              "value": "intermediate",
             },
             {
               "label": "Expert/Advanced",
-              "value": "Expert/Advanced",
+              "value": "expert",
             }
           ]
         }
