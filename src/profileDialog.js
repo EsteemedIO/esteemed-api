@@ -5,6 +5,7 @@ const api = require('./api')()
 const { profilesRef } = require('./firebase')
 const verifyRequest = require('./verifyRequest')
 const getProfileHome = require('./event/getProfileHome')
+const keyValue = require('./util/keyValue')
 const travisBuild = require('./travis')
 
 exports.handler = async (event) => {
@@ -170,15 +171,15 @@ const getWPProfileDialog = async payload => {
           "placeholder": "Choose your experience level...",
           "options": [
             {
-              "label": "Entry Level",
+              "label": keyValue.entry,
               "value": "entry",
             },
             {
-              "label": "Intermediate",
+              "label": keyValue.intermediate,
               "value": "intermediate",
             },
             {
-              "label": "Expert/Advanced",
+              "label": keyValue.expert,
               "value": "expert",
             }
           ]

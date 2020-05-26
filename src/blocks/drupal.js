@@ -1,3 +1,5 @@
+const keyValue = require('../util/keyValue')
+
 module.exports = (base_url, id) => {
   const url = base_url + id
   const link = '<' + url + '|' + 'View my Drupal Profile>'
@@ -11,7 +13,7 @@ module.exports = (base_url, id) => {
           "type": "button",
           "text": {
             "type": "plain_text",
-            "text": "Drupal Profile",
+            "text": keyValue.drupal_profile,
           },
           "value": "drupal_profile"
         }

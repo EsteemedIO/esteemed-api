@@ -1,3 +1,5 @@
+const keyValue = require('../util/keyValue')
+
 module.exports = [
   {
     "type": "section",
@@ -16,70 +18,70 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": "Architect",
+            "text": keyValue.architect,
           },
           "value": "architect"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Art Director",
+            "text": keyValue.art_director,
           },
           "value": "art_director"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Backend Developer"
+            "text": keyValue.backend,
           },
           "value": "backend"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Frontend Developer"
+            "text": keyValue.frontend,
           },
           "value": "frontend"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Full-Stack Developer"
+            "text": keyValue.full_stack,
           },
           "value": "full_stack"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Project Manager"
+            "text": keyValue.pm,
           },
           "value": "pm"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "QA Tester"
+            "text": keyValue.qa,
           },
           "value": "qa_tester"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "System Administrator",
+            "text": keyValue.sys_admin,
           },
           "value": "sys_admin"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "UX Designer",
+            "text": keyValue.ux_designer,
           },
           "value": "ux_designer"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Visual Designer",
+            "text": keyValue.visual_designer,
           },
           "value": "visual_designer"
         },
@@ -104,112 +106,112 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": "APIs",
+            "text": keyValue.api,
           },
           "value": "api"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Adobe Creative Suite",
+            "text": keyValue.adobe_creative_suite,
           },
           "value": "adobe_creative_suite"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Bootstrap",
+            "text": keyValue.bootstrap,
           },
           "value": "bootstrap"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "CLI",
+            "text": keyValue.cli,
           },
           "value": "cli"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Communication",
+            "text": keyValue.communication,
           },
           "value": "communication"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Custom Themes",
+            "text": keyValue.custom_themes,
           },
           "value": "custom_themes"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "eCommerce",
+            "text": keyValue.ecommerce,
           },
           "value": "ecommerce"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Git-flow",
+            "text": keyValue.gitflow,
           },
           "value": "gitflow"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "GitHub",
+            "text": keyValue.github,
           },
           "value": "github"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "jQuery",
+            "text": keyValue.jquery,
           },
           "value": "jquery"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "LAMP Stack",
+            "text": keyValue.lamp,
           },
           "value": "lamp"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "MariaDB / MySQL",
+            "text": keyValue.mysql,
           },
           "value": "mysql"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Mobile Design",
+            "text": keyValue.mobile_design,
           },
           "value": "mobile_design"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "SASS",
+            "text": keyValue.sass,
           },
           "value": "sass"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "SEO",
+            "text": keyValue.seo,
           },
           "value": "seo"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "UI / UX",
+            "text": keyValue.ui,
           },
           "value": "ui"
         },
@@ -233,21 +235,21 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": "Wix",
+            "text": keyValue.wix,
           },
           "value": "wix"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Squarespace",
+            "text": keyValue.squarespace,
           },
           "value": "squarespace"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Shopify",
+            "text": keyValue.shopify,
           },
           "value": "shopify"
         }
@@ -271,49 +273,49 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": "PHP",
+            "text": keyValue.php,
           },
           "value": "php"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "HTML",
+            "text": keyValue.html,
           },
           "value": "html"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "CSS",
+            "text": keyValue.css,
           },
           "value": "css"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "JavaScript",
+            "text": keyValue.javascript,
           },
           "value": "javascript"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "DotNet",
+            "text": keyValue.dotnet,
           },
           "value": "dotnet"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Java",
+            "text": keyValue.java,
           },
           "value": "java"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Ruby",
+            "text": keyValue.ruby,
           },
           "value": "ruby"
         }
@@ -337,49 +339,49 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": "Drupal",
+            "text": keyValue.drupal,
           },
           "value": "drupal"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "WordPress",
+            "text": keyValue.wordpress,
           },
           "value": "wordpress"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Sitecore",
+            "text": keyValue.sitecore,
           },
           "value": "sitecore"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Adobe Experience Manager (AEM)",
+            "text": keyValue.aem,
           },
           "value": "aem"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Laravel",
+            "text": keyValue.laravel,
           },
           "value": "laravel"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Ruby on Rails (RoR)",
+            "text": keyValue.ror,
           },
           "value": "ror"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Episerver",
+            "text": keyValue.episerver,
           },
           "value": "episerver"
         }
@@ -418,35 +420,35 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": "10 hours per week"
+            "text": keyValue.hours_10,
           },
           "value": "hours_10"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "20 hours per week"
+            "text": keyValue.hours_20,
           },
           "value": "hours_20"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "30 hours per week"
+            "text": keyValue.hours_30,
           },
           "value": "hours_30"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "40 hours"
+            "text": keyValue.hours_40,
           },
           "value": "hours_40"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "As needed, Open to offers"
+            "text": keyValue.open,
           },
           "value": "open"
         },
@@ -470,14 +472,14 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": "I am a citizen",
+            "text": keyValue.citizen,
           },
           "value": "citizen"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "I am in need of sponsorship",
+            "text": keyValue.not_citizen,
           },
           "value": "not_citizen"
         },
@@ -501,28 +503,28 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": "Elementary"
+            "text": keyValue.elementary,
           },
           "value": "elementary"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Intermediate"
+            "text": keyValue.intermediate,
           },
           "value": "intermediate"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Native"
+            "text": keyValue.native,
           },
           "value": "native"
         },
         {
           "text": {
             "type": "plain_text",
-            "text": "Proficient"
+            "text": keyValue.proficient,
           },
           "value": "proficient"
         },

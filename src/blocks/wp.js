@@ -1,3 +1,5 @@
+const keyValue = require('../util/keyValue')
+
 module.exports = (base_url, id) => {
   const url = base_url + 'profile/' + id.toLowerCase()
   const link = '<' + url + '|' + 'View my Wordpress Profile>'
@@ -12,6 +14,7 @@ module.exports = (base_url, id) => {
           "text": {
             "type": "plain_text",
             "text": "WP Profile",
+            "text": keyValue.wp_profile,
           },
           "value": "wp_profile"
         }
