@@ -18,12 +18,10 @@ module.exports = async user => {
 
   if (profile.cms && profile.cms.length > 0) {
     // Add Drupal button if they're a Drupal developer.
-    const is_drupal_dev = (profile.cms.filter(cms => cms.value == 'drupal').length === 1)
-    if (is_drupal_dev) blocks = [...blocks, ...drupalBlocks(drupal_base_url, user)]
+    if (profile.cms.includes('drupal')) blocks = [...blocks, ...drupalBlocks(drupal_base_url, user)]
 
     // Add WP button if they're a Drupal developer.
-    const is_wp_dev = (profile.cms.filter(cms => cms.value == 'wordpress').length === 1)
-    if (is_wp_dev) blocks = [...blocks, ...wpBlocks(wp_base_url, user)]
+    if (profile.cms.includes('wordpress')) blocks = [...blocks, ...wpBlocks(wp_base_url, user)]
   }
 
   // Get initial values for blocks.
