@@ -3,36 +3,114 @@ const values = require('./util/keyValue')
 exports.handler = async event => {
   const config = {
     valueMap: values,
-    titles: {
-      "architect": "Architect",
-      "art_director": "Art Director",
-      "backend": "Backend Developer",
-      "frontend": "Frontend Developer",
-      "full_stack": "Full-Stack Developer",
-      "pm": "Project Manager",
-      "qa_tester": "QA Tester",
-      "sys_admin": "System Administrator",
-      "ux_designer": "UX Designer",
-      "visual_designer": "Visual Designer",
-    },
-    skills: {
-      "api": "APIs",
-      "adobe_creative_suite": "Adobe Creative Suite",
-      "bootstrap": "Bootstrap",
-      "cli": "CLI",
-      "communication": "Communication",
-      "custom_themes": "Custom Themes",
-      "ecommerce": "eCommerce",
-      "gitflow": "Git-flow",
-      "github": "GitHub",
-      "jquery": "jQuery",
-      "lamp": "LAMP Stack",
-      "mysql": "MariaDB / MySQL",
-      "mobile_design": "Mobile Design",
-      "sass": "SASS",
-      "seo": "SEO",
-      "ui": "UI / UX",
-    }
+    titles: [
+      {
+        key: "architect",
+        value: "Architect"
+      },
+      {
+        key: "art_director",
+        value: "Art Director"
+      },
+      {
+        key: "backend",
+        value: "Backend Developer"
+      },
+      {
+        key: "frontend",
+        value: "Frontend Developer"
+      },
+      {
+        key: "full_stack",
+        value: "Full-Stack Developer"
+      },
+      {
+        key: "pm",
+        value: "Project Manager"
+      },
+      {
+        key: "qa_tester",
+        value: "QA Tester"
+      },
+      {
+        key: "sys_admin",
+        value: "System Administrator"
+      },
+      {
+        key: "ux_designer",
+        value: "UX Designer"
+      },
+      {
+        key: "visual_designer",
+        value: "Visual Designer"
+      },
+    ],
+    skills: [
+      {
+        key: "api",
+        value: "APIs"
+      },
+      {
+        key: "adobe_creative_suite",
+        value: "Adobe Creative Suite"
+      },
+      {
+        key: "bootstrap",
+        value: "Bootstrap"
+      },
+      {
+        key: "cli",
+        value: "CLI"
+      },
+      {
+        key: "communication",
+        value: "Communication"
+      },
+      {
+        key: "custom_themes",
+        value: "Custom Themes"
+      },
+      {
+        key: "ecommerce",
+        value: "eCommerce"
+      },
+      {
+        key: "gitflow",
+        value: "Git-flow"
+      },
+      {
+        key: "github",
+        value: "GitHub"
+      },
+      {
+        key: "jquery",
+        value: "jQuery"
+      },
+      {
+        key: "lamp",
+        value: "LAMP Stack"
+      },
+      {
+        key: "mysql",
+        value: "MariaDB / MySQL"
+      },
+      {
+        key: "mobile_design",
+        value: "Mobile Design"
+      },
+      {
+        key: "sass",
+        value: "SASS"
+      },
+      {
+        key: "seo",
+        value: "SEO"
+      },
+      {
+        key: "ui",
+        value: "UI / UX"
+      }
+    ]
   }
 
   return {
