@@ -14,6 +14,24 @@ exports.handler = async event => {
       "sys_admin": "System Administrator",
       "ux_designer": "UX Designer",
       "visual_designer": "Visual Designer",
+    },
+    skills: {
+      "api": "APIs",
+      "adobe_creative_suite": "Adobe Creative Suite",
+      "bootstrap": "Bootstrap",
+      "cli": "CLI",
+      "communication": "Communication",
+      "custom_themes": "Custom Themes",
+      "ecommerce": "eCommerce",
+      "gitflow": "Git-flow",
+      "github": "GitHub",
+      "jquery": "jQuery",
+      "lamp": "LAMP Stack",
+      "mysql": "MariaDB / MySQL",
+      "mobile_design": "Mobile Design",
+      "sass": "SASS",
+      "seo": "SEO",
+      "ui": "UI / UX",
     }
   }
 
