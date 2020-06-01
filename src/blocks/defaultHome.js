@@ -76,7 +76,7 @@ module.exports = [
         {
           "text": {
             "type": "plain_text",
-            "text": keyValue.qa,
+            "text": keyValue.qa_tester,
           },
           "value": "qa_tester"
         },
