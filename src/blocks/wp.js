@@ -6,25 +6,19 @@ module.exports = (base_url, id) => {
 
   return [
     {
-      "type": "actions",
-      "block_id": "wp_profile",
-      "elements": [
-        {
-          "type": "button",
-          "text": {
-            "type": "plain_text",
-            "text": "WP Profile",
-            "text": keyValue.wp_profile,
-          },
-          "value": "wp_profile"
-        }
-      ],
-    },
-    {
       "type": "section",
+      "block_id": "wp_profile",
       "text": {
         "type": "mrkdwn",
         "text": link
+      },
+      "accessory": {
+        "type": "button",
+        "text": {
+          "type": "plain_text",
+          "text": "Edit WP Profile",
+        },
+        "value": "wp_profile"
       }
     }
   ]
