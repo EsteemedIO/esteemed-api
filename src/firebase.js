@@ -9,3 +9,5 @@ fb.initializeApp({
 module.exports.db = () => fb.firestore()
 
 module.exports.profilesRef = () => fb.firestore().collection("profiles")
+
+module.exports.jobsRef = () => fb.firestore().collection("jobs")

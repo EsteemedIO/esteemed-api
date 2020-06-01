@@ -58,4 +58,11 @@ module.exports = {
   "entry": "Entry Level",
   "intermediate": "Intermediate",
   "expert": "Expert/Advanced",
+  "contract": "Contract",
+  "contract_to_perm": "Contract-to-Perm",
+  "permanent": "Permanent",
+  "n_a": "N/A",
+  "remote": "Remote",
+  "on_site": "On-site",
+  "mixed": "Mixed",
 }

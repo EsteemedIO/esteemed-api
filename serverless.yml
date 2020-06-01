@@ -41,6 +41,13 @@ functions:
           path: profiles
           method: get
           cors: true
+  getJobs:
+    handler: src/jobs.handler
+    events:
+      - http:
+          path: jobs
+          method: get
+          cors: true
   getProfileDialog:
     handler: src/profileDialog.handler
     events:
