@@ -34,6 +34,7 @@ exports.handler = async event => {
 
         if (fb_profile) {
           profile = { ...profile, ...{
+            'location': fb_profile.location ? fb_profile.location : '',
             'availability': fb_profile.availability ? fb_profile.availability : '',
             'english': fb_profile.english ? fb_profile.english : '',
             'titles': fb_profile.titles ? fb_profile.titles : [],

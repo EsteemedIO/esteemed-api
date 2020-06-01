@@ -24,6 +24,17 @@ module.exports = async user => {
     if (profile.cms.includes('wordpress')) blocks = [...blocks, ...wpBlocks(wp_base_url, user)]
   }
 
+  // Display location if found.
+  if (profile.location) {
+    blocks = blocks.reduce((acc, item) => {
+      if (item.block_id == 'location') item.text.text = "*My location:* " + profile.location
+
+      acc.push(item)
+
+      return acc
+    }, [])
+  }
+
   // Get initial values for blocks.
   const blocks_with_values = initialOptions(blocks, profile)
 

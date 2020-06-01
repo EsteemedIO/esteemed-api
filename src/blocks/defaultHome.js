@@ -3,6 +3,22 @@ const keyValue = require('../util/keyValue')
 module.exports = [
   {
     "type": "section",
+    "block_id": "location",
+    "text": {
+      "type": "mrkdwn",
+      "text": "Choose your location by selecting the button to the right"
+    },
+    "accessory": {
+      "type": "button",
+      "text": {
+        "type": "plain_text",
+        "text": "Lookup Address"
+      },
+      "value": "location"
+    }
+  },
+  {
+    "type": "section",
     "text": {
       "type": "mrkdwn",
       "text": "Please choose the role titles that best fit your background and experience."

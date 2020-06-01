@@ -9,6 +9,7 @@ custom:
     allowedChannels: ${file(secrets.yml):allowedChannels}
     firebaseApp: ${file(secrets.yml):firebaseApp}
     travisToken: ${file(secrets.yml):travisToken}
+    googleMaps: ${file(secrets.yml):googleMaps}
   ngrokTunnel:
     tunnels:
       - port: 3000
@@ -23,6 +24,7 @@ provider:
     SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
     FIREBASE_APP: ${self:custom.secrets.firebaseApp}
     TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
+    GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
 
 functions:
   getConfiguration:
