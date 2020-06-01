@@ -1,10 +1,10 @@
 const axios = require('axios')
-const { profilesRef } = require('../firebase')
-const api = require('../api')()
+const { profilesRef } = require('../util/firebase')
+const api = require('../util/api')()
 
 const defaultBlocks = require('../blocks/defaultHome')
-const drupalBlocks = require('../blocks/drupal')
-const wpBlocks = require('../blocks/wp')
+const drupal = require('../blocks/drupal')
+const wp = require('../blocks/wp')
 
 const drupal_base_url = 'https://app.drupalcontractors.com/'
 const wp_base_url = 'https://wpcontractors.github.io/'
@@ -18,10 +18,10 @@ module.exports = async user => {
 
   if (profile.cms && profile.cms.length > 0) {
     // Add Drupal button if they're a Drupal developer.
-    if (profile.cms.includes('drupal')) blocks = [...blocks, ...drupalBlocks(drupal_base_url, user)]
+    if (profile.cms.includes('drupal')) blocks = [...blocks, ...drupal.blocks(drupal_base_url, user)]
 
     // Add WP button if they're a Drupal developer.
-    if (profile.cms.includes('wordpress')) blocks = [...blocks, ...wpBlocks(wp_base_url, user)]
+    if (profile.cms.includes('wordpress')) blocks = [...blocks, ...wp.blocks(wp_base_url, user)]
   }
 
   // Display location if found.

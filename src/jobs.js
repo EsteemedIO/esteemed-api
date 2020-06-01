@@ -1,5 +1,5 @@
-const api = require('./api')()
-const { jobsRef } = require('./firebase')
+const api = require('./util/api')()
+const { jobsRef } = require('./util/firebase')
 
 exports.handler = async event => {
   try {
