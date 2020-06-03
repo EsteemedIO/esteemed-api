@@ -51,6 +51,7 @@ module.exports.dialog = async payload => {
           "type": "select",
           "name": "wp_experience",
           "placeholder": "Choose your experience level...",
+          "value": profile.wp_experience || '',
           "options": [
             {
               "label": keyValue.entry,
