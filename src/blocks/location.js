@@ -6,7 +6,7 @@ const { profilesRef } = require('../util/firebase')
 const travisBuild = require('../util/travis')
 
 module.exports.dialog = async payload => {
-  const profile = await profilesRef().doc(payload.user.id).get().then(doc => doc.data()) || {}
+  const profile = (await profilesRef().doc(user).get()).data() || {}
 
   const dialog = {
     token: process.env.SLACK_TOKEN_BOT,

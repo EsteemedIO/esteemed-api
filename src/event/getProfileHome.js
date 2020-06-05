@@ -35,7 +35,7 @@ module.exports = async user => {
   }
 
   // Get values.
-  const profile = await profilesRef().doc(user).get().then(doc => doc.data()) || {}
+  const profile = (await profilesRef().doc(user).get()).data() || {}
 
   // Get default blocks.
   let blocks = defaultBlocks
