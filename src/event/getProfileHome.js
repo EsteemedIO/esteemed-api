@@ -10,6 +10,30 @@ const drupal_base_url = 'https://app.drupalcontractors.com/'
 const wp_base_url = 'https://wpcontractors.github.io/'
 
 module.exports = async user => {
+  const initialOptions = (blocks, profile) => {
+    return blocks.reduce((accum, block) => {
+      if (block.accessory && profile[block.accessory.action_id] !== undefined) {
+        const value = profile[block.accessory.action_id]
+
+        if (value.length > 0 || value.value) {
+          if (block.accessory.type == 'static_select') {
+            block.accessory.initial_option = block.accessory.options.find(option => option.value == value)
+          }
+          else if (block.accessory.type == 'datepicker') {
+            block.accessory.initial_date = value
+          }
+          else {
+            block.accessory.initial_options = block.accessory.options.filter(option => value.includes(option.value))
+          }
+        }
+      }
+
+      accum.push(block)
+
+      return accum
+    }, [])
+  }
+
   // Get values.
   const profile = await profilesRef().doc(user).get().then(doc => doc.data()) || {}
 
@@ -59,28 +83,4 @@ module.exports = async user => {
       return { statusCode: 200, body: '' }
     })
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
-}
-
-const initialOptions = (blocks, profile) => {
-  return blocks.reduce((accum, block) => {
-    if (block.accessory && profile[block.accessory.action_id] !== undefined) {
-      const value = profile[block.accessory.action_id]
-
-      if (value.length > 0 || value.value) {
-        if (block.accessory.type == 'static_select') {
-          block.accessory.initial_option = block.accessory.options.find(option => option.value == value)
-        }
-        else if (block.accessory.type == 'datepicker') {
-          block.accessory.initial_date = value
-        }
-        else {
-          block.accessory.initial_options = block.accessory.options.filter(option => value.includes(option.value))
-        }
-      }
-    }
-
-    accum.push(block)
-
-    return accum
-  }, [])
 }
