@@ -75,7 +75,8 @@ const loadUsers = () => {
 const loadChannelMembers = channel => {
   return api.get('conversations.members', {
       params: {
-        channel: channel
+        channel: channel,
+        limit: 1000,
       }
     })
     .then(({ data }) => data.members)
