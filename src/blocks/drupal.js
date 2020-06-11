@@ -16,7 +16,7 @@ module.exports.blocks = (base_url, id) => {
       "block_id": "drupal_profile",
       "text": {
         "type": "mrkdwn",
-        "text": link
+        "text": 'Click the button to the right to edit your Drupal profile'
       },
       "accessory": {
         "type": "button",

@@ -14,7 +14,7 @@ module.exports.blocks = (base_url, id) => {
       "block_id": "wp_profile",
       "text": {
         "type": "mrkdwn",
-        "text": link
+        "text": 'Click the button to the right to edit your WP profile'
       },
       "accessory": {
         "type": "button",
