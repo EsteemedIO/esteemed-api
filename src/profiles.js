@@ -17,9 +17,21 @@ exports.handler = async event => {
     const users = await usersPromise
     const profiles = await profilesPromise
 
-    const members = await loadChannelMembers(channel)
-      .then(data => users.filter(user => data.includes(user.id)))
-      .then(data => data.map(user => {
+    // Iterate the conversation.members call due to its pagination limit.
+    let members = []
+    let more_members = true
+    let cursor = ''
+
+    while (more_members) {
+      let members_paged = await loadChannelMembers(channel, cursor)
+      more_members = members_paged.more
+      cursor = members_paged.cursor
+      members = members.concat(members_paged.members)
+    }
+
+    const body = members
+      .map(data => users.find(user => data.includes(user.id)))
+      .map(user => {
         const name = user.real_name.split(' ')
         const first = name[0]
         const last = name[1] ? ' ' + name[1][0] + '.' : ''
@@ -48,14 +60,14 @@ exports.handler = async event => {
         }
 
         return profile
-      }))
+      })
 
     return {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*"
       },
-      body: JSON.stringify(members),
+      body: JSON.stringify(body),
     }
   } catch (e) {
     console.log(e)
@@ -72,14 +84,22 @@ const loadUsers = () => {
     .then(data => data.filter(member => member.id != 'USLACKBOT'))
 }
 
-const loadChannelMembers = channel => {
-  return api.get('conversations.members', {
-      params: {
-        channel: channel,
-        limit: 1000,
-      }
-    })
-    .then(({ data }) => data.members)
+const loadChannelMembers = (channel, cursor) => {
+  let params = {
+    channel: channel,
+    limit: 1000,
+  }
+
+  if (cursor != '') {
+    params.cursor = cursor
+  }
+
+  return api.get('conversations.members', { params: params })
+    .then(({ data }) => ({
+        members: data.members,
+        cursor: data.response_metadata.next_cursor,
+        more: (data.response_metadata.next_cursor != '')
+      }))
 }
 
 const allProfiles = () => {
