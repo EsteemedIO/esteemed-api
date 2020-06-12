@@ -43,7 +43,7 @@ const getUser = userId => {
     params: {
       user: userId
     }
-  }).then( ({data}) => {return data} )
+  }).then( ({data}) => data )
 }
 
 const delayResponse = async payload => {
@@ -53,37 +53,35 @@ const delayResponse = async payload => {
     const profilesPromise = allProfiles()
     const users = await usersPromise
     const profiles = await profilesPromise
-    const currentUser = users.filter( user => user.id == payload.user_id )
-    var latestProfilesKeys = Object.keys(profiles).slice(0, 10)
+    const currentUser = users.find( user => user.id == payload.user_id )
+    const latestProfilesKeys = Object.keys(profiles).slice(0, 10)
     var msg = {
       "blocks": [
                   
       ]
     }
 
-    if ( currentUser[0].is_admin || currentUser[0].is_owner ) {
+    if ( currentUser.is_admin || currentUser.is_owner ) {
 
       for ( const latestProfileKey of latestProfilesKeys ) {
 
-        const requestedUserId = latestProfileKey
-        const requestedUserPromise = getUser(requestedUserId)
-        const requestedUser = await requestedUserPromise
+        const requestedUser = await getUser(latestProfileKey)
 
         if ( requestedUser.ok ) {
 
           var txt = "Name: " + requestedUser.user.profile.real_name + "\nEmail: " + requestedUser.user.profile.email + "\nPhone: " + requestedUser.user.profile.phone + "\nTitle: " + requestedUser.user.profile.title
         
-          // if ( profiles[requestedUserId].hasOwnProperty('drupal_profile') ) {
+          if ( profiles[latestProfileKey].hasOwnProperty('drupal_profile') ) {
 
-          //   txt += "\n" + "<" + profiles[requestedUserId].drupal_profile + "|" + profiles[requestedUserId].drupal_bio + ">"
+            // txt += "\n" + "<" + profiles[latestProfileKey].drupal_profile + "|" + profiles[latestProfileKey].drupal_bio + ">"
 
-          // }
+          }
 
-          // if ( profiles[requestedUserId].hasOwnProperty('wp_profile') ) {
+          if ( profiles[latestProfileKey].hasOwnProperty('wp_profile') ) {
 
-          //   txt += "\n" + "<" + profiles[requestedUserId].wp_profile + "|" + profiles[requestedUserId].wp_bio + ">"
+            // txt += "\n" + "<" + profiles[latestProfileKey].wp_profile + "|" + profiles[latestProfileKey].wp_bio + ">"
 
-          // }
+          }
 
           msg.blocks.push({
             "type": "section",
@@ -94,7 +92,7 @@ const delayResponse = async payload => {
             "accessory": {
               "type": "image",
               "image_url": requestedUser.user.profile.image_48,
-              "alt_text": "Haunted hotel image"
+              "alt_text": requestedUser.user.profile.real_name
             }
           })
 
