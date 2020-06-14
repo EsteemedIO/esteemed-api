@@ -10,6 +10,7 @@ custom:
     firebaseApp: ${file(secrets.yml):firebaseApp}
     travisToken: ${file(secrets.yml):travisToken}
     googleMaps: ${file(secrets.yml):googleMaps}
+    slackSlashCommandHook: ${file(secrets.yml):slackSlashCommandHook}
   ngrokTunnel:
     tunnels:
       - port: 3000
@@ -25,6 +26,7 @@ provider:
     FIREBASE_APP: ${self:custom.secrets.firebaseApp}
     TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
     GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
+    SLACK_SLASH_COMMAND_HOOK: ${self:custom.secrets.slackSlashCommandHook}
 
 functions:
   getConfiguration:
@@ -60,6 +62,20 @@ functions:
     events:
       - http:
           path: slackEvents
+          method: post
+          cors: true
+  commandProfile:
+    handler: src/slashCommands/profile.handler
+    events:
+      - http:
+          path: command_profile
+          method: post
+          cors: true
+  commandLatestProfiles:
+    handler: src/slashCommands/latest_profiles.handler
+    events:
+      - http:
+          path: command_latest_profiles
           method: post
           cors: true
 
