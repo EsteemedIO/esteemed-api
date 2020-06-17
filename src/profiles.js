@@ -1,5 +1,4 @@
-const api = require('./util/api')()
-const { profilesRef } = require('./util/firebase')
+const profiles = require('./util/userProfiles')
 
 exports.handler = async event => {
   try {
@@ -12,14 +11,26 @@ exports.handler = async event => {
     // Disallow sneaking into unapproved channels.
     if (!allowedChannels.includes(channel)) return { statusCode: 400, body: 'Invalid channel' }
 
-    const usersPromise = loadUsers()
-    const profilesPromise = allProfiles()
+    const usersPromise = profiles.loadUsers()
+    const profilesPromise = profiles.allProfiles()
     const users = await usersPromise
     const profiles = await profilesPromise
 
-    const members = await loadChannelMembers(channel)
-      .then(data => users.filter(user => data.includes(user.id)))
-      .then(data => data.map(user => {
+    // Iterate the conversation.members call due to its pagination limit.
+    let members = []
+    let more_members = true
+    let cursor = ''
+
+    while (more_members) {
+      let members_paged = await profiles.loadChannelMembers(channel, cursor)
+      more_members = members_paged.more
+      cursor = members_paged.cursor
+      members = members.concat(members_paged.members)
+    }
+
+    const body = members
+      .map(data => users.find(user => data.includes(user.id)))
+      .map(user => {
         const name = user.real_name.split(' ')
         const first = name[0]
         const last = name[1] ? ' ' + name[1][0] + '.' : ''
@@ -48,44 +59,18 @@ exports.handler = async event => {
         }
 
         return profile
-      }))
+      })
 
     return {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*"
       },
-      body: JSON.stringify(members),
+      body: JSON.stringify(body),
     }
   } catch (e) {
     console.log(e)
 
     return { statusCode: 400, body: JSON.stringify(e) }
   }
-}
-
-const loadUsers = () => {
-  return api.get('users.list')
-    .then(({ data }) => data.members.filter(member => !member.is_bot))
-    //.then(data => data.filter(member => !member.is_admin))
-    .then(data => data.filter(member => !member.deleted))
-    .then(data => data.filter(member => member.id != 'USLACKBOT'))
-}
-
-const loadChannelMembers = channel => {
-  return api.get('conversations.members', {
-      params: {
-        channel: channel
-      }
-    })
-    .then(({ data }) => data.members)
-}
-
-const allProfiles = () => {
-  return profilesRef().get()
-    .then(snapshot => snapshot.docs.reduce((obj, item) => {
-      obj[item.id] = item.data()
-      return obj
-    }, {}))
-    .catch(e => { console.log('Error getting documents', e) })
 }
