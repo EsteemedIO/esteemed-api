@@ -5,7 +5,9 @@
   "main": "handler.js",
   "scripts": {
     "develop": "NODE_ENV=development sls offline start",
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "import-db": "node admin/importDB.js",
+    "export-db": "node admin/exportDB.js && ls -lah db/"
   },
   "author": "",
   "license": "ISC",
