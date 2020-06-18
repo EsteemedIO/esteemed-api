@@ -5,7 +5,8 @@
   "main": "handler.js",
   "scripts": {
     "develop": "NODE_ENV=development sls offline start",
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "watch": "nodemon --exec \"sls offline start\""
   },
   "author": "",
   "license": "ISC",
