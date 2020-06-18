@@ -10,7 +10,6 @@ custom:
     firebaseApp: ${file(secrets.yml):firebaseApp}
     travisToken: ${file(secrets.yml):travisToken}
     googleMaps: ${file(secrets.yml):googleMaps}
-    slackSlashCommandHook: ${file(secrets.yml):slackSlashCommandHook}
   ngrokTunnel:
     tunnels:
       - port: 3000
@@ -26,7 +25,6 @@ provider:
     FIREBASE_APP: ${self:custom.secrets.firebaseApp}
     TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
     GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
-    SLACK_SLASH_COMMAND_HOOK: ${self:custom.secrets.slackSlashCommandHook}
 
 functions:
   getConfiguration:
