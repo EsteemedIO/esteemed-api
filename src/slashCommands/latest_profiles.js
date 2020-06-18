@@ -26,7 +26,7 @@ const delayResponse = async payload => {
           }
         }
       ]
-    }
+    }    
 
     if (currentUser.is_admin || currentUser.is_owner) {
       const allProfiles = await profiles.allProfiles()
@@ -35,7 +35,7 @@ const delayResponse = async payload => {
         acc.push({...allProfiles[key], ...{id: key}})
         return acc 
       }, [])
-      const latestProfilesKeys = allProfilesArray.sort((a, b) => { return b.join_date - a.join_date })
+      const latestProfilesKeys = allProfilesArray.sort((a, b) => { return Number(b.join_date.split("-").join("")) - Number(a.join_date.split("-").join("")) })
         .reduce((acc, value) => {
           acc.push(value.id)
           return acc
@@ -85,20 +85,22 @@ const delayResponse = async payload => {
       .then(blocks => blocks.flatMap((v, i, a) => a.length - 1 !== i ? [v, { "type": "divider" }] : v))
     }
     else {
-      msg.blocks = {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "Only admins or owners can use this command"
+      msg.blocks = [
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "Only admin or owner can use this command"
+          }
         }
-      }
+      ]
     }
 
     axios({
       method: 'post',
       url: 'https://slack.com/api/chat.postMessage',
       headers: { 'Content-Type': 'application/json' },
-      params: { channel: payload.channel_id, token: process.env.SLACK_TOKEN, parse: 'full', blocks: JSON.stringify(msg.blocks) }
+      params: { channel: payload.channel_id, token: process.env.SLACK_TOKEN, parse: 'full', blocks: JSON.stringify(msg.blocks)}
     })
 
     return
