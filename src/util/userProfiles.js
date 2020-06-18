@@ -1,5 +1,5 @@
-const api = require('./../util/api')()
-const { profilesRef } = require('./../util/firebase')
+const api = require('./api')()
+const { profilesRef } = require('./firebase')
 
 module.exports.loadUsers = () => {
   return api.get('users.list')
