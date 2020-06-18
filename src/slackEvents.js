@@ -2,6 +2,7 @@ const url = require('url')
 
 const verifyRequest = require('./verifyRequest')
 const getProfileHome = require('./event/getProfileHome')
+const setUserJoinDate = require('./event/setUserJoinDate')
 
 exports.handler = async event => {
   try {
@@ -21,6 +22,9 @@ exports.handler = async event => {
 
     if (payload.type && payload.type == 'app_home_opened') {
       return await getProfileHome(payload.user)
+    }
+    else if (payload.type && payload.type == 'team_join') {
+      return await setUserJoinDate(payload.user)
     }
   } catch (e) {
     console.log(e)
