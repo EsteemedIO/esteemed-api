@@ -6,7 +6,7 @@ exports.handler = async event => {
   const payload = qs.parse(event.body)
 
   try {
-    Promise.all([ profiles.loadUsers(), profiles.allProfiles() ])
+    await Promise.all([ profiles.loadUsers(), profiles.allProfiles() ])
       .then(([users, allProfiles]) => {
         const currentUser = users.find(user => user.id == payload.user_id)
 
@@ -88,5 +88,5 @@ exports.handler = async event => {
     return { statusCode: 400, body: JSON.stringify(e) }
   }
 
-  return { statusCode: 200, body: "Loading 10 most recent profiles..." }
+  return { statusCode: 200, body: "" }
 }
