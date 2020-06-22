@@ -1,4 +1,4 @@
-const profiles = require('./util/userProfiles')
+const userProfiles = require('./util/userProfiles')
 
 exports.handler = async event => {
   try {
@@ -11,8 +11,8 @@ exports.handler = async event => {
     // Disallow sneaking into unapproved channels.
     if (!allowedChannels.includes(channel)) return { statusCode: 400, body: 'Invalid channel' }
 
-    const usersPromise = profiles.loadUsers()
-    const profilesPromise = profiles.allProfiles()
+    const usersPromise = userProfiles.loadUsers()
+    const profilesPromise = userProfiles.allProfiles()
     const users = await usersPromise
     const profiles = await profilesPromise
 
@@ -22,7 +22,7 @@ exports.handler = async event => {
     let cursor = ''
 
     while (more_members) {
-      let members_paged = await profiles.loadChannelMembers(channel, cursor)
+      let members_paged = await userProfiles.loadChannelMembers(channel, cursor)
       more_members = members_paged.more
       cursor = members_paged.cursor
       members = members.concat(members_paged.members)

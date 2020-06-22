@@ -9,13 +9,22 @@ module.exports.loadUsers = () => {
     .then(data => data.filter(member => member.id != 'USLACKBOT'))
 }
 
-module.exports.loadChannelMembers = channel => {
-  return api.get('conversations.members', {
-      params: {
-        channel: channel
-      }
-    })
-    .then(({ data }) => data.members)
+module.exports.loadChannelMembers = (channel, cursor) => {
+  let params = {
+    channel: channel,
+    limit: 1000,
+  }
+
+  if (cursor != '') {
+    params.cursor = cursor
+  }
+
+  return api.get('conversations.members', { params: params })
+    .then(({ data }) => ({
+        members: data.members,
+        cursor: data.response_metadata.next_cursor,
+        more: (data.response_metadata.next_cursor != '')
+      }))
 }
 
 module.exports.allProfiles = () => {
