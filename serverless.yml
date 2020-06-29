@@ -17,6 +17,7 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
+  memorySize: 192
   environment:
     SLACK_TOKEN: ${self:custom.secrets.slackToken}
     SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
