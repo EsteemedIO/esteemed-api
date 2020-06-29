@@ -13,6 +13,11 @@ const keyValue = require('./util/keyValue')
 const travisBuild = require('./util/travis')
 
 exports.handler = async (event) => {
+  if (event.source === 'serverless-plugin-warmup') {
+    console.log('WarmUp - Lambda is warm!');
+    return 'Lambda is warm!';
+  }
+
   try {
     const payload = JSON.parse(qs.parse(event.body).payload)
     const slackSignature = event.headers['X-Slack-Signature']
