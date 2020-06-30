@@ -3,11 +3,6 @@ const axios = require('axios')
 const profiles = require('./../util/userProfiles')
 
 exports.handler = async event => {
-  if (event.source === 'serverless-plugin-warmup') {
-    console.log('WarmUp - Lambda is warm!');
-    return 'Lambda is warm!';
-  }
-
   const payload = qs.parse(event.body)
 
   try {

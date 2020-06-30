@@ -5,11 +5,6 @@ const getProfileHome = require('./event/getProfileHome')
 const setUserJoinDate = require('./event/setUserJoinDate')
 
 exports.handler = async event => {
-  if (event.source === 'serverless-plugin-warmup') {
-    console.log('WarmUp - Lambda is warm!');
-    return 'Lambda is warm!';
-  }
-
   try {
     const body = JSON.parse(event.body)
     const payload = body.event

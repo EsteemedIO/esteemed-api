@@ -18,12 +18,6 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 192
-  timeout: 10
-  iamRoleStatements:
-    - Effect: 'Allow'
-      Action:
-        - 'lambda:InvokeFunction'
-      Resource: "*"
   environment:
     SLACK_TOKEN: ${self:custom.secrets.slackToken}
     SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
@@ -62,8 +56,6 @@ functions:
           path: dialog
           method: post
           cors: true
-    warmup:
-      enabled: prod
   slackEvents:
     handler: src/slackEvents.handler
     events:
@@ -71,8 +63,6 @@ functions:
           path: slackEvents
           method: post
           cors: true
-    warmup:
-      enabled: prod
   commandProfile:
     handler: src/slashCommands/profile.handler
     events:
@@ -80,8 +70,6 @@ functions:
           path: command_profile
           method: post
           cors: true
-    warmup:
-      enabled: prod
   commandLatestProfiles:
     handler: src/slashCommands/latest_profiles.handler
     events:
@@ -89,10 +77,7 @@ functions:
           path: command_latest_profiles
           method: post
           cors: true
-    warmup:
-      enabled: prod
 
 plugins:
   - serverless-offline
   - serverless-ngrok-tunnel
-  - serverless-plugin-warmup
