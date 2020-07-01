@@ -12,70 +12,60 @@ const location = require('./blocks/location')
 const keyValue = require('./util/keyValue')
 const travisBuild = require('./util/travis')
 
-exports.handler = async (event) => {
+module.exports = async (req, res, next) => {
   try {
-    const payload = JSON.parse(qs.parse(event.body).payload)
-    const slackSignature = event.headers['X-Slack-Signature']
-    const timestamp = event.headers['X-Slack-Request-Timestamp']
-    const verified = await verifyRequest(slackSignature, event.body, timestamp)
+    const payload = JSON.parse(qs.parse(req.body).payload)
+    const slackSignature = req.headers['X-Slack-Signature']
+    const timestamp = req.headers['X-Slack-Request-Timestamp']
+    const verified = verifyRequest(slackSignature, req.body, timestamp)
 
     // Return errors if request validation fails.
-    if (verified.statusCode == 400) return verified
+    if (verified.statusCode == 400) next(verified.body)
 
     if (payload.view && payload.view.type == 'home' && payload.type && payload.type == 'block_actions') {
       // Update Home page options.
       if (payload.actions[0].type == 'multi_static_select'
         || payload.actions[0].type == 'datepicker'
         || payload.actions[0].type == 'static_select') {
-        return await updateProfileHome(payload)
+        res.send(updateProfileHome(payload))
       }
 
       // Get Drupal dialog upon button click.
       if (payload.actions[0].block_id == 'drupal_profile') {
-        return await drupal.dialog(payload)
+        res.send(drupal.dialog(payload))
       }
 
       // Get WP dialog upon button click.
       if (payload.actions[0].block_id == 'wp_profile') {
-        return await wp.dialog(payload)
+        res.send(wp.dialog(payload))
       }
 
       // Get location lookup dialog upon button click.
       if (payload.actions[0].block_id == 'location') {
-        return await location.dialog(payload)
+        res.send(location.dialog(payload))
       }
     }
 
     // Update Drupal profile.
     if (payload.type && payload.type == 'dialog_submission') {
       if (payload.callback_id == 'update_drupal_profile') {
-        return await drupal.updateProfile(payload)
+        res.send(drupal.updateProfile(payload))
       }
 
       if (payload.callback_id == 'update_wp_profile') {
-        return await wp.updateProfile(payload)
+        res.send(wp.updateProfile(payload))
       }
 
       if (payload.callback_id == 'update_location') {
-        return await location.update(payload)
+        res.send(location.update(payload))
       }
     }
-
   } catch (e) {
-    console.log(e)
-    return {
-      statusCode: 400,
-      body: JSON.stringify(e)
-    }
+    next(e)
   }
 }
 
 const updateProfileHome = async payload => {
-  // Check for valid data.
-  //const errors = await verifyData(payload.submission)
-
-  //if (errors.length > 0) return { statusCode: 200, body: JSON.stringify({ errors: errors }) }
-
   const type = payload.actions[0].type
   const action_id = payload.actions[0].action_id
   let values = []
@@ -102,5 +92,5 @@ const updateProfileHome = async payload => {
 
   await getProfileHome(payload.user.id)
 
-  return { statusCode: 200, body: '' }
+  return {}
 }

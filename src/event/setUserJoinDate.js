@@ -9,5 +9,5 @@ module.exports = async user => {
     .then(res => console.log(res))
     .catch(e => console.log(e))
 
-  return { statusCode: 200, body: '' }
+  return {}
 }

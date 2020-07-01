@@ -1,15 +1,15 @@
 const userProfiles = require('./util/userProfiles')
 
-exports.handler = async event => {
+module.exports = async (req, res, next) => {
   try {
     const allowedChannels = process.env.SLACK_CHANNELS.split(',')
-    const channel = event.queryStringParameters ? event.queryStringParameters.channel : false
+    const channel = req.query.channel ? req.query.channel : false
 
     // Require channel argument.
-    if (!channel) return { statusCode: 400, body: 'Channel argument required' }
+    if (!channel) next('Channel argument required')
 
     // Disallow sneaking into unapproved channels.
-    if (!allowedChannels.includes(channel)) return { statusCode: 400, body: 'Invalid channel' }
+    if (!allowedChannels.includes(channel)) next('Invalid channel')
 
     const usersPromise = userProfiles.loadUsers()
     const profilesPromise = userProfiles.allProfiles()
@@ -28,7 +28,7 @@ exports.handler = async event => {
       members = members.concat(members_paged.members)
     }
 
-    const body = members
+    res.send(members
       .map(data => users.find(user => data.includes(user.id)))
       .map(user => {
         const name = user.real_name.split(' ')
@@ -59,18 +59,10 @@ exports.handler = async event => {
         }
 
         return profile
-      })
-
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify(body),
-    }
+      }))
   } catch (e) {
     console.log(e)
 
-    return { statusCode: 400, body: JSON.stringify(e) }
+    next(e)
   }
 }

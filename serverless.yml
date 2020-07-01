@@ -18,6 +18,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 192
+  timeout: 20
   environment:
     SLACK_TOKEN: ${self:custom.secrets.slackToken}
     SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
@@ -28,54 +29,12 @@ provider:
     GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
 
 functions:
-  getConfiguration:
-    handler: src/configuration.handler
+  app:
+    handler: src/web.handler
     events:
       - http:
-          path: config
-          method: get
-          cors: true
-  getProfiles:
-    handler: src/profiles.handler
-    events:
-      - http:
-          path: profiles
-          method: get
-          cors: true
-  getJobs:
-    handler: src/jobs.handler
-    events:
-      - http:
-          path: jobs
-          method: get
-          cors: true
-  getProfileDialog:
-    handler: src/profileDialog.handler
-    events:
-      - http:
-          path: dialog
-          method: post
-          cors: true
-  slackEvents:
-    handler: src/slackEvents.handler
-    events:
-      - http:
-          path: slackEvents
-          method: post
-          cors: true
-  commandProfile:
-    handler: src/slashCommands/profile.handler
-    events:
-      - http:
-          path: command_profile
-          method: post
-          cors: true
-  commandLatestProfiles:
-    handler: src/slashCommands/latest_profiles.handler
-    events:
-      - http:
-          path: command_latest_profiles
-          method: post
+          path: /{any+}
+          method: ANY
           cors: true
 
 plugins:

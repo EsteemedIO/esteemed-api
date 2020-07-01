@@ -1,10 +1,10 @@
 const api = require('./util/api')()
 const { jobsRef } = require('./util/firebase')
 
-exports.handler = async event => {
+module.exports = async (res, next) => {
   try {
     const jobs = await getAllJobs()
-    const jobsFiltered = Object.keys(jobs).reduce((acc, key) => {
+    res.json(Object.keys(jobs).reduce((acc, key) => {
       const job = {
         key: key,
         title: jobs[key].title,
@@ -22,19 +22,9 @@ exports.handler = async event => {
       }
       acc.push(job)
       return acc
-    }, [])
-
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify(jobsFiltered),
-    }
+    }, []))
   } catch (e) {
-    console.log(e)
-
-    return { statusCode: 400, body: JSON.stringify(e) }
+    next(e)
   }
 }
 

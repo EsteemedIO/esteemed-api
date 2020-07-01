@@ -14,8 +14,11 @@
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^2.6.1",
     "axios": "^0.19.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "firebase-admin": "^8.10.0",
-    "query-string": "^6.12.1"
+    "query-string": "^6.12.1",
+    "serverless-http": "^2.5.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4",

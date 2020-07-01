@@ -1,9 +1,9 @@
 const qs = require('query-string')
 const axios = require('axios')
-const profiles = require('./../util/userProfiles')
+const profiles = require('../util/userProfiles')
 
-exports.handler = async event => {
-  const payload = qs.parse(event.body)
+module.exports = async (req, res, next) => {
+  const payload = qs.parse(req.body)
 
   try {
     await Promise.all([ profiles.loadUsers(), profiles.allProfiles() ])
@@ -84,9 +84,8 @@ exports.handler = async event => {
         .catch(e => console.log(e))
   } catch (e) {
     console.log(e)
-
-    return { statusCode: 400, body: JSON.stringify(e) }
+    next(e)
   }
 
-  return { statusCode: 200, body: "" }
+  res.send()
 }

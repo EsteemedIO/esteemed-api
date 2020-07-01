@@ -1,36 +1,31 @@
-const url = require('url')
-
 const verifyRequest = require('./verifyRequest')
 const getProfileHome = require('./event/getProfileHome')
 const setUserJoinDate = require('./event/setUserJoinDate')
 
-exports.handler = async event => {
+module.exports = async (req, res, next) => {
   try {
-    const body = JSON.parse(event.body)
+    const body = JSON.parse(req.body)
     const payload = body.event
-    const slackSignature = event.headers['X-Slack-Signature']
-    const timestamp = event.headers['X-Slack-Request-Timestamp']
-    const verified = await verifyRequest(slackSignature, event.body, timestamp)
+    const slackSignature = req.headers['X-Slack-Signature']
+    const timestamp = req.headers['X-Slack-Request-Timestamp']
+    const verified = verifyRequest(slackSignature, event.body, timestamp)
 
     // Verify domain with Slack.
     if (body.challenge) {
-      return { statusCode: 200, body: JSON.parse(event.body).challenge }
+      res.send(JSON.parse(event.body).challenge)
     }
 
     // Return errors if request validation fails.
-    if (verified.statusCode == 400) return verified
+    if (verified.statusCode == 400) next(verified.body)
 
     if (payload.type && payload.type == 'app_home_opened') {
-      return await getProfileHome(payload.user)
+      res.send(getProfileHome(payload.user))
     }
     else if (payload.type && payload.type == 'team_join') {
-      return await setUserJoinDate(payload.user)
+      res.send(setUserJoinDate(payload.user))
     }
   } catch (e) {
     console.log(e)
-    return {
-      statusCode: 400,
-      body: JSON.stringify(e)
-    }
+    next(e)
   }
 }
