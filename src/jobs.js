@@ -3,7 +3,7 @@ const { jobsRef } = require('./util/firebase')
 module.exports = async (res, next) => {
   try {
     const jobs = await getAllJobs()
-    res.json(Object.keys(jobs).reduce((acc, key) => {
+    res.send({ body: Object.keys(jobs).reduce((acc, key) => {
       const job = {
         key: key,
         title: jobs[key].title,
@@ -21,7 +21,7 @@ module.exports = async (res, next) => {
       }
       acc.push(job)
       return acc
-    }, []))
+    }, []) })
   } catch (e) {
     next(e)
   }

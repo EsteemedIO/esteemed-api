@@ -5,9 +5,7 @@ const getProfileHome = require('../event/getProfileHome')
 const { profilesRef } = require('../util/firebase')
 const travisBuild = require('../util/travis')
 
-module.exports.dialog = async payload => {
-  const profile = (await profilesRef().doc(payload.user.id).get()).data() || {}
-
+module.exports.dialog = async (payload, res) => {
   const dialog = {
     token: process.env.SLACK_TOKEN_BOT,
     trigger_id: payload.trigger_id,
@@ -26,8 +24,7 @@ module.exports.dialog = async payload => {
     })
   }
 
-  return api.post('dialog.open', null, { params: dialog })
-    .then(() => ({ statusCode: 200, body: '' }))
+  api.post('dialog.open', null, { params: dialog })
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
 }
 

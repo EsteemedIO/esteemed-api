@@ -72,5 +72,5 @@ module.exports = async (req, res, next) => {
     next(e)
   }
 
-  res.send()
+  res.send({ body: ''})
 }

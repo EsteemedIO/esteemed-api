@@ -7,42 +7,44 @@ const travisBuild = require('./util/travis')
 
 module.exports = async (req, res, next) => {
   try {
+    const payload = JSON.parse(req.body.payload)
+
     if (payload.view && payload.view.type == 'home' && payload.type && payload.type == 'block_actions') {
       // Update Home page options.
       if (payload.actions[0].type == 'multi_static_select'
         || payload.actions[0].type == 'datepicker'
         || payload.actions[0].type == 'static_select') {
-        res.send(updateProfileHome(payload))
+        res.send({ body: updateProfileHome(payload) })
       }
 
       // Get Drupal dialog upon button click.
       if (payload.actions[0].block_id == 'drupal_profile') {
-        res.send(drupal.dialog(payload))
+        res.send({ body: drupal.dialog(payload) })
       }
 
       // Get WP dialog upon button click.
       if (payload.actions[0].block_id == 'wp_profile') {
-        res.send(wp.dialog(payload))
+        res.send({ body: wp.dialog(payload) })
       }
 
       // Get location lookup dialog upon button click.
       if (payload.actions[0].block_id == 'location') {
-        res.send(location.dialog(payload))
+        await location.dialog(payload, res)
       }
     }
 
     // Update Drupal profile.
     if (payload.type && payload.type == 'dialog_submission') {
       if (payload.callback_id == 'update_drupal_profile') {
-        res.send(drupal.updateProfile(payload))
+        res.send({ body: drupal.updateProfile(payload) })
       }
 
       if (payload.callback_id == 'update_wp_profile') {
-        res.send(wp.updateProfile(payload))
+        res.send({ body: wp.updateProfile(payload) })
       }
 
       if (payload.callback_id == 'update_location') {
-        res.send(location.update(payload))
+        res.send({ body: location.update(payload) })
       }
     }
   } catch (e) {
