@@ -1,15 +1,8 @@
-const qs = require('query-string')
-const { Client, Status } = require('@googlemaps/google-maps-services-js')
-
-const api = require('./util/api')()
 const { profilesRef } = require('./util/firebase')
-const verifyData = require('./util/verifyData')
-const verifyRequest = require('./verifyRequest')
 const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
-const keyValue = require('./util/keyValue')
 const travisBuild = require('./util/travis')
 
 module.exports = async (req, res, next) => {

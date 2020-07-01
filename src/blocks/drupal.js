@@ -2,7 +2,6 @@ const url = require('url')
 
 const api = require('../util/api')()
 const { profilesRef } = require('../util/firebase')
-const keyValue = require('../util/keyValue')
 const travisBuild = require('../util/travis')
 const verifyData = require('../util/verifyData')
 

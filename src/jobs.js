@@ -1,4 +1,3 @@
-const api = require('./util/api')()
 const { jobsRef } = require('./util/firebase')
 
 module.exports = async (res, next) => {
