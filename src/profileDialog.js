@@ -14,14 +14,6 @@ const travisBuild = require('./util/travis')
 
 module.exports = async (req, res, next) => {
   try {
-    const payload = JSON.parse(qs.parse(req.body).payload)
-    const slackSignature = req.headers['X-Slack-Signature']
-    const timestamp = req.headers['X-Slack-Request-Timestamp']
-    const verified = verifyRequest(slackSignature, req.body, timestamp)
-
-    // Return errors if request validation fails.
-    if (verified.statusCode == 400) next(verified.body)
-
     if (payload.view && payload.view.type == 'home' && payload.type && payload.type == 'block_actions') {
       // Update Home page options.
       if (payload.actions[0].type == 'multi_static_select'

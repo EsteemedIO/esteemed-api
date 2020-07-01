@@ -2,23 +2,27 @@ const crypto = require('crypto')
 
 const slackSigningSecret = process.env.SLACK_SIGNING_SECRET
 
-module.exports = (sig, body, timestamp) => {
+module.exports = (req, res, next) => {
+  const body = JSON.parse(req.body)
+  const slackSignature = req.headers['X-Slack-Signature']
+  const timestamp = req.headers['X-Slack-Request-Timestamp']
+
   const time = Math.floor(new Date().getTime()/1000)
 
   if (Math.abs(time - timestamp) > 300) {
-    return { statusCode: 400, body: 'Request timeout' }
+    next('Request timeout')
   }
 
   if (!slackSigningSecret) {
-    return { statusCode: 400, body: 'Slack signing secret is empty' }
+    next('Slack signing secret is empty')
   }
 
-  const sigBasestring = 'v0:' + timestamp + ':' + body
+  const sigBasestring = 'v0:' + timestamp + ':' + req.body
   const mySig = 'v0=' + crypto.createHmac('sha256', slackSigningSecret).update(sigBasestring, 'utf8').digest('hex')
 
-  if (crypto.timingSafeEqual(Buffer.from(mySig, 'utf8'), Buffer.from(sig, 'utf8'))) {
-    return { statusCode: 200, body: '' }
+  if (crypto.timingSafeEqual(Buffer.from(mySig, 'utf8'), Buffer.from(slackSignature, 'utf8'))) {
+    res.send()
   } else {
-    return { statusCode: 400, body: 'Slack secret verification failed' }
+    next('Slack secret verification failed')
   }
 }
