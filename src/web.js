@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   next()
 })
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/config', async (req, res) => configuration(res))
 app.get('/profiles', async (req, res, next) => profiles(req, res, next))
