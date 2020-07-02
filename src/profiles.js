@@ -28,7 +28,7 @@ module.exports = async (req, res, next) => {
       members = members.concat(members_paged.members)
     }
 
-    res.send({ body: members
+    res.send(members
       .map(data => users.find(user => data.includes(user.id)))
       .map(user => {
         const name = user.real_name.split(' ')
@@ -59,7 +59,7 @@ module.exports = async (req, res, next) => {
         }
 
         return profile
-      })})
+      }))
   } catch (e) {
     console.log(e)
 

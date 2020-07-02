@@ -1,7 +1,7 @@
 const values = require('./util/keyValue')
 
 module.exports = res => {
-  const config = {
+  res.send({
     valueMap: values,
     titles: [
       {
@@ -111,6 +111,5 @@ module.exports = res => {
         value: "UI / UX"
       }
     ]
-  }
-  res.send({ body: config })
+  })
 }
