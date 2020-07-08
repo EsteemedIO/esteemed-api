@@ -3,7 +3,6 @@ const { Client, Status } = require('@googlemaps/google-maps-services-js')
 const api = require('../util/api')()
 const getProfileHome = require('../event/getProfileHome')
 const dynamodb = require('../util/dynamodb')
-const travisBuild = require('../util/travis')
 
 module.exports.dialog = async (payload, res) => {
   const dialog = {
@@ -76,8 +75,6 @@ module.exports.update = async payload => {
     .catch(e => console.log(e))
 
   await getProfileHome(payload.user.id)
-
-  travisBuild()
 
   return { statusCode: 200, body: '' }
 }

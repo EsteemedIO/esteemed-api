@@ -1,7 +1,6 @@
 const api = require('../util/api')()
 const dynamodb = require('../util/dynamodb')
 const keyValue = require('../util/keyValue')
-const travisBuild = require('../util/travis')
 const verifyData = require('../util/verifyData')
 
 module.exports.blocks = (base_url, id) => {
@@ -104,8 +103,6 @@ module.exports.updateProfile = async payload => {
   await dynamodb.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
-
-  travisBuild()
 
   return { statusCode: 200, body: '' }
 }

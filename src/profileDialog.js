@@ -3,7 +3,6 @@ const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
-const travisBuild = require('./util/travis')
 
 module.exports = async (req, res, next) => {
   try {
@@ -83,8 +82,6 @@ const updateProfileHome = async payload => {
   await dynamodb.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
-
-  travisBuild()
 
   await getProfileHome(payload.user.id)
 
