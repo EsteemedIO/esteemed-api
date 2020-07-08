@@ -1,11 +1,21 @@
-const { profilesRef } = require('../util/firebase')
+const dynamodb = require('../util/dynamodb')
 
 module.exports = async user => {
   const date = new Date(user.updated * 10000)
 
   // Add join date.
-  await profilesRef().doc(user.id)
-    .set({join_date: date.toISOString().split('T')[0]}, { merge: true })
+  let params = {
+    TableName: "profiles",
+    Key: {
+      id: user.id
+    },
+    UpdateExpression: `set join_date = :join_date`,
+    ExpressionAttributeValues: {
+      ':join_date': date.toISOString()
+    }
+  }
+
+  await dynamodb.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 

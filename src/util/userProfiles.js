@@ -1,5 +1,5 @@
 const api = require('./api')()
-const { profilesRef } = require('./firebase')
+const dynamodb = require('../util/dynamodb')
 
 module.exports.loadUsers = () => {
   return api.get('users.list')
@@ -27,13 +27,12 @@ module.exports.loadChannelMembers = (channel, cursor) => {
       }))
 }
 
-module.exports.allProfiles = () => {
-  return profilesRef().get()
-    .then(snapshot => snapshot.docs.reduce((obj, item) => {
-      obj[item.id] = item.data()
-      return obj
-    }, {}))
-    .catch(e => { console.log('Error getting documents', e) })
+module.exports.allProfiles = async () => {
+  var params = {
+    TableName: 'profiles',
+  };
+
+  return await dynamodb.scan(params).promise().then(({ Items }) => Items)
 }
 
 module.exports.getUser = userId => {

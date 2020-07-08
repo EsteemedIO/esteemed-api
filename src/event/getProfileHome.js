@@ -1,6 +1,5 @@
 const axios = require('axios')
-const { profilesRef } = require('../util/firebase')
-const api = require('../util/api')()
+const dynamodb = require('../util/dynamodb')
 
 const defaultBlocks = require('../blocks/defaultHome')
 const drupal = require('../blocks/drupal')
@@ -35,7 +34,13 @@ module.exports = async user => {
   }
 
   // Get values.
-  const profile = (await profilesRef().doc(user).get()).data() || {}
+  let params = {
+    TableName: "profiles",
+    Key: {
+      id: user
+    }
+  }
+  const profile = (await dynamodb.get(params).promise().then(({ Item }) => Item) || {})
 
   // Get default blocks.
   let blocks = defaultBlocks
@@ -49,9 +54,9 @@ module.exports = async user => {
   }
 
   // Display location if found.
-  if (profile.location) {
+  if (profile.locality) {
     blocks = blocks.reduce((acc, item) => {
-      if (item.block_id == 'location') item.text.text = "*My location:* " + profile.location
+      if (item.block_id == 'locality') item.text.text = "*My location:* " + profile.locality
 
       acc.push(item)
 

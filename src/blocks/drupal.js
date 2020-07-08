@@ -1,7 +1,7 @@
 const url = require('url')
 
 const api = require('../util/api')()
-const { profilesRef } = require('../util/firebase')
+const dynamodb = require('../util/dynamodb')
 const travisBuild = require('../util/travis')
 const verifyData = require('../util/verifyData')
 
@@ -30,7 +30,13 @@ module.exports.blocks = (base_url, id) => {
 }
 
 module.exports.dialog = async payload => {
-  const profile = (await profilesRef().doc(payload.user.id).get()).data() || {}
+  let params = {
+    TableName: "profiles",
+    Key: {
+      id: payload.user.id
+    }
+  }
+  const profile = (await dynamodb.get(params).promise().then(({ Item }) => Item) || {})
 
   const dialog = {
     token: process.env.SLACK_TOKEN_BOT,
@@ -59,7 +65,7 @@ module.exports.dialog = async payload => {
     })
   }
 
-  return api.post('dialog.open', null, { params: dialog })
+  await api.post('dialog.open', null, { params: dialog })
     .then(() => ({ statusCode: 200, body: '' }))
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
 }
@@ -74,7 +80,19 @@ module.exports.updateProfile = async payload => {
   payload.submission.drupal_profile = 'https://drupal.org' + url.parse(payload.submission.drupal_profile).pathname
 
   // Update profile data.
-  await profilesRef().doc(payload.user.id).set(payload.submission, { merge: true })
+  let params = {
+    TableName: "profiles",
+    Key: {
+      id: payload.user.id
+    },
+    UpdateExpression: `set drupal_profile = :drupal_profile, drupal_bio = :drupal_bio`,
+    ExpressionAttributeValues: {
+      ':drupal_profile': payload.submission.drupal_profile,
+      ':drupal_bio': payload.submission.drupal_bio
+    }
+  }
+
+  await dynamodb.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 

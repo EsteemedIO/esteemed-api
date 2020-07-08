@@ -1,8 +1,12 @@
-const { jobsRef } = require('./util/firebase')
+const dynamodb = require('./util/dynamodb')
 
 module.exports = async (res, next) => {
   try {
-    const jobs = await getAllJobs()
+    var params = {
+      TableName: 'jobs',
+    };
+
+    const jobs = await dynamodb.scan(params).promise().then(({ Items }) => Items)
     res.send(Object.keys(jobs).reduce((acc, key) => {
       const job = {
         key: key,

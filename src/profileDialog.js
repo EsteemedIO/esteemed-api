@@ -1,4 +1,4 @@
-const { profilesRef } = require('./util/firebase')
+const dynamodb = require('./util/dynamodb')
 const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
@@ -28,7 +28,7 @@ module.exports = async (req, res, next) => {
       }
 
       // Get location lookup dialog upon button click.
-      if (payload.actions[0].block_id == 'location') {
+      if (payload.actions[0].block_id == 'locality') {
         await location.dialog(payload, res)
       }
     }
@@ -67,11 +67,20 @@ const updateProfileHome = async payload => {
     values = payload.actions[0].selected_date
   }
 
-  let data = {}
-  data[action_id] = values
 
   // Update profile data.
-  await profilesRef().doc(payload.user.id).set(data, { merge: true })
+  let params = {
+    TableName: "profiles",
+    Key: {
+      id: payload.user.id
+    },
+    UpdateExpression: "set " + action_id + " = :v",
+    ExpressionAttributeValues: {
+      ':v': values
+    }
+  }
+
+  await dynamodb.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 

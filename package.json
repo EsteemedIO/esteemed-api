@@ -4,7 +4,7 @@
   "description": "",
   "main": "handler.js",
   "scripts": {
-    "develop": "NODE_ENV=development nodemon --exec 'sls offline start'",
+    "develop": "NODE_ENV=development OFFLINE=true nodemon --exec 'sls offline start'",
     "deploy": "sls deploy",
     "import-db": "node admin/importDB.js",
     "export-db": "node admin/exportDB.js && ls -lah db/"
@@ -13,11 +13,12 @@
   "license": "ISC",
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^2.6.1",
+    "aws-sdk": "^2.710.0",
     "axios": "^0.19.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "firebase-admin": "^8.10.0",
     "query-string": "^6.12.1",
+    "serverless-dynamodb-local": "^0.2.39",
     "serverless-http": "^2.5.0"
   },
   "devDependencies": {

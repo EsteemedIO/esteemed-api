@@ -3,7 +3,7 @@ const keyValue = require('../util/keyValue')
 module.exports = [
   {
     "type": "section",
-    "block_id": "location",
+    "block_id": "locality",
     "text": {
       "type": "mrkdwn",
       "text": "Choose your location by selecting the button to the right"
@@ -14,7 +14,7 @@ module.exports = [
         "type": "plain_text",
         "text": "Lookup Address"
       },
-      "value": "location"
+      "value": "locality"
     }
   },
   {

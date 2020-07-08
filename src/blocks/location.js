@@ -2,7 +2,7 @@ const { Client, Status } = require('@googlemaps/google-maps-services-js')
 
 const api = require('../util/api')()
 const getProfileHome = require('../event/getProfileHome')
-const { profilesRef } = require('../util/firebase')
+const dynamodb = require('../util/dynamodb')
 const travisBuild = require('../util/travis')
 
 module.exports.dialog = async (payload, res) => {
@@ -17,22 +17,25 @@ module.exports.dialog = async (payload, res) => {
         {
           "label": "Location",
           "type": "text",
-          "name": "location",
+          "name": "locality",
           "placeholder": "i.e. Olympia, WA"
         }
       ]
     })
   }
 
-  api.post('dialog.open', null, { params: dialog })
-    .catch((e) => { console.log('dialog.open call failed: %o', e) })
+  await api.post('dialog.open', null, { params: dialog })
+    .then(data => {
+      console.log(data)
+      res.send()
+    })
 }
 
 module.exports.update = async payload => {
   const client = new Client({});
   const location = await client.geocode({
     params: {
-      address: payload.submission.location,
+      address: payload.submission.locality,
       key: process.env.GOOGLE_MAPS
     },
     timeout: 1000
@@ -57,7 +60,18 @@ module.exports.update = async payload => {
   })
 
   // Update profile data.
-  await profilesRef().doc(payload.user.id).set({ location: location }, { merge: true })
+  let params = {
+    TableName: "profiles",
+    Key: {
+      id: payload.user.id
+    },
+    UpdateExpression: `set locality = :locality`,
+    ExpressionAttributeValues: {
+      ':locality': location
+    }
+  }
+
+  await dynamodb.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 

@@ -7,16 +7,22 @@ custom:
     slackTokenBot: ${file(secrets.yml):slackTokenBot}
     slackSigning: ${file(secrets.yml):slackSigning}
     allowedChannels: ${file(secrets.yml):allowedChannels}
-    firebaseApp: ${file(secrets.yml):firebaseApp}
     travisToken: ${file(secrets.yml):travisToken}
     googleMaps: ${file(secrets.yml):googleMaps}
   ngrokTunnel:
     tunnels:
       - port: 3000
+  dynamodb:
+    start:
+      migrate: true
+      inMemory: false
+    stages:
+      - dev
 
 provider:
   name: aws
   runtime: nodejs12.x
+  region: us-east-1
   memorySize: 192
   timeout: 20
   environment:
@@ -24,9 +30,19 @@ provider:
     SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
     SLACK_SIGNING_SECRET: ${self:custom.secrets.slackSigning}
     SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
-    FIREBASE_APP: ${self:custom.secrets.firebaseApp}
     TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
     GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
+    IS_OFFLINE: ${env:OFFLINE}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+
 
 functions:
   app:
@@ -37,6 +53,36 @@ functions:
           method: ANY
           cors: true
 
+resources:
+  Resources:
+    profilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: profiles
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    JobsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: jobs
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
 plugins:
   - serverless-offline
   - serverless-ngrok-tunnel
+  - serverless-dynamodb-local

@@ -1,5 +1,5 @@
 const api = require('../util/api')()
-const { profilesRef } = require('../util/firebase')
+const dynamodb = require('../util/dynamodb')
 const keyValue = require('../util/keyValue')
 const travisBuild = require('../util/travis')
 const verifyData = require('../util/verifyData')
@@ -29,7 +29,13 @@ module.exports.blocks = (base_url, id) => {
 }
 
 module.exports.dialog = async payload => {
-  const profile = (await profilesRef().doc(payload.user.id).get()).data() || {}
+  let params = {
+    TableName: "profiles",
+    Key: {
+      id: payload.user.id
+    }
+  }
+  const profile = (await dynamodb.get(params).promise().then(({ Item }) => Item) || {})
 
   const dialog = {
     token: process.env.SLACK_TOKEN_BOT,
@@ -71,8 +77,8 @@ module.exports.dialog = async payload => {
     })
   }
 
-  return api.post('dialog.open', null, { params: dialog })
-    .then(() => ({ statusCode: 200, body: '' }))
+  await api.post('dialog.open', null, { params: dialog })
+    .then(data => console.log(data))
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
 }
 
@@ -83,7 +89,19 @@ module.exports.updateProfile = async payload => {
   if (errors.length > 0) return { statusCode: 200, body: JSON.stringify({ errors: errors }) }
 
   // Update profile data.
-  await profilesRef().doc(payload.user.id).set(payload.submission, { merge: true })
+  let params = {
+    TableName: "profiles",
+    Key: {
+      id: payload.user.id
+    },
+    UpdateExpression: `set wp_experience = :wp_experience, wp_bio = :wp_bio`,
+    ExpressionAttributeValues: {
+      ':wp_experience': payload.submission.wp_experience,
+      ':wp_bio': payload.submission.wp_bio
+    }
+  }
+
+  await dynamodb.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 

@@ -41,11 +41,11 @@ module.exports = async (req, res, next) => {
           image: user.profile.image_512,
         }
 
-        const fb_profile = profiles[user.id]
+        const fb_profile = profiles.find(profile => profile.id == user.id)
 
         if (fb_profile) {
           profile = { ...profile, ...{
-            'location': fb_profile.location ? fb_profile.location : '',
+            'location': fb_profile.locality ? fb_profile.locality : '',
             'availability': fb_profile.availability ? fb_profile.availability : '',
             'english': fb_profile.english ? fb_profile.english : '',
             'titles': fb_profile.titles ? fb_profile.titles : [],
