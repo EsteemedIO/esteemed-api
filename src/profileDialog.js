@@ -13,17 +13,17 @@ module.exports = async (req, res, next) => {
       if (payload.actions[0].type == 'multi_static_select'
         || payload.actions[0].type == 'datepicker'
         || payload.actions[0].type == 'static_select') {
-        res.send(updateProfileHome(payload))
+        await updateProfileHome(payload)
       }
 
       // Get Drupal dialog upon button click.
       if (payload.actions[0].block_id == 'drupal_profile') {
-        res.send(drupal.dialog(payload))
+        await drupal.dialog(payload)
       }
 
       // Get WP dialog upon button click.
       if (payload.actions[0].block_id == 'wp_profile') {
-        res.send(wp.dialog(payload))
+        await wp.dialog(payload)
       }
 
       // Get location lookup dialog upon button click.
@@ -35,17 +35,19 @@ module.exports = async (req, res, next) => {
     // Update Drupal profile.
     if (payload.type && payload.type == 'dialog_submission') {
       if (payload.callback_id == 'update_drupal_profile') {
-        res.send(drupal.updateProfile(payload))
+        await drupal.updateProfile(payload)
       }
 
       if (payload.callback_id == 'update_wp_profile') {
-        res.send(wp.updateProfile(payload))
+        await wp.updateProfile(payload)
       }
 
       if (payload.callback_id == 'update_location') {
-        res.send(location.update(payload))
+        await location.update(payload)
       }
     }
+
+    res.send()
   } catch (e) {
     next(e)
   }
