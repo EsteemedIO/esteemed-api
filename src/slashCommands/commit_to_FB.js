@@ -1,7 +1,7 @@
-const { jobsRef } = require("../util/firebase");
-const fb = require("firebase-admin");
-const travisBuild = require("../util/travis");
-const moment = require("moment");
+const { jobsRef } = require("../util/firebase")
+const fb = require("firebase-admin")
+const travisBuild = require("../util/travis")
+const moment = require("moment")
 
 module.exports = async (payload, type, jobID, user) => {
   try {
@@ -10,90 +10,122 @@ module.exports = async (payload, type, jobID, user) => {
       const applicant = {
         id: user.id,
         name: user.real_name,
-      };
+      }
+
       // search FB to see if applicants field exists
-      const checkJob = await jobsRef()
-        .doc(jobID)
-        .get()
-        .then(data => data.data())
-        .catch(e => console.log(e));
+      var params = {
+        TableName: 'jobs',
+        Key: {
+          id: jobID
+        }
+      }
+
+      const checkJob = await dynamodb.get(params).promise()
+        .then(({ Item }) => Item)
+        .catch(e => console.log(e))
 
       if (!checkJob.applicants) {
-        console.log("CREATED");
-        return await jobsRef()
-          .doc(jobID)
-          .update({ applicants: [applicant] }, { merge: true })
-          .then(res => {
-            return {
-              status: res.status,
-            };
-          })
-          .catch(e => console.log(e));
+        console.log("CREATED")
+        let params = {
+          TableName: "jobs",
+          Key: {
+            id: jobID
+          },
+          UpdateExpression: `set applicants = :applicant`,
+          ExpressionAttributeValues: {
+            ':applicant': [ applicant ]
+          }
+        }
+
+        return await dynamodb.update(params).promise()
       } else {
-        console.log("ADDED");
-        return await jobsRef()
-          .doc(jobID)
-          .update({
-            applicants: fb.firestore.FieldValue.arrayUnion(applicant),
-          });
+        console.log("ADDED")
+        let params = {
+          TableName: "jobs",
+          Key: {
+            id: jobID
+          },
+          UpdateExpression: `set applicants = :applicants`,
+          ExpressionAttributeValues: {
+            ':applicants': fb.firestore.FieldValue.arrayUnion(applicant),
+          }
+        }
+
+        return await dynamodb.update(params).promise()
       }
     }
 
     // parsing the payload to set up document to send to fb (this can bbe from the edit or the add)
     const formVal = Object.keys(payload.view.state.values).reduce(
       (acc, key) => {
-        const objKey = payload.view.state.values;
+        const objKey = payload.view.state.values
         if (
           objKey[key].val.type === "static_select" ||
           objKey[key].val.type === "radio_buttons"
         ) {
-          acc[key] = objKey[key].val.selected_option.value;
+          acc[key] = objKey[key].val.selected_option.value
         } else if (objKey[key].val.type === "multi_static_select") {
           acc[key] = objKey[key].val.selected_options.map(
             option => option.value
-          );
+          )
         } else if (objKey[key].val.type === "datepicker") {
-          acc[key] = objKey[key].val.selected_date;
+          acc[key] = objKey[key].val.selected_date
         } else {
-          acc[key] = objKey[key].val.value;
+          acc[key] = objKey[key].val.value
         }
-        return acc;
+        return acc
       },
       {}
-    );
+    )
 
     //* ===============================================//
     if (type === "recommend") {
       const recommendie = {
         id: user.id,
         name: user.real_name,
-      };
-      formVal.recommended_by = recommendie;
+      }
+      formVal.recommended_by = recommendie
+
       // search FB to see if applicants field exists
-      const checkJob = await jobsRef()
-        .doc(jobID)
-        .get()
-        .then(data => data.data())
-        .catch(e => console.log(e));
+      var params = {
+        TableName: 'jobs',
+        Key: {
+          id: jobID
+        }
+      }
+
+      const checkJob = await dynamodb.get(params).promise()
+        .then(({ Item }) => Item)
+        .catch(e => console.log(e))
 
       if (!checkJob.recommended_applicants) {
-        console.log("CREATED");
-        return await jobsRef()
-          .doc(jobID)
-          .update({ recommended_applicants: [formVal] }, { merge: true })
-          .then(res => {
-            return {
-              status: res.status,
-            };
-          })
-          .catch(e => console.log(e));
+        console.log("CREATED")
+        let params = {
+          TableName: "jobs",
+          Key: {
+            id: jobID
+          },
+          UpdateExpression: `set recommended_applicants = :recommended_applicants`,
+          ExpressionAttributeValues: {
+            ':recommended_applicants': [ formVal ]
+          }
+        }
+
+        return await dynamodb.update(params).promise()
       } else {
-        console.log("ADDED");
-        return await jobsRef()
-          .doc(jobID)
-          .update({
-            recommended_applicants: fb.firestore.FieldValue.arrayUnion(formVal),
-          });
+        console.log("ADDED")
+        let params = {
+          TableName: "jobs",
+          Key: {
+            id: jobID
+          },
+          UpdateExpression: `set recommended_applicants = :recommended_applicants`,
+          ExpressionAttributeValues: {
+            ':recommended_applicants': fb.firestore.FieldValue.arrayUnion(formVal),
+          }
+        }
+
+        return await dynamodb.update(params).promise()
       }
     }
     //* ===============================================//
@@ -103,64 +135,69 @@ module.exports = async (payload, type, jobID, user) => {
       const author = {
         id: user.id,
         name: user.real_name,
-      };
-      formVal.author = author;
+      }
+      formVal.author = author
+
       // search FB to see if applicants field exists
-      const checkJob = await jobsRef()
-        .doc(jobID)
-        .get()
-        .then(data => data.data())
-        .catch(e => console.log(e));
+      var params = {
+        TableName: 'jobs',
+        Key: {
+          id: jobID
+        }
+      }
+
+      const checkJob = await dynamodb.get(params).promise()
+        .then(({ Item }) => Item)
+        .catch(e => console.log(e))
 
       if (!checkJob.notes) {
-        console.log("CREATED");
-        return await jobsRef()
-          .doc(jobID)
-          .update({ notes: [formVal] }, { merge: true })
-          .then(res => {
-            return {
-              status: res.status,
-            };
-          })
-          .catch(e => console.log(e));
+        console.log("CREATED")
+        let params = {
+          TableName: "jobs",
+          Key: {
+            id: jobID
+          },
+          UpdateExpression: `set notes = :notes`,
+          ExpressionAttributeValues: {
+            ':notes': [ formVal ]
+          }
+        }
+
+        return await dynamodb.update(params).promise()
+          .catch(e => console.log(e))
       } else {
-        console.log("ADDED");
-        return await jobsRef()
-          .doc(jobID)
-          .update({
-            notes: fb.firestore.FieldValue.arrayUnion(formVal),
-          });
+        console.log("ADDED")
+        let params = {
+          TableName: "jobs",
+          Key: {
+            id: jobID
+          },
+          UpdateExpression: `set notes = :notes`,
+          ExpressionAttributeValues: {
+            ':notes': fb.firestore.FieldValue.arrayUnion(formVal),
+          }
+        }
+
+        return await dynamodb.update(params).promise()
       }
     }
 
     //* ===============================================//
 
-    if (type === "add") {
-      formVal.job_active = false;
+    if (type === "add" || type == "edit") {
+      formVal.job_active = false
       // if we want to add a field for when the post was created
-      //? formVal.dateAdded = moment().format("lll");
-      return await jobsRef()
-        .add(formVal)
-        .then(res => {
-          return { status: res.status };
-        })
-        .catch(e => console.log(e));
-    }
-    if (type === "edit") {
-      return await jobsRef()
-        .doc(jobID)
-        .set(formVal, { merge: true })
-        .then(res => {
-          if (formVal["job_active"] === "true") {
-            // travisBuild();
-          }
-          return {
-            status: res.status,
-          };
-        })
-        .catch(e => console.log(e));
+      //? formVal.dateAdded = moment().format("lll")
+        let params = {
+          TableName: "jobs",
+          Item: formVal,
+        }
+
+        params.Item.id = jobID
+
+        return await dynamodb.put(params).promise()
     }
   } catch (err) {
-    if (err) console.log(err);
+    if (err) console.log(err)
   }
-};
+}

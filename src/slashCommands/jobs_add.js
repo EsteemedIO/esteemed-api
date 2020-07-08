@@ -1,12 +1,13 @@
-const jobsForm = require("../blocks/jobsForm");
-const axios = require("axios");
+const axios = require("axios")
+
+const jobsForm = require("../blocks/jobsForm")
 
 module.exports = async payload => {
-  return await displayJobsForm(payload);
-};
+  return await displayJobsForm(payload)
+}
 
 const displayJobsForm = async payload => {
-  console.log(payload);
+  console.log(payload)
   const dialog = {
     token: process.env.SLACK_TOKEN_BOT,
     trigger_id: payload.trigger_id,
@@ -27,18 +28,18 @@ const displayJobsForm = async payload => {
       },
       blocks: jobsForm,
     }),
-  };
+  }
 
-  console.log(dialog);
+  console.log(dialog)
   // return await api
   //   .post("views.open", null, { params: dialog })
   //   .then(data => {
-  //     console.log(data.data);
-  //     return { statusCode: 200, body: "" };
+  //     console.log(data.data)
+  //     return { statusCode: 200, body: "" }
   //   })
   //   .catch(e => {
-  //     console.log("dialog.open call failed: %o", e);
-  //   });
+  //     console.log("dialog.open call failed: %o", e)
+  //   })
 
   return await axios
     .post("https://slack.com/api/views.open", dialog, {
@@ -49,9 +50,9 @@ const displayJobsForm = async payload => {
     })
     .then(data => {
       //console.log('response: ', data.data)
-      return { statusCode: 200, body: "" };
+      return { statusCode: 200, body: "" }
     })
     .catch(e => {
-      console.log("dialog.open call failed: %o", e);
-    });
-};
+      console.log("dialog.open call failed: %o", e)
+    })
+}

@@ -12,4 +12,4 @@ module.exports = [
       text: "Label",
     },
   },
-];
+]

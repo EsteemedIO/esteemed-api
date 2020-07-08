@@ -1,11 +1,10 @@
-// const api = require("./api")();
-const { jobsRef } = require("./firebase");
+const { jobsRef } = require("./firebase")
 
 const jobsList = async event => {
   try {
-    const jobs = await getAllJobs();
+    const jobs = await getAllJobs()
     const jobsFiltered = Object.keys(jobs).reduce((acc, key) => {
-      console.log(jobs[key]);
+      console.log(jobs[key])
       const job = {
         key: key,
         title: jobs[key].job_title,
@@ -22,31 +21,31 @@ const jobsList = async event => {
         rate_esteemd: jobs[key].rate_esteemd,
         rate_client: jobs[key].rate_client,
         description: jobs[key].description,
-      };
-      acc.push(job);
-      return acc;
-    }, []);
+      }
+      acc.push(job)
+      return acc
+    }, [])
 
-    return JSON.stringify(jobsFiltered);
+    return JSON.stringify(jobsFiltered)
   } catch (e) {
-    console.log(e);
+    console.log(e)
 
-    return { statusCode: 400, body: JSON.stringify(e) };
+    return { statusCode: 400, body: JSON.stringify(e) }
   }
-};
+}
 
 const getAllJobs = () => {
   return jobsRef()
     .get()
     .then(snapshot =>
       snapshot.docs.reduce((obj, item) => {
-        obj[item.id] = item.data();
-        return obj;
+        obj[item.id] = item.data()
+        return obj
       }, {})
     )
     .catch(e => {
-      console.log("Error getting documents", e);
-    });
-};
+      console.log("Error getting documents", e)
+    })
+}
 
-module.exports = { jobsList };
+module.exports = { jobsList }

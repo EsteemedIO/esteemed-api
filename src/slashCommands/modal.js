@@ -1,6 +1,7 @@
-const recommendForm = require("../blocks/recommendForm");
-const notesForm = require("../blocks/notesForm");
-const axios = require("axios");
+const axios = require("axios")
+
+const recommendForm = require("../blocks/recommendForm")
+const notesForm = require("../blocks/notesForm")
 
 module.exports = async (payload, jobID, form, user) => {
   try {
@@ -24,7 +25,7 @@ module.exports = async (payload, jobID, form, user) => {
         },
         blocks: form === "recommend" ? recommendForm : notesForm,
       }),
-    };
+    }
     return await axios
       .post("https://slack.com/api/views.open", view, {
         headers: {
@@ -33,13 +34,13 @@ module.exports = async (payload, jobID, form, user) => {
         },
       })
       .then(data => {
-        console.log("response: ", data.data);
-        return { statusCode: 200, body: "" };
+        console.log("response: ", data.data)
+        return { statusCode: 200, body: "" }
       })
       .catch(e => {
-        console.log("dialog.open call failed: %o", e);
-      });
+        console.log("dialog.open call failed: %o", e)
+      })
   } catch (err) {
-    if (err) console.log(err);
+    if (err) console.log(err)
   }
-};
+}
