@@ -21,6 +21,14 @@ app.use((req, res, next) => {
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Log calling function.
+app.use((req, res, next) => {
+  console.log('Called endpoint: ', req.url)
+
+  next()
+})
+
+// Endpoints.
 app.get('/config', async (req, res) => configuration(res))
 app.get('/profiles', async (req, res, next) => profiles(req, res, next))
 app.get('/jobs', async (req, res, next) => jobs(res, next))
