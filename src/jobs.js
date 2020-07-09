@@ -30,12 +30,3 @@ module.exports = async (res, next) => {
     next(e)
   }
 }
-
-const getAllJobs = () => {
-  return jobsRef().get()
-    .then(snapshot => snapshot.docs.reduce((obj, item) => {
-      obj[item.id] = item.data()
-      return obj
-    }, {}))
-    .catch(e => { console.log('Error getting documents', e) })
-}

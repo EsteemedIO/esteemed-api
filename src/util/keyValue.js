@@ -56,7 +56,6 @@ module.exports = {
   "drupal_profile": "Drupal Profile",
   "wp_profile": "WP Profile",
   "entry": "Entry Level",
-  "intermediate": "Intermediate",
   "expert": "Expert/Advanced",
   "contract": "Contract",
   "contract_to_perm": "Contract-to-Perm",

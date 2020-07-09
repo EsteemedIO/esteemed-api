@@ -1,6 +1,6 @@
 const url = require('url')
 
-module.exports = async submission => {
+module.exports = submission => {
   let errors = []
 
   if (submission.linkedin) {

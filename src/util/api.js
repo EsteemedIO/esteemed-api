@@ -9,7 +9,7 @@ module.exports = () => {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   })
 
-  Api.interceptors.request.use(async request => {
+  Api.interceptors.request.use(request => {
     request.params = { token: process.env.SLACK_TOKEN, ...request.params }
 
     return request
