@@ -9,10 +9,12 @@ module.exports = async (req, res, next) => {
     }
 
     if (req.body.event.type && req.body.event.type == 'app_home_opened') {
-      res.send(getProfileHome(req.body.event.user))
+      await getProfileHome(req.body.event.user)
+      res.send()
     }
     else if (req.body.event.type && req.body.event.type == 'team_join') {
-      res.send(setUserJoinDate(req.body.event.user))
+      await setUserJoinDate(req.body.event.user)
+      res.send()
     }
   } catch (e) {
     console.log(e)
