@@ -4,7 +4,7 @@ const profiles = require('../util/userProfiles')
 
 module.exports = async (req, res, next) => {
   try {
-    await Promise.all([ profiles.loadUsers(), profiles.allProfiles() ])
+    return await Promise.all([ profiles.loadUsers(), profiles.allProfiles() ])
       .then(([users, allProfiles]) => {
         const currentUser = users.find(user => user.id == req.body.user_id)
 
@@ -32,27 +32,21 @@ module.exports = async (req, res, next) => {
           ]
         }
 
-        const allProfilesArray = Object.keys(allProfiles).reduce((acc, key) => {
-          acc.push({...allProfiles[key], ...{id: key}})
-          return acc
-        }, [])
-
-        const latestProfilesKeys = allProfilesArray
+        const latestProfilesSortedArray = allProfiles
           .sort((a, b) => { return Number(b.join_date.split("-").join("")) - Number(a.join_date.split("-").join("")) })
-          .map(value => value.id)
           .slice(0, 10)
 
-        return Promise.all(latestProfilesKeys.map(item => {
-          return profiles.getUser(item)
+        return Promise.all(latestProfilesSortedArray.map(item => {
+          return profiles.getUser(item.id)
             .then(requestedUser => {
               if (requestedUser.ok) {
                 let text = profiles.format(requestedUser.user.profile)
 
-                if (allProfiles[item].hasOwnProperty('drupal_profile')) {
+                if (allProfiles.find(profile => profile.id == item.id).hasOwnProperty('drupal_profile')) {
                   // text += "\n" + "<" + allProfiles[item].drupal_profile + "|" + allProfiles[item].drupal_bio + ">"
                 }
 
-                if (allProfiles[item].hasOwnProperty('wp_profile')) {
+                if (allProfiles.find(profile => profile.id == item.id).hasOwnProperty('wp_profile')) {
                   // text += "\n" + "<" + allProfiles[item].wp_profile + "|" + allProfiles[item].wp_bio + ">"
                 }
 
@@ -72,12 +66,9 @@ module.exports = async (req, res, next) => {
             })
           }))
           .then(blocks => blocks.flatMap((v, i, a) => a.length - 1 !== i ? [v, { "type": "divider" }] : v))
-        })
-        .then(blocks => axios.post('https://slack.com/api/chat.postMessage', null, {
-            headers: { 'Content-Type': 'application/json' },
-            params: { channel: req.body.channel_id, token: process.env.SLACK_TOKEN, parse: 'full', blocks: JSON.stringify(blocks) }
-        }))
-        .catch(e => console.log(e))
+          .then(blocks => res.send({ response_type: 'in_channel', blocks: blocks }))
+          .catch(e => console.log(e))
+      })
   } catch (e) {
     console.log(e)
     next(e)

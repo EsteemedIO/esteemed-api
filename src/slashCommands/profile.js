@@ -25,11 +25,11 @@ module.exports = async (req, res, next) => {
         if (requestedUser) {
           let text = profiles.format(requestedUser.profile)
 
-          if (allProfiles[requestedUser.id].hasOwnProperty('drupal_profile') ) {
+          if (allProfiles.find(profile => profile.id == requestedUser.id).hasOwnProperty('drupal_profile')) {
             // text += "\n" + "<" + allProfiles[requestedUser.id].drupal_profile + "|" + allProfiles[requestedUser.id].drupal_bio + ">"
           }
 
-          if (allProfiles[requestedUser.id].hasOwnProperty('wp_profile') ) {
+          if (allProfiles.find(profile => profile.id == requestedUser.id).hasOwnProperty('wp_profile')) {
             // text += "\n" + "<" + allProfiles[requestedUser.id].wp_profile + "|" + allProfiles[requestedUser.id].wp_bio + ">"
           }
 
@@ -60,10 +60,7 @@ module.exports = async (req, res, next) => {
           ]
         }
       })
-      .then(blocks => axios.post('https://slack.com/api/chat.postMessage', null, {
-          headers: { 'Content-Type': 'application/json' },
-          params: { channel: req.body.channel_id, token: process.env.SLACK_TOKEN, parse: 'full', blocks: JSON.stringify(blocks) }
-        }))
+      .then(blocks => res.send({ response_type: 'in_channel', blocks: blocks }))
       .catch(e => console.log(e))
   } catch (e) {
     console.log(e)

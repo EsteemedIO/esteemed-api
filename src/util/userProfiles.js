@@ -41,6 +41,7 @@ module.exports.getUser = userId => {
       user: userId
     }
   }).then(({ data }) => data)
+  .catch(err => console.log(err))
 }
 
 module.exports.format = ({ real_name, email, phone, title })=> {
