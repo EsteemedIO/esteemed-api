@@ -44,36 +44,34 @@ module.exports = async (req, res, next) => {
           .map(value => value.id)
           .slice(0, 10)
 
-        return Promise.all(latestProfilesKeys.map(async item => {
-          try {
-            return profiles.getUser(item)
-              .then(requestedUser => {
-                if (requestedUser.ok) {
-                  let text = profiles.format(requestedUser.user.profile)
+        return Promise.all(latestProfilesKeys.map(item => {
+          return profiles.getUser(item)
+            .then(requestedUser => {
+              if (requestedUser.ok) {
+                let text = profiles.format(requestedUser.user.profile)
 
-                  if (allProfiles[item].hasOwnProperty('drupal_profile')) {
-                    // text += "\n" + "<" + allProfiles[item].drupal_profile + "|" + allProfiles[item].drupal_bio + ">"
-                  }
+                if (allProfiles[item].hasOwnProperty('drupal_profile')) {
+                  // text += "\n" + "<" + allProfiles[item].drupal_profile + "|" + allProfiles[item].drupal_bio + ">"
+                }
 
-                  if (allProfiles[item].hasOwnProperty('wp_profile')) {
-                    // text += "\n" + "<" + allProfiles[item].wp_profile + "|" + allProfiles[item].wp_bio + ">"
-                  }
+                if (allProfiles[item].hasOwnProperty('wp_profile')) {
+                  // text += "\n" + "<" + allProfiles[item].wp_profile + "|" + allProfiles[item].wp_bio + ">"
+                }
 
-                  return {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": text
-                    },
-                    "accessory": {
-                      "type": "image",
-                      "image_url": requestedUser.user.profile.image_48,
-                      "alt_text": requestedUser.user.profile.real_name
-                    }
+                return {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": text
+                  },
+                  "accessory": {
+                    "type": "image",
+                    "image_url": requestedUser.user.profile.image_48,
+                    "alt_text": requestedUser.user.profile.real_name
                   }
                 }
-              })
-            } catch (err) { throw err }
+              }
+            })
           }))
           .then(blocks => blocks.flatMap((v, i, a) => a.length - 1 !== i ? [v, { "type": "divider" }] : v))
         })
