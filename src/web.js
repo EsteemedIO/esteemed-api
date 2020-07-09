@@ -10,7 +10,6 @@ const profileDialog = require('./profileDialog')
 const slackEvents = require('./slackEvents')
 const commandProfile = require('./slashCommands/profile')
 const commandLatestProfiles = require('./slashCommands/latestProfiles')
-const verifyRequest = require('./verifyRequest')
 
 app.use(cors())
 app.use((req, res, next) => {

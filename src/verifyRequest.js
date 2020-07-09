@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const qs = require('qs')
 
 const slackSigningSecret = process.env.SLACK_SIGNING_SECRET
 

@@ -3,10 +3,7 @@ const dynamodb = require('../util/dynamodb')
 const keyValue = require('../util/keyValue')
 const verifyData = require('../util/verifyData')
 
-module.exports.blocks = (base_url, id) => {
-  const url = base_url + 'profile/' + id.toLowerCase()
-  const link = '<' + url + '|' + 'View my Wordpress Profile>'
-
+module.exports.blocks = () => {
   return [
     {
       "type": "section",

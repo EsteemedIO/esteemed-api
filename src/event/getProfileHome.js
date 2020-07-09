@@ -5,9 +5,6 @@ const defaultBlocks = require('../blocks/defaultHome')
 const drupal = require('../blocks/drupal')
 const wp = require('../blocks/wp')
 
-const drupal_base_url = 'https://app.drupalcontractors.com/'
-const wp_base_url = 'https://wpcontractors.github.io/'
-
 module.exports = async user => {
   const initialOptions = (blocks, profile) => {
     return blocks.reduce((accum, block) => {
@@ -47,10 +44,10 @@ module.exports = async user => {
 
   if (profile.cms && profile.cms.length > 0) {
     // Add Drupal button if they're a Drupal developer.
-    if (profile.cms.includes('drupal')) blocks = [...blocks, ...drupal.blocks(drupal_base_url, user)]
+    if (profile.cms.includes('drupal')) blocks = [...blocks, ...drupal.blocks()]
 
     // Add WP button if they're a Drupal developer.
-    if (profile.cms.includes('wordpress')) blocks = [...blocks, ...wp.blocks(wp_base_url, user)]
+    if (profile.cms.includes('wordpress')) blocks = [...blocks, ...wp.blocks()]
   }
 
   // Display location if found.
@@ -83,9 +80,6 @@ module.exports = async user => {
     'Authorization': 'Bearer ' + process.env.SLACK_TOKEN_BOT,
     'Content-Type': 'application/json',
     }})
-    .then(data => {
-      //console.log('response: ', data.data)
-      return { statusCode: 200, body: '' }
-    })
+    .then(() => ({ statusCode: 200, body: '' }))
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
 }

@@ -4,10 +4,7 @@ const api = require('../util/api')()
 const dynamodb = require('../util/dynamodb')
 const verifyData = require('../util/verifyData')
 
-module.exports.blocks = (base_url, id) => {
-  const url = base_url + 'profile/' + id.toLowerCase()
-  const link = '<' + url + '|' + 'View my Drupal Profile>'
-
+module.exports.blocks = () => {
   return [
     {
       "type": "section",
@@ -76,7 +73,7 @@ module.exports.updateProfile = async payload => {
   if (errors.length > 0) return { statusCode: 200, body: JSON.stringify({ errors: errors }) }
 
   // Normalize URL if users enter www subdomain.
-  payload.submission.drupal_profile = 'https://drupal.org' + url.parse(payload.submission.drupal_profile).pathname
+  let drupal_profile = 'https://drupal.org' + url.parse(payload.submission.drupal_profile).pathname
 
   // Update profile data.
   let params = {
@@ -86,7 +83,7 @@ module.exports.updateProfile = async payload => {
     },
     UpdateExpression: `set drupal_profile = :drupal_profile, drupal_bio = :drupal_bio`,
     ExpressionAttributeValues: {
-      ':drupal_profile': payload.submission.drupal_profile,
+      ':drupal_profile': drupal_profile,
       ':drupal_bio': payload.submission.drupal_bio
     }
   }
