@@ -11,7 +11,7 @@ module.exports = async user => {
     },
     UpdateExpression: `set join_date = :join_date`,
     ExpressionAttributeValues: {
-      ':join_date': date.toISOString()
+      ':join_date': date.toISOString().split('T')[0]
     }
   }
 
