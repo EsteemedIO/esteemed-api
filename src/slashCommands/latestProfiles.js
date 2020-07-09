@@ -3,12 +3,10 @@ const axios = require('axios')
 const profiles = require('../util/userProfiles')
 
 module.exports = async (req, res, next) => {
-  const payload = qs.parse(req.body)
-
   try {
     await Promise.all([ profiles.loadUsers(), profiles.allProfiles() ])
       .then(([users, allProfiles]) => {
-        const currentUser = users.find(user => user.id == payload.user_id)
+        const currentUser = users.find(user => user.id == req.body.user_id)
 
         if (!(currentUser.is_admin || currentUser.is_owner)) {
           return [
@@ -77,7 +75,7 @@ module.exports = async (req, res, next) => {
         })
         .then(blocks => axios.post('https://slack.com/api/chat.postMessage', null, {
             headers: { 'Content-Type': 'application/json' },
-            params: { channel: payload.channel_id, token: process.env.SLACK_TOKEN, parse: 'full', blocks: JSON.stringify(blocks) }
+            params: { channel: req.body.channel_id, token: process.env.SLACK_TOKEN, parse: 'full', blocks: JSON.stringify(blocks) }
         }))
         .catch(e => console.log(e))
   } catch (e) {
