@@ -1,5 +1,3 @@
-const qs = require('query-string')
-const axios = require('axios')
 const profiles = require('../util/userProfiles')
 
 module.exports = async (req, res, next) => {
