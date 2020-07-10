@@ -56,7 +56,7 @@ module.exports = async (req, res, next) => {
                   },
                   "accessory": {
                     "type": "image",
-                    "image_url": requestedUser.user.profile.image_48,
+                    "image_url": requestedUser.user.profile.image_192,
                     "alt_text": requestedUser.user.profile.real_name
                   }
                 }
