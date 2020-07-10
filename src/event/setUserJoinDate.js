@@ -1,7 +1,7 @@
 const dynamodb = require('../util/dynamodb')
 
 module.exports = async user => {
-  const date = new Date(user.updated * 10000)
+  const date = new Date(user.updated * 1000)
 
   // Add join date.
   let params = {
