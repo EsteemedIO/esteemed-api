@@ -32,7 +32,6 @@ provider:
     SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
     TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
     GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
-    IS_OFFLINE: ${env:OFFLINE}
   iamRoleStatements:
     - Effect: "Allow"
       Action:

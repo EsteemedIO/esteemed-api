@@ -4,7 +4,7 @@
   "description": "",
   "main": "handler.js",
   "scripts": {
-    "develop": "NODE_ENV=development OFFLINE=true nodemon --exec 'sls offline start'",
+    "develop": "NODE_ENV=development nodemon --exec 'sls offline start'",
     "deploy": "sls deploy",
     "import-db": "node admin/importDB.js",
     "export-db": "node admin/exportDB.js && ls -lah db/"
@@ -24,6 +24,6 @@
     "nodemon": "^2.0.4",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-ngrok-tunnel": "0.0.3",
-    "serverless-offline": "^6.1.4"
+    "serverless-offline": "^6.4.0"
   }
 }
