@@ -1,11 +1,11 @@
 const qs = require("query-string")
 
 const verifyRequest = require("../verifyRequest")
-const jobsList = require("../slashCommands/jobs_list")
-const jobsAdd = require("../slashCommands/jobs_add")
-const jobsUpdate = require("../slashCommands/jobs_edit")
+const jobsList = require("../slashCommands/listJobs")
+const jobsAdd = require("../slashCommands/addJob")
+const jobsUpdate = require("../slashCommands/editJob")
 const { getUser } = require("../util/userProfiles")
-const submitToFB = require("../slashCommands/commit_to_FB")
+const submitToFB = require("../slashCommands/commitToFB")
 const modal = require("../slashCommands/modal")
 
 exports.handler = async event => {

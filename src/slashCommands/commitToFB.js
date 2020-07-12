@@ -1,7 +1,4 @@
-const { jobsRef } = require("../util/firebase")
-const fb = require("firebase-admin")
-const travisBuild = require("../util/travis")
-const moment = require("moment")
+const dynamodb = require("../util/dynamodb")
 
 module.exports = async (payload, type, jobID, user) => {
   try {
@@ -47,7 +44,8 @@ module.exports = async (payload, type, jobID, user) => {
           },
           UpdateExpression: `set applicants = :applicants`,
           ExpressionAttributeValues: {
-            ':applicants': fb.firestore.FieldValue.arrayUnion(applicant),
+            //':applicants': fb.firestore.FieldValue.arrayUnion(applicant),
+            ':applicants': [ applicant ],
           }
         }
 
@@ -121,7 +119,8 @@ module.exports = async (payload, type, jobID, user) => {
           },
           UpdateExpression: `set recommended_applicants = :recommended_applicants`,
           ExpressionAttributeValues: {
-            ':recommended_applicants': fb.firestore.FieldValue.arrayUnion(formVal),
+            //':recommended_applicants': fb.firestore.FieldValue.arrayUnion(formVal),
+            ':recommended_applicants': [ formVal ],
           }
         }
 
@@ -174,7 +173,8 @@ module.exports = async (payload, type, jobID, user) => {
           },
           UpdateExpression: `set notes = :notes`,
           ExpressionAttributeValues: {
-            ':notes': fb.firestore.FieldValue.arrayUnion(formVal),
+            //':notes': fb.firestore.FieldValue.arrayUnion(formVal),
+            ':notes': [ formVal ],
           }
         }
 
