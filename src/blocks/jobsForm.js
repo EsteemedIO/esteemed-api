@@ -1,5 +1,6 @@
 const keyValue = require("../util/keyValue");
-const moment = require("moment");
+
+date = new Date()
 
 module.exports = [
   {
@@ -507,7 +508,7 @@ module.exports = [
     element: {
       type: "datepicker",
       action_id: "val",
-      initial_date: moment().format("YYYY-MM-DD"),
+      initial_date: date.toISOString().split('T')[0],
       placeholder: {
         type: "plain_text",
         text: "Select a Start Date",
