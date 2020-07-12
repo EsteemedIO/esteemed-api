@@ -40,7 +40,7 @@ module.exports.getUser = userId => {
     params: {
       user: userId
     }
-  }).then(({ data }) => data)
+  }).then(({ data }) => data.user)
   .catch(err => console.log(err))
 }
 
