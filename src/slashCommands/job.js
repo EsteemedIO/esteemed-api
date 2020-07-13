@@ -116,7 +116,7 @@ module.exports.addJob = async job => {
   const date = new Date()
   const created = date.toISOString().split('T')[0]
 
-  let item = flattenSlack(job)
+  let item = flattenSlack.flatten(job)
   item.id = crypto.createHash('md5').update(created).digest('hex').substring(0, 12)
   item.created = created
 

@@ -1,4 +1,4 @@
-module.exports = data => {
+module.exports.flatten = data => {
   return Object.keys(data).reduce((acc, key) => {
       const item = data[key]
 
