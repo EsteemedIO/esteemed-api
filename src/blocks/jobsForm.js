@@ -162,58 +162,58 @@ module.exports = [
         {
           text: {
             type: "plain_text",
-            text: keyValue.three_month,
+            text: keyValue.months_3,
           },
-          value: "three_month",
+          value: "months_3",
         },
         {
           text: {
             type: "plain_text",
-            text: keyValue.six_month,
+            text: keyValue.months_6,
           },
-          value: "six_month",
+          value: "months_6",
         },
         {
           text: {
             type: "plain_text",
-            text: keyValue.six_month_ext,
+            text: keyValue.months_6_ext,
           },
-          value: "six_month_ext",
+          value: "months_6_ext",
         },
         {
           text: {
             type: "plain_text",
-            text: keyValue.oneYr,
+            text: keyValue.year_1,
           },
-          value: "oneYr",
+          value: "1 year",
         },
         {
           text: {
             type: "plain_text",
-            text: keyValue.twoYr,
+            text: keyValue.year_2,
           },
-          value: "twoYr",
+          value: "2 years",
         },
         {
           text: {
             type: "plain_text",
-            text: keyValue.threeYr,
+            text: keyValue.year_3,
           },
-          value: "threeYr",
+          value: "3 years",
         },
         {
           text: {
             type: "plain_text",
-            text: keyValue.fourYr,
+            text: keyValue.year_4,
           },
-          value: "fourYr",
+          value: "4 years",
         },
         {
           text: {
             type: "plain_text",
-            text: keyValue.fiveYr,
+            text: keyValue.year_5,
           },
-          value: "fiveYr",
+          value: "5 years",
         },
       ],
     },
@@ -321,9 +321,9 @@ module.exports = [
         {
           text: {
             type: "plain_text",
-            text: keyValue.us_can,
+            text: keyValue.us_can_greencard,
           },
-          value: "us_can",
+          value: "us_can_greencard",
         },
         {
           text: {

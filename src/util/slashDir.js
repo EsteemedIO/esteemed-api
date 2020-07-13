@@ -31,7 +31,7 @@ exports.handler = async event => {
 const dir = async event => {
   const payload = qs.parse(event.body)
   const id = payload.user_id
-  const { user } = await getUser(id)
+  const user = await getUser(id)
   const isAdmin = user.is_admin
   const task = payload.text.split(" ")[0]
   const jobID = payload.text.split(" ")[1]

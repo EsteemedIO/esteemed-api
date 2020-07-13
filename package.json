@@ -16,6 +16,7 @@
     "aws-sdk": "^2.710.0",
     "axios": "^0.19.2",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "express": "^4.17.1",
     "query-string": "^6.12.1",
     "serverless-http": "^2.5.0"

@@ -3,6 +3,7 @@ const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
+const { addJob } = require('./slashCommands/job')
 
 module.exports = async (req, res, next) => {
   try {
@@ -44,6 +45,12 @@ module.exports = async (req, res, next) => {
 
       if (payload.callback_id == 'update_location') {
         await location.update(payload)
+      }
+    }
+
+    if (payload.type && payload.type == 'view_submission') {
+      if (payload.view.callback_id == 'add_job') {
+        await addJob(payload.view.state.values)
       }
     }
 

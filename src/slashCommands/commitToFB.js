@@ -183,20 +183,6 @@ module.exports = async (payload, type, jobID, user) => {
     }
 
     //* ===============================================//
-
-    if (type === "add" || type == "edit") {
-      formVal.job_active = false
-      // if we want to add a field for when the post was created
-      //? formVal.dateAdded = moment().format("lll")
-        let params = {
-          TableName: "jobs",
-          Item: formVal,
-        }
-
-        params.Item.id = jobID
-
-        return await dynamodb.put(params).promise()
-    }
   } catch (err) {
     if (err) console.log(err)
   }
