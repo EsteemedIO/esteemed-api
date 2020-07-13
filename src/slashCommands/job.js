@@ -12,7 +12,7 @@ module.exports.listJobs = async (req, res) => {
   try {
     const currentUser = await getUser(req.body.user_id)
 
-    const blocks = await module.exports.getAllJobs()
+    const blocks = await module.exports.getJobs()
       .then(jobs => jobs.map(job => {
         let text = [
           {
@@ -201,76 +201,9 @@ module.exports.dialog = async (req, res) => {
 
 module.exports.editJobForm = async (req, res) => {
   try {
-    var params = {
-      TableName: 'jobs',
-      Key: {
-        id: jobID
-      }
-    }
+    const job = await module.export.getJobs(req.job.id)
 
-    const documentData = await dynamodb.get(params).promise()
-      .then(({ Items }) => Items)
-      .then(doc => {
-        if (!doc.exists) {
-          console.log("No such document!")
-        } else {
-          return doc.data()
-        }
-      })
-      .catch(err => {
-        console.log("Error getting document", err)
-      })
-
-    const dbKeys = Object.keys(documentData)
-
-    const currentJob = []
-
-    //method to parse fb data and insert into slack block
-    jobsForm.forEach((block, index) => {
-      const target = block.block_id
-      const item = documentData[target]
-      // in case there is a field missing in the db
-      if (dbKeys.indexOf(target) !== -1) {
-        if (block.element.type === "multi_static_select") {
-          block.element.initial_options = item.map(option => {
-            return {
-              text: {
-                type: "plain_text",
-                text: keyValue[option],
-              },
-              value: option,
-            }
-          })
-        } else if (block.element.type === "static_select") {
-          block.element.initial_option = {
-            text: {
-              type: "plain_text",
-              text: keyValue[item],
-            },
-            value: item,
-          }
-        } else {
-          if (block.element.type === "datepicker") {
-            block.element.initial_date = item
-          } else {
-            block.element.initial_value = item
-          }
-        }
-      }
-      currentJob.push(block)
-      if (index === jobsForm.length - 1) {
-        activateBlock.element.initial_option = {
-          text: {
-            type: "plain_text",
-            text: item ? "Yes" : "No",
-          },
-          value: item ? "true" : "false",
-        }
-        currentJob.push(activateBlock)
-      }
-    })
-
-    console.log(currentJob[13].element.options)
+    const blocks = flattenSlack.unflatten(jobsForm)
 
     const view = {
       token: process.env.SLACK_TOKEN_BOT,
@@ -296,30 +229,31 @@ module.exports.editJobForm = async (req, res) => {
       }),
     }
 
-    return await call(payload, view)
+    await axios.post("https://slack.com/api/views.open", dialog, {
+        headers: {
+          Authorization: "Bearer " + process.env.SLACK_TOKEN_BOT,
+          "Content-Type": "application/json",
+        },
+      })
+      .then(data => res.send())
+      .catch(e => {
+        console.log("dialog.open call failed: %o", e)
+      })
   } catch (err) {
     if (err) console.log(err)
   }
 }
 
-const call = async (payload, data) => {
-  return axios.post('https://slack.com/api/chat.postMessage', null, {
-    headers: { 'Content-Type': 'application/json' },
-    params: { channel: payload.channel_id, token: process.env.SLACK_TOKEN, parse: 'full', blocks: JSON.stringify(data) }
-  })
-    .then(data => {
-      console.log("response: ", data.data)
-      return { statusCode: 200, body: "" }
-    })
-    .catch(e => {
-      console.log("dialog.open call failed: %o", e)
-    })
-}
-
-module.exports.getAllJobs = async () => {
+module.exports.getJobs = async (item = null) => {
   try {
-    var params = {
+    let params = {
       TableName: 'jobs',
+    }
+
+    if (item !== null) {
+      params.FilterExpression = 'id = :id'
+      params.ExpressionAttributeValues = { ':id': item }
+      params.Limit = 1
     }
 
     return await dynamodb.scan(params).promise()
