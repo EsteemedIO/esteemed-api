@@ -5,7 +5,6 @@ const dynamodb = require('../util/dynamodb')
 const jobsForm = require("../blocks/jobsForm")
 const activateBlock = require('../blocks/activateJob')
 const keyValue = require('../util/keyValue')
-const jobsList = require('../util/jobsList')
 const { getUser } = require('../util/userProfiles')
 const flattenSlack = require('../util/flattenSlack')
 
@@ -13,7 +12,7 @@ module.exports.listJobs = async (req, res) => {
   try {
     const currentUser = await getUser(req.body.user_id)
 
-    const blocks = await jobsList()
+    const blocks = await module.exports.getAllJobs()
       .then(jobs => jobs.map(job => {
         let text = [
           {
@@ -315,4 +314,20 @@ const call = async (payload, data) => {
     .catch(e => {
       console.log("dialog.open call failed: %o", e)
     })
+}
+
+module.exports.getAllJobs = async () => {
+  try {
+    var params = {
+      TableName: 'jobs',
+    }
+
+    return await dynamodb.scan(params).promise()
+      .then(({ Items }) => Items)
+      .catch(e => console.log(e))
+  } catch (e) {
+    console.log(e)
+
+      return { statusCode: 400, body: JSON.stringify(e) }
+  }
 }
