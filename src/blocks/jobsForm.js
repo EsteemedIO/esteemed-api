@@ -7,7 +7,7 @@ module.exports = [
     type: "input",
     block_id: "attendance",
     element: {
-      action_id: "attendance",
+      action_id: "val",
       type: "static_select",
       placeholder: {
         type: "plain_text",
@@ -47,7 +47,7 @@ module.exports = [
     block_id: "categories",
     element: {
       type: "multi_static_select",
-      action_id: "categories",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "Options",
@@ -136,7 +136,7 @@ module.exports = [
     block_id: "description",
     element: {
       type: "plain_text_input",
-      action_id: "description",
+      action_id: "val",
       multiline: true,
       placeholder: {
         type: "plain_text",
@@ -153,7 +153,7 @@ module.exports = [
     block_id: "duration",
     element: {
       type: "static_select",
-      action_id: "duration",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "Options",
@@ -227,7 +227,7 @@ module.exports = [
     block_id: "engagement",
     element: {
       type: "static_select",
-      action_id: "engagement",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "Options",
@@ -266,7 +266,7 @@ module.exports = [
     block_id: "experience",
     element: {
       type: "static_select",
-      action_id: "experience",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "Options",
@@ -305,7 +305,7 @@ module.exports = [
     block_id: "location_req",
     element: {
       type: "static_select",
-      action_id: "location_req",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "Options",
@@ -344,7 +344,7 @@ module.exports = [
     block_id: "rate_client",
     element: {
       type: "plain_text_input",
-      action_id: "rate_client",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "$0",
@@ -360,7 +360,7 @@ module.exports = [
     block_id: "rate_esteemd",
     element: {
       type: "plain_text_input",
-      action_id: "rate_esteemed",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "$0",
@@ -376,7 +376,7 @@ module.exports = [
     block_id: "skills",
     element: {
       type: "multi_static_select",
-      action_id: "skills",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "Select skills",
@@ -507,7 +507,7 @@ module.exports = [
     block_id: "start_date",
     element: {
       type: "datepicker",
-      action_id: "start_date",
+      action_id: "val",
       initial_date: date.toISOString().split('T')[0],
       placeholder: {
         type: "plain_text",
@@ -524,7 +524,7 @@ module.exports = [
     block_id: "timezone",
     element: {
       type: "plain_text_input",
-      action_id: "timezone",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "ET",
@@ -540,7 +540,7 @@ module.exports = [
     block_id: "job_title",
     element: {
       type: "plain_text_input",
-      action_id: "job_title",
+      action_id: "val",
       placeholder: {
         type: "plain_text",
         text: "Title",
@@ -560,7 +560,7 @@ module.exports = [
       text: "How many hours per week are you available?",
     },
     element: {
-      action_id: "availability",
+      action_id: "val",
       type: "static_select",
       options: [
         {
