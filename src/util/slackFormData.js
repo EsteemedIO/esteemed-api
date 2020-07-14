@@ -37,8 +37,8 @@ module.exports.set = (blocks, record) => {
       }
     }
 
-    if (block.element && record[block.element.action_id] !== undefined) {
-      const value = record[block.element.action_id]
+    if (block.element && record[block.block_id] !== undefined) {
+      const value = record[block.block_id]
 
       if (value.length > 0 || value.value) {
         if (block.element.type == 'static_select') {
