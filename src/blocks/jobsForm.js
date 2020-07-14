@@ -357,7 +357,7 @@ module.exports = [
   },
   {
     type: "input",
-    block_id: "rate_esteemd",
+    block_id: "rate_esteemed",
     element: {
       type: "plain_text_input",
       action_id: "val",
@@ -368,7 +368,7 @@ module.exports = [
     },
     label: {
       type: "plain_text",
-      text: "Rate Esteemd",
+      text: "Rate Esteemed",
     },
   },
   {
@@ -537,7 +537,7 @@ module.exports = [
   },
   {
     type: "input",
-    block_id: "job_title",
+    block_id: "title",
     element: {
       type: "plain_text_input",
       action_id: "val",
@@ -554,10 +554,10 @@ module.exports = [
 
   {
     type: "input",
-    block_id: "availability",
+    block_id: "weekly_hours",
     label: {
       type: "plain_text",
-      text: "How many hours per week are you available?",
+      text: "How many hours per week are required?",
     },
     element: {
       action_id: "val",
