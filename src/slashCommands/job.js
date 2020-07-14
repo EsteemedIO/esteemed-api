@@ -138,13 +138,14 @@ module.exports.addJob = async job => {
   return await dynamodb.put(params).promise()
 }
 
-module.exports.updateJob = async job => {
+module.exports.updateJob = async (job_id, values) => {
+  const job = slackFormData.get(values)
   let params = {
     TableName: "jobs",
     Key: {
-      id: job.id,
+      id: job_id,
     },
-    UpdateExpression: `set attendance = :attendance, categories = :categories, description = :description, duration = :duration, engagement = :engagement, experience = :experience, location_req = :location_req, start_date = :start_date, title = :title, weekly_hours = :weekly_hours, rate_client = :rate_client, rate_esteemed = :rate_esteemed, timezone = :timezone, salary_high = :salary_high, salary_low = :salary_low, skills = :skills`,
+    UpdateExpression: `set attendance = :attendance, categories = :categories, description = :description, #duration = :duration, engagement = :engagement, experience = :experience, location_req = :location_req, start_date = :start_date, title = :title, weekly_hours = :weekly_hours, rate_client = :rate_client, rate_esteemed = :rate_esteemed, #timezone = :timezone, skills = :skills`,
     ExpressionAttributeValues: {
       ':attendance': job.attendance,
       ':categories': job.categories,
@@ -159,15 +160,15 @@ module.exports.updateJob = async job => {
       ':rate_client': job.rate_client,
       ':rate_esteemed': job.rate_esteemed,
       ':timezone': job.timezone,
-      ':salary_high': job.salary_high,
-      ':salary_low': job.salary_low,
       ':skills': job.skills,
+    },
+    ExpressionAttributeNames: {
+      '#duration': 'duration',
+      '#timezone': 'timezone'
     }
   }
 
-  params.Item.id = jobID
-
-  return await dynamodb.put(params).promise()
+  return await dynamodb.update(params).promise()
 }
 
 module.exports.dialog = async (req, res) => {
@@ -207,7 +208,7 @@ module.exports.dialog = async (req, res) => {
   res.send()
 }
 
-module.exports.editJobForm = async (trigger_id, job_id, res) => {
+module.exports.editJobForm = async (trigger_id, job_id) => {
   try {
     const job = await module.exports.getJobs(job_id)
 
@@ -221,7 +222,7 @@ module.exports.editJobForm = async (trigger_id, job_id, res) => {
           type: "plain_text",
           text: "Edit Jobs",
         },
-        callback_id: `edit_job-${job_id}`,
+        callback_id: `edit_job`,
         submit: {
           type: "plain_text",
           text: "Update",
@@ -232,6 +233,7 @@ module.exports.editJobForm = async (trigger_id, job_id, res) => {
         },
         type: "modal",
         blocks: blocks,
+        private_metadata: job_id,
       }),
     }
 

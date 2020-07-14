@@ -3,8 +3,7 @@ const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
-const { addJob, editJobForm } = require('./slashCommands/job')
-const slackFormData = require('./util/slackFormData')
+const { addJob, editJobForm, updateJob } = require('./slashCommands/job')
 
 module.exports = async (req, res, next) => {
   try {
@@ -59,6 +58,9 @@ module.exports = async (req, res, next) => {
     if (payload.type && payload.type == 'view_submission') {
       if (payload.view.callback_id == 'add_job') {
         await addJob(payload.view.state.values)
+      }
+      if (payload.view.callback_id == 'edit_job') {
+        await updateJob(payload.view.private_metadata, payload.view.state.values)
       }
     }
 
