@@ -4,6 +4,7 @@ const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
 const { addJob } = require('./slashCommands/job')
+const slackFormData = require('./util/slackFormData')
 
 module.exports = async (req, res, next) => {
   try {

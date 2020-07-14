@@ -1,4 +1,4 @@
-module.exports.flatten = data => {
+module.exports.get = data => {
   return Object.keys(data).reduce((acc, key) => {
       const item = data[key]
 
@@ -19,7 +19,7 @@ module.exports.flatten = data => {
     }, {})
 }
 
-module.exports.unflatten = (blocks, record) => {
+module.exports.set = (blocks, record) => {
   return blocks.reduce((accum, block) => {
     if (block.accessory && record[block.accessory.action_id] !== undefined) {
       const value = record[block.accessory.action_id]

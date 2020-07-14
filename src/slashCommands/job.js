@@ -6,7 +6,7 @@ const jobsForm = require("../blocks/jobsForm")
 const activateBlock = require('../blocks/activateJob')
 const keyValue = require('../util/keyValue')
 const { getUser } = require('../util/userProfiles')
-const flattenSlack = require('../util/flattenSlack')
+const slackFormData = require('../util/slackFormData')
 
 module.exports.listJobs = async (req, res) => {
   try {
@@ -116,7 +116,7 @@ module.exports.addJob = async job => {
   const date = new Date()
   const created = date.toISOString().split('T')[0]
 
-  let item = flattenSlack.flatten(job)
+  let item = slackFormData.get(job)
   item.id = crypto.createHash('md5').update(created).digest('hex').substring(0, 12)
   item.created = created
 
@@ -203,7 +203,7 @@ module.exports.editJobForm = async (req, res) => {
   try {
     const job = await module.export.getJobs(req.job.id)
 
-    const blocks = flattenSlack.unflatten(jobsForm)
+    const blocks = slackFormData.set(jobsForm)
 
     const view = {
       token: process.env.SLACK_TOKEN_BOT,

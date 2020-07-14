@@ -4,7 +4,7 @@ const dynamodb = require('../util/dynamodb')
 const defaultBlocks = require('../blocks/defaultHome')
 const drupal = require('../blocks/drupal')
 const wp = require('../blocks/wp')
-const flattenSlack = require('../util/flattenSlack')
+const slackFormData = require('../util/slackFormData')
 
 module.exports = async user => {
 
@@ -40,7 +40,7 @@ module.exports = async user => {
   }
 
   // Get initial values for blocks.
-  const blocks_with_values = flattenSlack.unflatten(blocks, profile)
+  const blocks_with_values = slackFormData.set(blocks, profile)
 
   // Prepare home view.
   const home = {
