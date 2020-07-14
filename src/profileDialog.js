@@ -3,7 +3,7 @@ const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
-const { addJob } = require('./slashCommands/job')
+const { addJob, editJobForm } = require('./slashCommands/job')
 const slackFormData = require('./util/slackFormData')
 
 module.exports = async (req, res, next) => {
@@ -31,6 +31,13 @@ module.exports = async (req, res, next) => {
       // Get location lookup dialog upon button click.
       if (payload.actions[0].block_id == 'locality') {
         await location.dialog(payload, res)
+      }
+    }
+
+    if (payload.type && payload.type == 'block_actions') {
+      if (payload.actions[0].action_id == 'edit_job') {
+        await editJobForm(payload.trigger_id, payload.actions[0]['value'])
+        res.send()
       }
     }
 

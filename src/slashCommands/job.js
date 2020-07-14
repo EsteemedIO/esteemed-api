@@ -98,6 +98,16 @@ module.exports.listJobs = async (req, res) => {
             value: job.id,
             action_id: "add-notes_btn",
           })
+
+          button.elements.push({
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Edit Job",
+            },
+            value: job.id,
+            action_id: "edit_job",
+          })
         }
 
         return [ block, button ]
@@ -197,43 +207,40 @@ module.exports.dialog = async (req, res) => {
   res.send()
 }
 
-module.exports.editJobForm = async (req, res) => {
+module.exports.editJobForm = async (trigger_id, job_id, res) => {
   try {
-    const job = await module.export.getJobs(req.job.id)
+    const job = await module.exports.getJobs(job_id)
 
-    const blocks = slackFormData.set(jobForm, job)
+    const blocks = slackFormData.set(jobsForm, job)
 
     const dialog = {
       token: process.env.SLACK_TOKEN_BOT,
-      trigger_id: payload.trigger_id,
+      trigger_id: trigger_id,
       view: JSON.stringify({
         title: {
           type: "plain_text",
           text: "Edit Jobs",
         },
-        callback_id: `edit_job-${jobID}`,
+        callback_id: `edit_job-${job_id}`,
         submit: {
           type: "plain_text",
           text: "Update",
-          emoji: true,
         },
         close: {
           type: "plain_text",
           text: "Cancel",
-          emoji: true,
         },
         type: "modal",
         blocks: blocks,
       }),
     }
 
-    await axios.post("https://slack.com/api/views.open", dialog, {
+    return await axios.post("https://slack.com/api/views.open", dialog, {
         headers: {
           Authorization: "Bearer " + process.env.SLACK_TOKEN_BOT,
           "Content-Type": "application/json",
         },
       })
-      .then(data => res.send())
       .catch(e => {
         console.log("dialog.open call failed: %o", e)
       })
@@ -249,17 +256,20 @@ module.exports.getJobs = async (item = null) => {
     }
 
     if (item !== null) {
-      params.FilterExpression = 'id = :id'
-      params.ExpressionAttributeValues = { ':id': item }
-      params.Limit = 1
+      params.Key = { id: item }
+      return await dynamodb.get(params).promise()
+        .then(({ Item }) => Item)
+        .catch(e => console.log(e))
+    }
+    else {
+      return await dynamodb.scan(params).promise()
+        .then(({ Items }) => Items)
+        .catch(e => console.log(e))
     }
 
-    return await dynamodb.scan(params).promise()
-      .then(({ Items }) => Items)
-      .catch(e => console.log(e))
   } catch (e) {
     console.log(e)
 
-      return { statusCode: 400, body: JSON.stringify(e) }
+    return { statusCode: 400, body: JSON.stringify(e) }
   }
 }
