@@ -47,6 +47,9 @@ module.exports.set = (blocks, record) => {
         else if (block.element.type == 'datepicker') {
           block.element.initial_date = value
         }
+        else if (block.element.type == 'plain_text_input') {
+          block.element.initial_value = value
+        }
         else {
           block.element.initial_options = block.element.options.filter(option => value.includes(option.value))
         }
