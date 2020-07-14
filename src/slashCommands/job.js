@@ -201,9 +201,9 @@ module.exports.editJobForm = async (req, res) => {
   try {
     const job = await module.export.getJobs(req.job.id)
 
-    const blocks = slackFormData.set(jobsForm)
+    const blocks = slackFormData.set(jobForm, job)
 
-    const view = {
+    const dialog = {
       token: process.env.SLACK_TOKEN_BOT,
       trigger_id: payload.trigger_id,
       view: JSON.stringify({
@@ -223,7 +223,7 @@ module.exports.editJobForm = async (req, res) => {
           emoji: true,
         },
         type: "modal",
-        blocks: currentJob,
+        blocks: blocks,
       }),
     }
 
