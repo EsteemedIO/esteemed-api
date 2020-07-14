@@ -82,7 +82,7 @@ module.exports.listJobs = async (req, res) => {
                 type: "plain_text",
                 text: "Recommend Applicant",
               },
-              value: job.key,
+              value: job.id,
               action_id: "recommend_btn",
             },
           ],
@@ -95,7 +95,7 @@ module.exports.listJobs = async (req, res) => {
               type: "plain_text",
               text: "Add Notes",
             },
-            value: job.key,
+            value: job.id,
             action_id: "add-notes_btn",
           })
         }
