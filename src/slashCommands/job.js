@@ -129,8 +129,6 @@ module.exports.addJob = async job => {
 }
 
 module.exports.updateJob = async job => {
-  // if we want to add a field for when the post was created
-  //? formVal.dateAdded = moment().format("lll")
   let params = {
     TableName: "jobs",
     Key: {
