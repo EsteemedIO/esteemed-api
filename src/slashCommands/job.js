@@ -171,7 +171,7 @@ module.exports.updateJob = async (job_id, values) => {
   return await dynamodb.update(params).promise()
 }
 
-module.exports.dialog = async (req, res) => {
+module.exports.addJobForm = async (req, res) => {
   const dialog = {
     token: process.env.SLACK_TOKEN_BOT,
     trigger_id: req.body.trigger_id,

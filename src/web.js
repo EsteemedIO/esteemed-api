@@ -37,8 +37,7 @@ app.post('/slackEvents', async (req, res, next) => await slackEvents(req, res, n
 app.post('/commandProfile', async (req, res, next) => await commandProfile(req, res, next))
 app.post('/commandLatestProfiles', async (req, res, next) => await commandLatestProfiles(req, res, next))
 app.post('/commandListJobs', async (req, res, next) => await job.listJobs(req, res))
-app.post('/commandAddJob', async (req, res, next) => await job.dialog(req, res))
-app.post('/commandEditJob', async (req, res, next) => await job.dialog(req, res, next))
+app.post('/commandAddJob', async (req, res, next) => await job.addJobForm(req, res))
 
 // Not Found
 app.get('*', (req, res) => res.json({ msg: 'Path not valid' }))
