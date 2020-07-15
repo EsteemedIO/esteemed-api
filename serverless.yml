@@ -41,6 +41,10 @@ provider:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
+        - dynamodb:DescribeStream
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:ListStreams
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"
 
 
@@ -52,10 +56,27 @@ functions:
           path: /{any+}
           method: ANY
           cors: true
+  streamFunction:
+    handler: streams.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - ProfilesTable
+              - StreamArn
+          batchSize: 1
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - JobsTable
+              - StreamArn
+          batchSize: 1
 
 resources:
   Resources:
-    profilesTable:
+    ProfilesTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: profiles
@@ -68,6 +89,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
     JobsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -81,6 +104,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
 
 plugins:
   - serverless-offline
