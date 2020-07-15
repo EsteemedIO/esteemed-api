@@ -3,6 +3,7 @@ const crypto = require('crypto')
 
 const dynamodb = require('../util/dynamodb')
 const jobsForm = require("../blocks/jobsForm")
+const notesForm = require('../blocks/notesForm')
 const activateBlock = require('../blocks/activateJob')
 const keyValue = require('../util/keyValue')
 const { getUser } = require('../util/userProfiles')
@@ -96,7 +97,7 @@ module.exports.listJobs = async (req, res) => {
               text: "Add Notes",
             },
             value: job.id,
-            action_id: "add-notes_btn",
+            action_id: "add_job_notes",
           })
 
           button.elements.push({
@@ -249,6 +250,74 @@ module.exports.editJobForm = async (trigger_id, job_id) => {
   } catch (err) {
     if (err) console.log(err)
   }
+}
+
+module.exports.addJobNoteForm = async (trigger_id, job_id) => {
+  try {
+    const dialog = {
+      token: process.env.SLACK_TOKEN_BOT,
+      trigger_id: trigger_id,
+      view: JSON.stringify({
+        title: {
+          type: "plain_text",
+          text: "Add Note",
+        },
+        callback_id: 'add_job_notes',
+        submit: {
+          type: "plain_text",
+          text: "Add",
+        },
+        close: {
+          type: "plain_text",
+          text: "Cancel",
+        },
+        type: "modal",
+        blocks: notesForm,
+        private_metadata: job_id,
+      }),
+    }
+
+    return await axios.post("https://slack.com/api/views.open", dialog, {
+        headers: {
+          Authorization: "Bearer " + process.env.SLACK_TOKEN_BOT,
+          "Content-Type": "application/json",
+        },
+      })
+      .catch(e => {
+        console.log("dialog.open call failed: %o", e)
+      })
+  } catch (err) {
+    if (err) console.log(err)
+  }
+}
+
+module.exports.updateNotes = async (job_id, user_id, values) => {
+  date = new Date()
+  let notes = [
+    {
+      user: user_id,
+      date: date.toISOString(),
+      note: slackFormData.get(values).notes,
+    }
+  ]
+
+  const job = await module.exports.getJobs(job_id)
+  if (job.notes) {
+    notes.push(job.notes)
+  }
+
+  let params = {
+    TableName: "jobs",
+    Key: {
+      id: job_id,
+    },
+    UpdateExpression: 'set notes = :notes',
+    ExpressionAttributeValues: {
+      ':notes': notes,
+    },
+  }
+
+  return await dynamodb.update(params).promise()
 }
 
 module.exports.getJobs = async (item = null) => {
