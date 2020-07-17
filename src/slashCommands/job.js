@@ -8,6 +8,7 @@ const activateBlock = require('../blocks/activateJob')
 const keyValue = require('../util/keyValue')
 const { getUser } = require('../util/userProfiles')
 const slackFormData = require('../util/slackFormData')
+const userProfiles = require('../util/userProfiles')
 
 module.exports.listJobs = async (req, res) => {
   try {
@@ -94,7 +95,7 @@ module.exports.listJobs = async (req, res) => {
             type: "button",
             text: {
               type: "plain_text",
-              text: "Add Notes",
+              text: "Job Notes",
             },
             value: job.id,
             action_id: "add_job_notes",
@@ -253,6 +254,29 @@ module.exports.editJobForm = async (trigger_id, job_id) => {
 }
 
 module.exports.addJobNoteForm = async (trigger_id, job_id) => {
+  const blocks = await module.exports.getJobs(job_id)
+    .then(({ notes }) => Promise.all(notes.map(note => {
+      return userProfiles.getUser(note.user)
+        .then(user => {
+          const date = parseInt(Date.parse(note.date) / 1000).toFixed(0)
+
+          return {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `*${user.profile.real_name} [<!date^${date}^{date} at {time}|Timestamp>]*: ${note.note}`
+            }
+          }
+        })
+    })))
+    .then(notes => notesForm.concat({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: '*Prior Notes*'
+      }}).concat(notes)
+    )
+
   try {
     const dialog = {
       token: process.env.SLACK_TOKEN_BOT,
@@ -260,7 +284,7 @@ module.exports.addJobNoteForm = async (trigger_id, job_id) => {
       view: JSON.stringify({
         title: {
           type: "plain_text",
-          text: "Add Note",
+          text: "Job Notes",
         },
         callback_id: 'add_job_notes',
         submit: {
@@ -272,7 +296,7 @@ module.exports.addJobNoteForm = async (trigger_id, job_id) => {
           text: "Cancel",
         },
         type: "modal",
-        blocks: notesForm,
+        blocks: blocks,
         private_metadata: job_id,
       }),
     }
@@ -302,8 +326,9 @@ module.exports.updateNotes = async (job_id, user_id, values) => {
   ]
 
   const job = await module.exports.getJobs(job_id)
+
   if (job.notes) {
-    notes.push(job.notes)
+    notes = notes.concat(job.notes)
   }
 
   let params = {

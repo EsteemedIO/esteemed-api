@@ -9,7 +9,7 @@ module.exports = [
     block_id: "notes",
     label: {
       type: "plain_text",
-      text: "Label",
+      text: "Add note",
     },
   },
 ]
