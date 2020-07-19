@@ -24,7 +24,6 @@ provider:
   runtime: nodejs12.x
   region: us-east-1
   memorySize: 192
-  timeout: 20
   environment:
     SLACK_TOKEN: ${self:custom.secrets.slackToken}
     SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
@@ -32,7 +31,6 @@ provider:
     SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
     TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
     GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
-    IS_OFFLINE: ${env:OFFLINE}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -63,7 +61,7 @@ functions:
           type: dynamodb
           arn:
             Fn::GetAtt:
-              - ProfilesTable
+              - profilesTable
               - StreamArn
           batchSize: 1
       - stream:
@@ -76,7 +74,7 @@ functions:
 
 resources:
   Resources:
-    ProfilesTable:
+    profilesTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: profiles

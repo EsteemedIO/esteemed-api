@@ -37,28 +37,26 @@ module.exports = async (req, res, next) => {
         return Promise.all(latestProfilesSortedArray.map(item => {
           return profiles.getUser(item.id)
             .then(requestedUser => {
-              if (requestedUser.ok) {
-                let text = profiles.format(requestedUser.user.profile)
+              let text = profiles.format(requestedUser.profile)
 
-                if (allProfiles.find(profile => profile.id == item.id).hasOwnProperty('drupal_profile')) {
-                  // text += "\n" + "<" + allProfiles[item].drupal_profile + "|" + allProfiles[item].drupal_bio + ">"
-                }
+              if (allProfiles.find(profile => profile.id == item.id).hasOwnProperty('drupal_profile')) {
+                // text += "\n" + "<" + allProfiles[item].drupal_profile + "|" + allProfiles[item].drupal_bio + ">"
+              }
 
-                if (allProfiles.find(profile => profile.id == item.id).hasOwnProperty('wp_profile')) {
-                  // text += "\n" + "<" + allProfiles[item].wp_profile + "|" + allProfiles[item].wp_bio + ">"
-                }
+              if (allProfiles.find(profile => profile.id == item.id).hasOwnProperty('wp_profile')) {
+                // text += "\n" + "<" + allProfiles[item].wp_profile + "|" + allProfiles[item].wp_bio + ">"
+              }
 
-                return {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": text
-                  },
-                  "accessory": {
-                    "type": "image",
-                    "image_url": requestedUser.user.profile.image_192,
-                    "alt_text": requestedUser.user.profile.real_name
-                  }
+              return {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": text
+                },
+                "accessory": {
+                  "type": "image",
+                  "image_url": requestedUser.profile.image_192,
+                  "alt_text": requestedUser.profile.real_name
                 }
               }
             })

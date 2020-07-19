@@ -4,31 +4,9 @@ const dynamodb = require('../util/dynamodb')
 const defaultBlocks = require('../blocks/defaultHome')
 const drupal = require('../blocks/drupal')
 const wp = require('../blocks/wp')
+const slackFormData = require('../util/slackFormData')
 
 module.exports = async user => {
-  const initialOptions = (blocks, profile) => {
-    return blocks.reduce((accum, block) => {
-      if (block.accessory && profile[block.accessory.action_id] !== undefined) {
-        const value = profile[block.accessory.action_id]
-
-        if (value.length > 0 || value.value) {
-          if (block.accessory.type == 'static_select') {
-            block.accessory.initial_option = block.accessory.options.find(option => option.value == value)
-          }
-          else if (block.accessory.type == 'datepicker') {
-            block.accessory.initial_date = value
-          }
-          else {
-            block.accessory.initial_options = block.accessory.options.filter(option => value.includes(option.value))
-          }
-        }
-      }
-
-      accum.push(block)
-
-      return accum
-    }, [])
-  }
 
   // Get values.
   let params = {
@@ -62,7 +40,7 @@ module.exports = async user => {
   }
 
   // Get initial values for blocks.
-  const blocks_with_values = initialOptions(blocks, profile)
+  const blocks_with_values = slackFormData.set(blocks, profile)
 
   // Prepare home view.
   const home = {

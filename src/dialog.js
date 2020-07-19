@@ -3,6 +3,7 @@ const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
+const { addJob, editJobForm, updateJob, addJobNoteForm, updateNotes, confirmApplication, saveApplication } = require('./slashCommands/job')
 
 module.exports = async (req, res, next) => {
   try {
@@ -32,6 +33,19 @@ module.exports = async (req, res, next) => {
       }
     }
 
+    if (payload.type && payload.type == 'block_actions') {
+      if (payload.actions[0].action_id == 'edit_job') {
+        await editJobForm(payload.trigger_id, payload.actions[0]['value'])
+        res.send()
+      }
+      if (payload.actions[0].action_id == 'add_job_notes') {
+        await addJobNoteForm(payload.trigger_id, payload.actions[0]['value'])
+      }
+      if (payload.actions[0].action_id == 'apply_btn') {
+        await confirmApplication(res, payload.trigger_id, payload.actions[0]['value'])
+      }
+    }
+
     // Update Drupal profile.
     if (payload.type && payload.type == 'dialog_submission') {
       if (payload.callback_id == 'update_drupal_profile') {
@@ -44,6 +58,21 @@ module.exports = async (req, res, next) => {
 
       if (payload.callback_id == 'update_location') {
         await location.update(payload)
+      }
+    }
+
+    if (payload.type && payload.type == 'view_submission') {
+      if (payload.view.callback_id == 'add_job') {
+        await addJob(payload.view.state.values)
+      }
+      if (payload.view.callback_id == 'edit_job') {
+        await updateJob(payload.view.private_metadata, payload.view.state.values)
+      }
+      if (payload.view.callback_id == 'add_job_notes') {
+        await updateNotes(payload.view.private_metadata, payload.user.id, payload.view.state.values)
+      }
+      if (payload.view.callback_id == 'confirm_app') {
+        await saveApplication(payload.view.private_metadata, payload.user.id)
       }
     }
 
