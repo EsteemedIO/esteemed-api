@@ -75,7 +75,7 @@ module.exports.listJobs = async (req, res) => {
                 type: "plain_text",
                 text: `Apply for ${job.title}`,
               },
-              value: job.key,
+              value: job.id,
               action_id: "apply_btn",
             },
             {
@@ -122,6 +122,78 @@ module.exports.listJobs = async (req, res) => {
   } catch (err) {
     if (err) return err
   }
+}
+
+module.exports.confirmApplication = async (res, trigger_id, job) => {
+  try {
+    const dialog = {
+      token: process.env.SLACK_TOKEN_BOT,
+      trigger_id: trigger_id,
+      view: JSON.stringify({
+        title: {
+          type: "plain_text",
+          text: "Confirmation",
+        },
+        callback_id: 'confirm_app',
+        submit: {
+          type: "plain_text",
+          text: "Confirm",
+        },
+        close: {
+          type: "plain_text",
+          text: "Cancel",
+        },
+        type: "modal",
+        private_metadata: job,
+        blocks: [],
+      }),
+    }
+
+    await axios.post("https://slack.com/api/views.open", dialog, {
+      headers: {
+        Authorization: "Bearer " + process.env.SLACK_TOKEN_BOT,
+        "Content-Type": "application/json",
+      },
+    })
+    .then(({ data }) => {
+      console.log(data.response_metadata)
+      res.send()
+    })
+    .catch(e => {
+      console.log("dialog.open call failed: %o", e)
+    })
+  } catch (err) {
+    if (err) console.log(err)
+  }
+}
+
+module.exports.saveApplication = async (job_id, user_id) => {
+  date = new Date()
+  let applicants = [
+    {
+      user: user_id,
+      date: date.toISOString(),
+    }
+  ]
+
+  const job = await module.exports.getJobs(job_id)
+
+  if (job.applicants) {
+    applicants = applicants.concat(job.applicants)
+  }
+
+  let params = {
+    TableName: "jobs",
+    Key: {
+      id: job_id,
+    },
+    UpdateExpression: 'set applicants = :applicants',
+    ExpressionAttributeValues: {
+      ':applicants': applicants,
+    },
+  }
+
+  return await dynamodb.update(params).promise()
 }
 
 module.exports.addJob = async job => {

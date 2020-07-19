@@ -3,7 +3,7 @@ const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
-const { addJob, editJobForm, updateJob, addJobNoteForm, updateNotes } = require('./slashCommands/job')
+const { addJob, editJobForm, updateJob, addJobNoteForm, updateNotes, confirmApplication, saveApplication } = require('./slashCommands/job')
 
 module.exports = async (req, res, next) => {
   try {
@@ -41,6 +41,9 @@ module.exports = async (req, res, next) => {
       if (payload.actions[0].action_id == 'add_job_notes') {
         await addJobNoteForm(payload.trigger_id, payload.actions[0]['value'])
       }
+      if (payload.actions[0].action_id == 'apply_btn') {
+        await confirmApplication(res, payload.trigger_id, payload.actions[0]['value'])
+      }
     }
 
     // Update Drupal profile.
@@ -67,6 +70,9 @@ module.exports = async (req, res, next) => {
       }
       if (payload.view.callback_id == 'add_job_notes') {
         await updateNotes(payload.view.private_metadata, payload.user.id, payload.view.state.values)
+      }
+      if (payload.view.callback_id == 'confirm_app') {
+        await saveApplication(payload.view.private_metadata, payload.user.id)
       }
     }
 
