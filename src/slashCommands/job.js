@@ -220,8 +220,9 @@ module.exports.updateJob = async (job_id, values) => {
     Key: {
       id: job_id,
     },
-    UpdateExpression: `set attendance = :attendance, categories = :categories, description = :description, #duration = :duration, engagement = :engagement, experience = :experience, location_req = :location_req, start_date = :start_date, title = :title, weekly_hours = :weekly_hours, rate_client = :rate_client, rate_esteemed = :rate_esteemed, #timezone = :timezone, skills = :skills`,
+    UpdateExpression: `set active = :active, attendance = :attendance, categories = :categories, description = :description, #duration = :duration, engagement = :engagement, experience = :experience, location_req = :location_req, start_date = :start_date, title = :title, weekly_hours = :weekly_hours, rate_client = :rate_client, rate_esteemed = :rate_esteemed, #timezone = :timezone, skills = :skills`,
     ExpressionAttributeValues: {
+      ':active': job.active,
       ':attendance': job.attendance,
       ':categories': job.categories,
       ':description': job.description,
