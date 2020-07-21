@@ -202,7 +202,7 @@ module.exports.addJob = async job => {
   const created = date.toISOString().split('T')[0]
 
   let item = slackFormData.get(job)
-  item.id = crypto.createHash('md5').update(date).digest('hex').substring(0, 12)
+  item.id = crypto.createHash('md5').update(created).digest('hex').substring(0, 12)
   item.created = created
 
   let params = {
