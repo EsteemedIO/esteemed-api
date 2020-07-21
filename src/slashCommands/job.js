@@ -246,6 +246,8 @@ module.exports.updateJob = async (job_id, values) => {
 }
 
 module.exports.addJobForm = async (req, res) => {
+  const is_admin = await userProfiles.isAdmin(req.body.user_id)
+
   const dialog = {
     token: process.env.SLACK_TOKEN_BOT,
     trigger_id: req.body.trigger_id,
@@ -264,7 +266,7 @@ module.exports.addJobForm = async (req, res) => {
         type: "plain_text",
         text: "Cancel",
       },
-      blocks: jobsForm,
+      blocks: jobsForm(is_admin),
     }),
   }
 
@@ -274,7 +276,7 @@ module.exports.addJobForm = async (req, res) => {
         "Content-Type": "application/json",
       },
     })
-    .then(data => res.send())
+    .then(() => res.send())
     .catch(e => {
       console.log("dialog.open call failed: %o", e)
     })
@@ -282,11 +284,11 @@ module.exports.addJobForm = async (req, res) => {
   res.send()
 }
 
-module.exports.editJobForm = async (trigger_id, job_id) => {
+module.exports.editJobForm = async (trigger_id, job_id, user_id) => {
   try {
     const job = await module.exports.getJobs(job_id)
-
-    const blocks = slackFormData.set(jobsForm, job)
+    const is_admin = await userProfiles.isAdmin(user_id)
+    const blocks = slackFormData.set(jobsForm(is_admin), job)
 
     const dialog = {
       token: process.env.SLACK_TOKEN_BOT,

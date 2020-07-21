@@ -84,4 +84,6 @@ module.exports = {
   "year_3": "3 years",
   "year_4": "4 years",
   "year_5": "5 years",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
 }

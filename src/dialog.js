@@ -35,7 +35,7 @@ module.exports = async (req, res, next) => {
 
     if (payload.type && payload.type == 'block_actions') {
       if (payload.actions[0].action_id == 'edit_job') {
-        await editJobForm(payload.trigger_id, payload.actions[0]['value'])
+        await editJobForm(payload.trigger_id, payload.actions[0]['value'], payload.user.id)
         res.send()
       }
       if (payload.actions[0].action_id == 'add_job_notes') {

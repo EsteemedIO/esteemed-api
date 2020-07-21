@@ -50,3 +50,5 @@ module.exports.format = ({ real_name, email, phone, title })=> {
     "\nPhone: " + phone +
     "\nTitle: " + title
 }
+
+module.exports.isAdmin = user_id => module.exports.getUser(user_id).then(user => user.is_admin)
