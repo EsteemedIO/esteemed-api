@@ -18,14 +18,14 @@ module.exports = async (req, res, next) => {
 
     // Iterate the conversation.members call due to its pagination limit.
     let members = []
-    let more_members = true
+    let moreMembers = true
     let cursor = ''
 
-    while (more_members) {
-      let members_paged = await userProfiles.loadChannelMembers(channel, cursor)
-      more_members = members_paged.more
-      cursor = members_paged.cursor
-      members = members.concat(members_paged.members)
+    while (moreMembers) {
+      const membersPaged = await userProfiles.loadChannelMembers(channel, cursor)
+      moreMembers = membersPaged.more
+      cursor = membersPaged.cursor
+      members = members.concat(membersPaged.members)
     }
 
     res.send(members
@@ -38,24 +38,27 @@ module.exports = async (req, res, next) => {
         let profile = {
           id: user.id,
           name: first + last,
-          image: user.profile.image_512,
+          image: user.profile.image_512
         }
 
-        const fb_profile = profiles.find(profile => profile.id == user.id)
+        const externalProfile = profiles.find(profile => profile.id === user.id)
 
-        if (fb_profile) {
-          profile = { ...profile, ...{
-            'location': fb_profile.locality ? fb_profile.locality : '',
-            'availability': fb_profile.availability ? fb_profile.availability : '',
-            'english': fb_profile.english ? fb_profile.english : '',
-            'titles': fb_profile.titles ? fb_profile.titles : [],
-            'languages': fb_profile.languages ? fb_profile.languages : [],
-            'skills': fb_profile.skills ? fb_profile.skills : [],
-            'citizenship': fb_profile.citizen ? fb_profile.citizen : '',
-            'drupal_bio': profiles[user.id] ? profiles[user.id].drupal_bio : '',
-            'wp_experience': profiles[user.id] ? profiles[user.id].wp_experience : '',
-            'wp_bio': profiles[user.id] ? profiles[user.id].wp_bio : '',
-          }}
+        if (externalProfile) {
+          profile = {
+            ...profile,
+            ...{
+              location: externalProfile.locality ? externalProfile.locality : '',
+              availability: externalProfile.availability ? externalProfile.availability : '',
+              english: externalProfile.english ? externalProfile.english : '',
+              titles: externalProfile.titles ? externalProfile.titles : [],
+              languages: externalProfile.languages ? externalProfile.languages : [],
+              skills: externalProfile.skills ? externalProfile.skills : [],
+              citizenship: externalProfile.citizen ? externalProfile.citizen : '',
+              drupal_bio: profiles[user.id] ? profiles[user.id].drupal_bio : '',
+              wp_experience: profiles[user.id] ? profiles[user.id].wp_experience : '',
+              wp_bio: profiles[user.id] ? profiles[user.id].wp_bio : ''
+            }
+          }
         }
 
         return profile

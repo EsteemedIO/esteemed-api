@@ -9,69 +9,69 @@ module.exports = async (req, res, next) => {
   try {
     const payload = JSON.parse(req.body.payload)
 
-    if (payload.view && payload.view.type == 'home' && payload.type && payload.type == 'block_actions') {
+    if (payload.view && payload.view.type === 'home' && payload.type && payload.type === 'block_actions') {
       // Update Home page options.
-      if (payload.actions[0].type == 'multi_static_select'
-        || payload.actions[0].type == 'datepicker'
-        || payload.actions[0].type == 'static_select') {
+      if (payload.actions[0].type === 'multi_static_select' ||
+        payload.actions[0].type === 'datepicker' ||
+        payload.actions[0].type === 'static_select') {
         await updateProfileHome(payload)
       }
 
       // Get Drupal dialog upon button click.
-      if (payload.actions[0].block_id == 'drupal_profile') {
+      if (payload.actions[0].block_id === 'drupal_profile') {
         await drupal.dialog(payload)
       }
 
       // Get WP dialog upon button click.
-      if (payload.actions[0].block_id == 'wp_profile') {
+      if (payload.actions[0].block_id === 'wp_profile') {
         await wp.dialog(payload)
       }
 
       // Get location lookup dialog upon button click.
-      if (payload.actions[0].block_id == 'locality') {
+      if (payload.actions[0].block_id === 'locality') {
         await location.dialog(payload, res)
       }
     }
 
-    if (payload.type && payload.type == 'block_actions') {
-      if (payload.actions[0].action_id == 'edit_job') {
-        await editJobForm(payload.trigger_id, payload.actions[0]['value'], payload.user.id)
+    if (payload.type && payload.type === 'block_actions') {
+      if (payload.actions[0].action_id === 'edit_job') {
+        await editJobForm(payload.trigger_id, payload.actions[0].value, payload.user.id)
         res.send()
       }
-      if (payload.actions[0].action_id == 'add_job_notes') {
-        await addJobNoteForm(payload.trigger_id, payload.actions[0]['value'])
+      if (payload.actions[0].action_id === 'add_job_notes') {
+        await addJobNoteForm(payload.trigger_id, payload.actions[0].value)
       }
-      if (payload.actions[0].action_id == 'apply_btn') {
-        await confirmApplication(res, payload.trigger_id, payload.actions[0]['value'])
+      if (payload.actions[0].action_id === 'apply_btn') {
+        await confirmApplication(res, payload.trigger_id, payload.actions[0].value)
       }
     }
 
     // Update Drupal profile.
-    if (payload.type && payload.type == 'dialog_submission') {
-      if (payload.callback_id == 'update_drupal_profile') {
+    if (payload.type && payload.type === 'dialog_submission') {
+      if (payload.callback_id === 'update_drupal_profile') {
         await drupal.updateProfile(payload)
       }
 
-      if (payload.callback_id == 'update_wp_profile') {
+      if (payload.callback_id === 'update_wp_profile') {
         await wp.updateProfile(payload)
       }
 
-      if (payload.callback_id == 'update_location') {
+      if (payload.callback_id === 'update_location') {
         await location.update(payload)
       }
     }
 
-    if (payload.type && payload.type == 'view_submission') {
-      if (payload.view.callback_id == 'add_job') {
+    if (payload.type && payload.type === 'view_submission') {
+      if (payload.view.callback_id === 'add_job') {
         await addJob(payload.view.state.values)
       }
-      if (payload.view.callback_id == 'edit_job') {
+      if (payload.view.callback_id === 'edit_job') {
         await updateJob(payload.view.private_metadata, payload.view.state.values)
       }
-      if (payload.view.callback_id == 'add_job_notes') {
+      if (payload.view.callback_id === 'add_job_notes') {
         await updateNotes(payload.view.private_metadata, payload.user.id, payload.view.state.values)
       }
-      if (payload.view.callback_id == 'confirm_app') {
+      if (payload.view.callback_id === 'confirm_app') {
         await saveApplication(payload.view.private_metadata, payload.user.id)
       }
     }
@@ -84,27 +84,24 @@ module.exports = async (req, res, next) => {
 
 const updateProfileHome = async payload => {
   const type = payload.actions[0].type
-  const action_id = payload.actions[0].action_id
+  const actionId = payload.actions[0].action_id
   let values = []
 
-  if (type == 'static_select') {
+  if (type === 'static_select') {
     values = payload.actions[0].selected_option.value
-  }
-  else if (type == 'multi_static_select') {
+  } else if (type === 'multi_static_select') {
     values = payload.actions[0].selected_options.map(option => option.value)
-  }
-  else if (type == 'datepicker') {
+  } else if (type === 'datepicker') {
     values = payload.actions[0].selected_date
   }
 
-
   // Update profile data.
-  let params = {
-    TableName: "profiles",
+  const params = {
+    TableName: 'profiles',
     Key: {
       id: payload.user.id
     },
-    UpdateExpression: "set " + action_id + " = :v",
+    UpdateExpression: 'set ' + actionId + ' = :v',
     ExpressionAttributeValues: {
       ':v': values
     }

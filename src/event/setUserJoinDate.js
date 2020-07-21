@@ -4,12 +4,12 @@ module.exports = async user => {
   const date = new Date(user.updated * 1000)
 
   // Add join date.
-  let params = {
-    TableName: "profiles",
+  const params = {
+    TableName: 'profiles',
     Key: {
       id: user.id
     },
-    UpdateExpression: `set join_date = :join_date`,
+    UpdateExpression: 'set join_date = :join_date',
     ExpressionAttributeValues: {
       ':join_date': date.toISOString().split('T')[0]
     }

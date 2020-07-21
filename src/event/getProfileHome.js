@@ -7,10 +7,9 @@ const wp = require('../blocks/wp')
 const slackFormData = require('../util/slackFormData')
 
 module.exports = async user => {
-
   // Get values.
-  let params = {
-    TableName: "profiles",
+  const params = {
+    TableName: 'profiles',
     Key: {
       id: user
     }
@@ -31,7 +30,7 @@ module.exports = async user => {
   // Display location if found.
   if (profile.locality) {
     blocks = blocks.reduce((acc, item) => {
-      if (item.block_id == 'locality') item.text.text = "*My location:* " + profile.locality
+      if (item.block_id === 'locality') item.text.text = '*My location:* ' + profile.locality
 
       acc.push(item)
 
@@ -40,15 +39,15 @@ module.exports = async user => {
   }
 
   // Get initial values for blocks.
-  const blocks_with_values = slackFormData.set(blocks, profile)
+  const blocksWithValues = slackFormData.set(blocks, profile)
 
   // Prepare home view.
   const home = {
     user_id: user,
     callback_id: 'profile_home',
     view: {
-      "type": "home",
-      "blocks": blocks_with_values
+      type: 'home',
+      blocks: blocksWithValues
     }
   }
 

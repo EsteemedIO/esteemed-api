@@ -8,11 +8,10 @@ module.exports = async (req, res, next) => {
       res.send(req.body.challenge)
     }
 
-    if (req.body.event.type && req.body.event.type == 'app_home_opened') {
+    if (req.body.event.type && req.body.event.type === 'app_home_opened') {
       await getProfileHome(req.body.event.user)
       res.send()
-    }
-    else if (req.body.event.type && req.body.event.type == 'team_join') {
+    } else if (req.body.event.type && req.body.event.type === 'team_join') {
       await setUserJoinDate(req.body.event.user)
       res.send()
     }

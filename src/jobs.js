@@ -3,8 +3,8 @@ const dynamodb = require('./util/dynamodb')
 module.exports = async (res, next) => {
   try {
     var params = {
-      TableName: 'jobs',
-    };
+      TableName: 'jobs'
+    }
 
     const jobs = await dynamodb.scan(params).promise().then(({ Items }) => Items)
     res.send(Object.keys(jobs).reduce((acc, key) => {
@@ -21,7 +21,7 @@ module.exports = async (res, next) => {
         categories: jobs[key].categories,
         skills: jobs[key].skills,
         location_req: jobs[key].location_req,
-        weekly_hours: jobs[key].weekly_hours,
+        weekly_hours: jobs[key].weekly_hours
       }
       acc.push(job)
       return acc

@@ -3,7 +3,6 @@ const axios = require('axios')
 const baseUrl = 'https://slack.com/api'
 
 module.exports.user = () => {
-
   const Api = axios.create({
     baseURL: baseUrl,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -19,11 +18,10 @@ module.exports.user = () => {
 }
 
 module.exports.bot = () => {
-
   const Api = axios.create({
     baseURL: baseUrl,
     headers: {
-      'Authorization': 'Bearer ' + process.env.SLACK_TOKEN_BOT,
+      Authorization: 'Bearer ' + process.env.SLACK_TOKEN_BOT,
       'Content-Type': 'application/json'
     }
   })

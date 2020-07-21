@@ -14,10 +14,10 @@ module.exports.dialog = async (payload, res) => {
       submit_label: 'Lookup',
       elements: [
         {
-          "label": "Location",
-          "type": "text",
-          "name": "locality",
-          "placeholder": "i.e. Olympia, WA"
+          label: 'Location',
+          type: 'text',
+          name: 'locality',
+          placeholder: 'i.e. Olympia, WA'
         }
       ]
     })
@@ -31,7 +31,7 @@ module.exports.dialog = async (payload, res) => {
 }
 
 module.exports.update = async payload => {
-  const client = new Client({});
+  const client = new Client({})
   const location = await client.geocode({
     params: {
       address: payload.submission.locality,
@@ -39,32 +39,32 @@ module.exports.update = async payload => {
     },
     timeout: 1000
   })
-  .then(r => {
-    if (r.data.status === Status.OK) {
-      const address_elements = ['administrative_area_level_1', 'locality', 'country']
-      return r.data.results[0].address_components
-        .filter(component => component.types.some(type => address_elements.includes(type)))
-        .reduce((acc, item, index, src) => {
-          if (index < src.length - 1) {
-            return acc + item.long_name + ', '
-          }
-          return acc + item.short_name
-        }, '')
-    } else {
-      console.log(r.data.error_message);
-    }
-  })
-  .catch((e) => {
-    console.log(e);
-  })
+    .then(r => {
+      if (r.data.status === Status.OK) {
+        const addressElements = ['administrative_area_level_1', 'locality', 'country']
+        return r.data.results[0].address_components
+          .filter(component => component.types.some(type => addressElements.includes(type)))
+          .reduce((acc, item, index, src) => {
+            if (index < src.length - 1) {
+              return acc + item.long_name + ', '
+            }
+            return acc + item.short_name
+          }, '')
+      } else {
+        console.log(r.data.error_message)
+      }
+    })
+    .catch((e) => {
+      console.log(e)
+    })
 
   // Update profile data.
-  let params = {
-    TableName: "profiles",
+  const params = {
+    TableName: 'profiles',
     Key: {
       id: payload.user.id
     },
-    UpdateExpression: `set locality = :locality`,
+    UpdateExpression: 'set locality = :locality',
     ExpressionAttributeValues: {
       ':locality': location
     }

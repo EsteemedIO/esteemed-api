@@ -2,57 +2,57 @@ const profiles = require('./../util/userProfiles')
 
 module.exports = async (req, res, next) => {
   try {
-    await Promise.all([ profiles.loadUsers(), profiles.allProfiles() ])
+    await Promise.all([profiles.loadUsers(), profiles.allProfiles()])
       .then(([users, allProfiles]) => {
-        const currentUser = users.find(user => user.id == req.body.user_id)
+        const currentUser = users.find(user => user.id === req.body.user_id)
 
         if (!(currentUser.is_admin || currentUser.is_owner)) {
           return [
             {
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "Only admin or owner can use this command"
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: 'Only admin or owner can use this command'
               }
             }
           ]
         }
 
-        const requestedUser = users.find(user => user.name == req.body.text.replace('@', '')) || false
+        const requestedUser = users.find(user => user.name === req.body.text.replace('@', '')) || false
 
         if (requestedUser) {
-          let text = profiles.format(requestedUser.profile)
+          const externalProfile = allProfiles.find(profile => profile.id === requestedUser.id)
+          const text = profiles.format(requestedUser.profile, externalProfile)
 
-          if (allProfiles.find(profile => profile.id == requestedUser.id).hasOwnProperty('drupal_profile')) {
+          if (Object.prototype.hasOwnProperty.call(allProfiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
             // text += "\n" + "<" + allProfiles[requestedUser.id].drupal_profile + "|" + allProfiles[requestedUser.id].drupal_bio + ">"
           }
 
-          if (allProfiles.find(profile => profile.id == requestedUser.id).hasOwnProperty('wp_profile')) {
+          if (Object.prototype.hasOwnProperty.call(allProfiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
             // text += "\n" + "<" + allProfiles[requestedUser.id].wp_profile + "|" + allProfiles[requestedUser.id].wp_bio + ">"
           }
 
           return [
             {
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": text
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: text
               },
-              "accessory": {
-                "type": "image",
-                "image_url": requestedUser.profile.image_192,
-                "alt_text": requestedUser.profile.real_name
+              accessory: {
+                type: 'image',
+                image_url: requestedUser.profile.image_192,
+                alt_text: requestedUser.profile.real_name
               }
             }
           ]
-        }
-        else {
+        } else {
           return [
             {
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "Wrong Username"
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: 'Wrong Username'
               }
             }
           ]

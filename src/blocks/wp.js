@@ -6,27 +6,27 @@ const verifyData = require('../util/verifyData')
 module.exports.blocks = () => {
   return [
     {
-      "type": "section",
-      "block_id": "wp_profile",
-      "text": {
-        "type": "mrkdwn",
-        "text": 'Click the button to the right to edit your WP profile'
+      type: 'section',
+      block_id: 'wp_profile',
+      text: {
+        type: 'mrkdwn',
+        text: 'Click the button to the right to edit your WP profile'
       },
-      "accessory": {
-        "type": "button",
-        "text": {
-          "type": "plain_text",
-          "text": "Edit WP Profile",
+      accessory: {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Edit WP Profile'
         },
-        "value": "wp_profile"
+        value: 'wp_profile'
       }
     }
   ]
 }
 
 module.exports.dialog = async payload => {
-  let params = {
-    TableName: "profiles",
+  const params = {
+    TableName: 'profiles',
     Key: {
       id: payload.user.id
     }
@@ -42,30 +42,30 @@ module.exports.dialog = async payload => {
       submit_label: 'Save',
       elements: [
         {
-          "label": "WP bio",
-          "type": "textarea",
-          "name": "wp_bio",
-          "value": profile.wp_bio || '',
-          "placeholder": "I'm awesome at WordPress because...",
+          label: 'WP bio',
+          type: 'textarea',
+          name: 'wp_bio',
+          value: profile.wp_bio || '',
+          placeholder: "I'm awesome at WordPress because..."
         },
         {
-          "label": "Experience level",
-          "type": "select",
-          "name": "wp_experience",
-          "placeholder": "Choose your experience level...",
-          "value": profile.wp_experience || '',
-          "options": [
+          label: 'Experience level',
+          type: 'select',
+          name: 'wp_experience',
+          placeholder: 'Choose your experience level...',
+          value: profile.wp_experience || '',
+          options: [
             {
-              "label": keyValue.entry,
-              "value": "entry",
+              label: keyValue.entry,
+              value: 'entry'
             },
             {
-              "label": keyValue.intermediate,
-              "value": "intermediate",
+              label: keyValue.intermediate,
+              value: 'intermediate'
             },
             {
-              "label": keyValue.expert,
-              "value": "expert",
+              label: keyValue.expert,
+              value: 'expert'
             }
           ]
         }
@@ -85,12 +85,12 @@ module.exports.updateProfile = async payload => {
   if (errors.length > 0) return { statusCode: 200, body: JSON.stringify({ errors: errors }) }
 
   // Update profile data.
-  let params = {
-    TableName: "profiles",
+  const params = {
+    TableName: 'profiles',
     Key: {
       id: payload.user.id
     },
-    UpdateExpression: `set wp_experience = :wp_experience, wp_bio = :wp_bio`,
+    UpdateExpression: 'set wp_experience = :wp_experience, wp_bio = :wp_bio',
     ExpressionAttributeValues: {
       ':wp_experience': payload.submission.wp_experience,
       ':wp_bio': payload.submission.wp_bio

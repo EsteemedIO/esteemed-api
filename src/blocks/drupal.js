@@ -1,5 +1,3 @@
-const url = require('url')
-
 const api = require('../util/api')
 const dynamodb = require('../util/dynamodb')
 const verifyData = require('../util/verifyData')
@@ -7,27 +5,27 @@ const verifyData = require('../util/verifyData')
 module.exports.blocks = () => {
   return [
     {
-      "type": "section",
-      "block_id": "drupal_profile",
-      "text": {
-        "type": "mrkdwn",
-        "text": 'Click the button to the right to edit your Drupal profile'
+      type: 'section',
+      block_id: 'drupal_profile',
+      text: {
+        type: 'mrkdwn',
+        text: 'Click the button to the right to edit your Drupal profile'
       },
-      "accessory": {
-        "type": "button",
-        "text": {
-          "type": "plain_text",
-          "text": "Edit Drupal Profile"
+      accessory: {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Edit Drupal Profile'
         },
-        "value": "drupal_profile"
+        value: 'drupal_profile'
       }
     }
   ]
 }
 
 module.exports.dialog = async payload => {
-  let params = {
-    TableName: "profiles",
+  const params = {
+    TableName: 'profiles',
     Key: {
       id: payload.user.id
     }
@@ -43,20 +41,20 @@ module.exports.dialog = async payload => {
       submit_label: 'Save',
       elements: [
         {
-          "label": "Drupal.org Profile link",
-          "type": "text",
-          "subtype": "url",
-          "name": "drupal_profile",
-          "value": profile.drupal_profile || '',
-          "placeholder": "https://www.drupal.org/u/",
+          label: 'Drupal.org Profile link',
+          type: 'text',
+          subtype: 'url',
+          name: 'drupal_profile',
+          value: profile.drupal_profile || '',
+          placeholder: 'https://www.drupal.org/u/'
         },
         {
-          "label": "Drupal Bio",
-          "type": "textarea",
-          "name": "drupal_bio",
-          "value": profile.drupal_bio || '',
-          "placeholder": "I'm awesome at Drupal because...",
-        },
+          label: 'Drupal Bio',
+          type: 'textarea',
+          name: 'drupal_bio',
+          value: profile.drupal_bio || '',
+          placeholder: "I'm awesome at Drupal because..."
+        }
       ]
     })
   }
@@ -73,17 +71,17 @@ module.exports.updateProfile = async payload => {
   if (errors.length > 0) return { statusCode: 200, body: JSON.stringify({ errors: errors }) }
 
   // Normalize URL if users enter www subdomain.
-  let drupal_profile = 'https://drupal.org' + url.parse(payload.submission.drupal_profile).pathname
+  const drupalProfile = 'https://drupal.org' + new URL(payload.submission.drupal_profile).pathname
 
   // Update profile data.
-  let params = {
-    TableName: "profiles",
+  const params = {
+    TableName: 'profiles',
     Key: {
       id: payload.user.id
     },
-    UpdateExpression: `set drupal_profile = :drupal_profile, drupal_bio = :drupal_bio`,
+    UpdateExpression: 'set drupal_profile = :drupal_profile, drupal_bio = :drupal_bio',
     ExpressionAttributeValues: {
-      ':drupal_profile': drupal_profile,
+      ':drupal_profile': drupalProfile,
       ':drupal_bio': payload.submission.drupal_bio
     }
   }

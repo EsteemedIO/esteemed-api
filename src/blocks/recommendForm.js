@@ -1,50 +1,50 @@
 module.exports = [
   {
-    type: "input",
+    type: 'input',
     element: {
-      type: "plain_text_input",
-      action_id: "val",
+      type: 'plain_text_input',
+      action_id: 'val',
       placeholder: {
-        type: "plain_text",
-        text: "John Doe",
-      },
+        type: 'plain_text',
+        text: 'John Doe'
+      }
     },
     label: {
-      type: "plain_text",
-      text: "Name",
+      type: 'plain_text',
+      text: 'Name'
     },
-    block_id: "name",
+    block_id: 'name'
   },
   {
-    type: "input",
+    type: 'input',
     element: {
-      type: "plain_text_input",
-      action_id: "val",
+      type: 'plain_text_input',
+      action_id: 'val',
       placeholder: {
-        type: "plain_text",
-        text: "johndoe@mail.com",
-      },
+        type: 'plain_text',
+        text: 'johndoe@mail.com'
+      }
     },
     label: {
-      type: "plain_text",
-      text: "Email",
+      type: 'plain_text',
+      text: 'Email'
     },
-    block_id: "email",
+    block_id: 'email'
   },
   {
-    type: "input",
+    type: 'input',
     element: {
-      type: "plain_text_input",
-      action_id: "val",
+      type: 'plain_text_input',
+      action_id: 'val',
       placeholder: {
-        type: "plain_text",
-        text: "555-555-1234",
-      },
+        type: 'plain_text',
+        text: '555-555-1234'
+      }
     },
     label: {
-      type: "plain_text",
-      text: "Phone Number",
+      type: 'plain_text',
+      text: 'Phone Number'
     },
-    block_id: "phone",
-  },
+    block_id: 'phone'
+  }
 ]

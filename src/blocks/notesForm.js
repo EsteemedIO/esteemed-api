@@ -1,15 +1,15 @@
 module.exports = [
   {
-    type: "input",
+    type: 'input',
     element: {
-      type: "plain_text_input",
+      type: 'plain_text_input',
       multiline: true,
-      action_id: "val",
+      action_id: 'val'
     },
-    block_id: "notes",
+    block_id: 'notes',
     label: {
-      type: "plain_text",
-      text: "Add note",
-    },
-  },
+      type: 'plain_text',
+      text: 'Add note'
+    }
+  }
 ]

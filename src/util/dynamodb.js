@@ -1,14 +1,13 @@
 const AWS = require('aws-sdk')
 
-let config = {
-  apiVersion: '2012-08-10',
+const config = {
+  apiVersion: '2012-08-10'
 }
 
 if (process.env.IS_OFFLINE) {
   config.region = 'localhost'
   config.endpoint = 'http://localhost:8000'
-}
-else {
+} else {
   config.region = process.env.AWS_DEFAULT_REGION
 }
 
