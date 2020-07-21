@@ -15,6 +15,7 @@ module.exports.listJobs = async (req, res) => {
     const currentUser = await getUser(req.body.user_id)
 
     const blocks = await module.exports.getJobs()
+      .then(jobs => currentUser.is_admin ? jobs : jobs.filter(job => job.active == 'enabled'))
       .then(jobs => jobs.map(job => {
         let text = [
           {
