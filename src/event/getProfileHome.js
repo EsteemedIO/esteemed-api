@@ -1,4 +1,4 @@
-const axios = require('axios')
+const api = require('../util/api')
 const dynamodb = require('../util/dynamodb')
 
 const defaultBlocks = require('../blocks/defaultHome')
@@ -44,7 +44,6 @@ module.exports = async user => {
 
   // Prepare home view.
   const home = {
-    token: process.env.SLACK_TOKEN_BOT,
     user_id: user,
     callback_id: 'profile_home',
     view: {
@@ -54,10 +53,7 @@ module.exports = async user => {
   }
 
   // Update home view.
-  return await axios.post('https://slack.com/api/views.publish', home, { headers: {
-    'Authorization': 'Bearer ' + process.env.SLACK_TOKEN_BOT,
-    'Content-Type': 'application/json',
-    }})
+  return await api.bot().post('views.publish', home)
     .then(() => ({ statusCode: 200, body: '' }))
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
 }

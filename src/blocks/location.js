@@ -1,6 +1,6 @@
 const { Client, Status } = require('@googlemaps/google-maps-services-js')
 
-const api = require('../util/api')()
+const api = require('../util/api')
 const getProfileHome = require('../event/getProfileHome')
 const dynamodb = require('../util/dynamodb')
 
@@ -23,7 +23,7 @@ module.exports.dialog = async (payload, res) => {
     })
   }
 
-  await api.post('dialog.open', null, { params: dialog })
+  await api.user().post('dialog.open', null, { params: dialog })
     .then(data => {
       console.log(data)
       res.send()

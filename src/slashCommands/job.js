@@ -1,6 +1,6 @@
-const axios = require("axios")
 const crypto = require('crypto')
 
+const api = require("../util/api")
 const dynamodb = require('../util/dynamodb')
 const jobsForm = require("../blocks/jobsForm")
 const notesForm = require('../blocks/notesForm')
@@ -128,7 +128,6 @@ module.exports.listJobs = async (req, res) => {
 module.exports.confirmApplication = async (res, trigger_id, job) => {
   try {
     const dialog = {
-      token: process.env.SLACK_TOKEN_BOT,
       trigger_id: trigger_id,
       view: JSON.stringify({
         title: {
@@ -150,19 +149,11 @@ module.exports.confirmApplication = async (res, trigger_id, job) => {
       }),
     }
 
-    await axios.post("https://slack.com/api/views.open", dialog, {
-      headers: {
-        Authorization: "Bearer " + process.env.SLACK_TOKEN_BOT,
-        "Content-Type": "application/json",
-      },
-    })
-    .then(({ data }) => {
-      console.log(data.response_metadata)
-      res.send()
-    })
-    .catch(e => {
-      console.log("dialog.open call failed: %o", e)
-    })
+    await api.bot().post('views.open', dialog)
+      .then(() => res.send())
+      .catch(e => {
+        console.log("dialog.open call failed: %o", e)
+      })
   } catch (err) {
     if (err) console.log(err)
   }
@@ -272,12 +263,7 @@ module.exports.addJobForm = async (req, res) => {
     }),
   }
 
-  await axios.post("https://slack.com/api/views.open", dialog, {
-      headers: {
-        Authorization: "Bearer " + process.env.SLACK_TOKEN_BOT,
-        "Content-Type": "application/json",
-      },
-    })
+  await api.bot().post('views.open', dialog)
     .then(() => res.send())
     .catch(e => {
       console.log("dialog.open call failed: %o", e)
@@ -293,7 +279,6 @@ module.exports.editJobForm = async (trigger_id, job_id, user_id) => {
     const blocks = slackFormData.set(jobsForm(is_admin), job)
 
     const dialog = {
-      token: process.env.SLACK_TOKEN_BOT,
       trigger_id: trigger_id,
       view: JSON.stringify({
         title: {
@@ -315,12 +300,7 @@ module.exports.editJobForm = async (trigger_id, job_id, user_id) => {
       }),
     }
 
-    return await axios.post("https://slack.com/api/views.open", dialog, {
-        headers: {
-          Authorization: "Bearer " + process.env.SLACK_TOKEN_BOT,
-          "Content-Type": "application/json",
-        },
-      })
+    return await api.bot().post('views.open', dialog)
       .catch(e => {
         console.log("dialog.open call failed: %o", e)
       })
@@ -377,12 +357,7 @@ module.exports.addJobNoteForm = async (trigger_id, job_id) => {
       }),
     }
 
-    return await axios.post("https://slack.com/api/views.open", dialog, {
-        headers: {
-          Authorization: "Bearer " + process.env.SLACK_TOKEN_BOT,
-          "Content-Type": "application/json",
-        },
-      })
+    return await api.bot().post('views.open', dialog)
       .catch(e => {
         console.log("dialog.open call failed: %o", e)
       })

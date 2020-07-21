@@ -1,6 +1,6 @@
 const url = require('url')
 
-const api = require('../util/api')()
+const api = require('../util/api')
 const dynamodb = require('../util/dynamodb')
 const verifyData = require('../util/verifyData')
 
@@ -61,7 +61,7 @@ module.exports.dialog = async payload => {
     })
   }
 
-  await api.post('dialog.open', null, { params: dialog })
+  await api.user().post('dialog.open', null, { params: dialog })
     .then(() => ({ statusCode: 200, body: '' }))
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
 }

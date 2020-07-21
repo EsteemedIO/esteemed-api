@@ -1,8 +1,8 @@
-const api = require('./api')()
+const api = require('./api')
 const dynamodb = require('../util/dynamodb')
 
 module.exports.loadUsers = () => {
-  return api.get('users.list')
+  return api.user().get('users.list')
     .then(({ data }) => data.members.filter(member => !member.is_bot))
     //.then(data => data.filter(member => !member.is_admin))
     .then(data => data.filter(member => !member.deleted))
@@ -19,7 +19,7 @@ module.exports.loadChannelMembers = (channel, cursor) => {
     params.cursor = cursor
   }
 
-  return api.get('conversations.members', { params: params })
+  return api.user().get('conversations.members', { params: params })
     .then(({ data }) => ({
         members: data.members,
         cursor: data.response_metadata.next_cursor,
@@ -36,7 +36,7 @@ module.exports.allProfiles = async () => {
 }
 
 module.exports.getUser = userId => {
-  return api.get('users.info', {
+  return api.user().get('users.info', {
     params: {
       user: userId
     }

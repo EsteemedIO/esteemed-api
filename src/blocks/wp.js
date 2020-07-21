@@ -1,4 +1,4 @@
-const api = require('../util/api')()
+const api = require('../util/api')
 const dynamodb = require('../util/dynamodb')
 const keyValue = require('../util/keyValue')
 const verifyData = require('../util/verifyData')
@@ -73,7 +73,7 @@ module.exports.dialog = async payload => {
     })
   }
 
-  await api.post('dialog.open', null, { params: dialog })
+  await api.user().post('dialog.open', null, { params: dialog })
     .then(data => console.log(data))
     .catch((e) => { console.log('dialog.open call failed: %o', e) })
 }
