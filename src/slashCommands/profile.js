@@ -4,20 +4,6 @@ module.exports = async (req, res, next) => {
   try {
     await Promise.all([profiles.loadUsers(), profiles.allProfiles()])
       .then(([users, allProfiles]) => {
-        const currentUser = users.find(user => user.id === req.body.user_id)
-
-        if (!(currentUser.is_admin || currentUser.is_owner)) {
-          return [
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: 'Only admin or owner can use this command'
-              }
-            }
-          ]
-        }
-
         const requestedUser = users.find(user => user.name === req.body.text.replace('@', '')) || false
 
         if (requestedUser) {
