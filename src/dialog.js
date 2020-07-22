@@ -3,7 +3,7 @@ const getProfileHome = require('./event/getProfileHome')
 const drupal = require('./blocks/drupal')
 const wp = require('./blocks/wp')
 const location = require('./blocks/location')
-const { addJob, editJobForm, updateJob, addJobNoteForm, updateNotes, confirmApplication, saveApplication } = require('./slashCommands/job')
+const job = require('./slashCommands/job')
 
 module.exports = async (req, res, next) => {
   try {
@@ -35,14 +35,14 @@ module.exports = async (req, res, next) => {
 
     if (payload.type && payload.type === 'block_actions') {
       if (payload.actions[0].action_id === 'edit_job') {
-        await editJobForm(payload.trigger_id, payload.actions[0].value, payload.user.id)
+        await job.editJobForm(payload.trigger_id, payload.actions[0].value, payload.user.id)
         res.send()
       }
       if (payload.actions[0].action_id === 'add_job_notes') {
-        await addJobNoteForm(payload.trigger_id, payload.actions[0].value)
+        await job.addJobNoteForm(payload.trigger_id, payload.actions[0].value)
       }
       if (payload.actions[0].action_id === 'apply_btn') {
-        await confirmApplication(res, payload.trigger_id, payload.actions[0].value)
+        await job.confirmApplication(res, payload.trigger_id, payload.actions[0].value)
       }
     }
 
@@ -63,16 +63,16 @@ module.exports = async (req, res, next) => {
 
     if (payload.type && payload.type === 'view_submission') {
       if (payload.view.callback_id === 'add_job') {
-        await addJob(payload.view.state.values)
+        await job.addJob(payload.view.state.values)
       }
       if (payload.view.callback_id === 'edit_job') {
-        await updateJob(payload.view.private_metadata, payload.view.state.values)
+        await job.updateJob(payload.view.private_metadata, payload.view.state.values)
       }
       if (payload.view.callback_id === 'add_job_notes') {
-        await updateNotes(payload.view.private_metadata, payload.user.id, payload.view.state.values)
+        await job.updateNotes(payload.view.private_metadata, payload.user.id, payload.view.state.values)
       }
       if (payload.view.callback_id === 'confirm_app') {
-        await saveApplication(payload.view.private_metadata, payload.user.id)
+        await job.saveApplication(payload.view.private_metadata, payload.user.id)
       }
     }
 
