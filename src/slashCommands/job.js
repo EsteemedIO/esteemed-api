@@ -309,20 +309,26 @@ module.exports.editJobForm = async (triggerId, jobId, userId) => {
 
 module.exports.addJobNoteForm = async (triggerId, jobId) => {
   const blocks = await module.exports.getJobs(jobId)
-    .then(({ notes }) => Promise.all(notes.map(note => {
-      return userProfiles.getUser(note.user)
-        .then(user => {
-          const date = parseInt(Date.parse(note.date) / 1000).toFixed(0)
+    .then(job => {
+      if (job.notes !== undefined) {
+        return Promise.all(job.notes.map(note => {
+          return userProfiles.getUser(note.user)
+            .then(user => {
+              const date = parseInt(Date.parse(note.date) / 1000).toFixed(0)
 
-          return {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `*${user.profile.real_name} [<!date^${date}^{date} at {time}|Timestamp>]*: ${note.note}`
-            }
-          }
-        })
-    })))
+              return {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*${user.profile.real_name} [<!date^${date}^{date} at {time}|Timestamp>]*: ${note.note}`
+                }
+              }
+            })
+        }))
+      } else {
+        return []
+      }
+    })
     .then(notes => notesForm.concat({
       type: 'section',
       text: {
