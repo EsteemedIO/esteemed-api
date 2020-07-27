@@ -1,7 +1,5 @@
-const api = require('../util/api')
 const dynamodb = require('../util/dynamodb')
 const keyValue = require('../util/keyValue')
-const verifyData = require('../util/verifyData')
 
 module.exports.blocks = () => {
   return [
@@ -24,76 +22,115 @@ module.exports.blocks = () => {
   ]
 }
 
-module.exports.dialog = async payload => {
+module.exports.modal = async user => {
   const params = {
     TableName: 'profiles',
     Key: {
-      id: payload.user.id
+      id: user
     }
   }
   const profile = (await dynamodb.get(params).promise().then(({ Item }) => Item) || {})
 
-  const dialog = {
-    token: process.env.SLACK_TOKEN_BOT,
-    trigger_id: payload.trigger_id,
-    dialog: JSON.stringify({
-      title: 'Update my WP profile',
-      callback_id: 'update_wp_profile',
-      submit_label: 'Save',
-      elements: [
-        {
-          label: 'WP bio',
-          type: 'textarea',
-          name: 'wp_bio',
-          value: profile.wp_bio || '',
-          placeholder: "I'm awesome at WordPress because..."
+  const modal = {
+    title: {
+      type: 'plain_text',
+      text: 'Update my WP profile'
+    },
+    callback_id: 'update_wp_profile',
+    submit: {
+      type: 'plain_text',
+      text: 'Save'
+    },
+    close: {
+      type: 'plain_text',
+      text: 'Cancel'
+    },
+    type: 'modal',
+    blocks: [
+      {
+        type: 'input',
+        block_id: 'wp_experience',
+        label: {
+          type: 'plain_text',
+          text: 'Experience Level'
         },
-        {
-          label: 'Experience level',
-          type: 'select',
-          name: 'wp_experience',
-          placeholder: 'Choose your experience level...',
-          value: profile.wp_experience || '',
+        element: {
+          type: 'static_select',
+          action_id: 'val',
+          placeholder: {
+            type: 'plain_text',
+            text: 'Choose your experience level...'
+          },
           options: [
             {
-              label: keyValue.entry,
+              text: {
+                type: 'plain_text',
+                text: keyValue.entry
+              },
               value: 'entry'
             },
             {
-              label: keyValue.intermediate,
+              text: {
+                type: 'plain_text',
+                text: keyValue.intermediate
+              },
               value: 'intermediate'
             },
             {
-              label: keyValue.expert,
+              text: {
+                type: 'plain_text',
+                text: keyValue.expert
+              },
               value: 'expert'
             }
           ]
         }
-      ]
-    })
+      },
+      {
+        type: 'input',
+        block_id: 'wp_bio',
+        label: {
+          type: 'plain_text',
+          text: 'WP Bio'
+        },
+        element: {
+          type: 'plain_text_input',
+          action_id: 'val',
+          multiline: true,
+          placeholder: {
+            type: 'plain_text',
+            text: "I'm awesome at WordPress because..."
+          },
+          initial_value: profile.wp_bio || ''
+        }
+      }
+    ]
   }
 
-  await api.user().post('dialog.open', null, { params: dialog })
-    .then(data => console.log(data))
-    .catch((e) => { console.log('dialog.open call failed: %o', e) })
+  if (profile.wp_experience) {
+    modal.blocks[0].element.initial_option = {
+      text: {
+        type: 'plain_text',
+        text: keyValue[profile.wp_experience]
+      },
+      value: profile.wp_experience
+    }
+  }
+
+  return modal
 }
 
-module.exports.updateProfile = async payload => {
-  // Check for valid data.
-  const errors = await verifyData(payload.submission)
-
-  if (errors.length > 0) return { statusCode: 200, body: JSON.stringify({ errors: errors }) }
-
+module.exports.updateProfile = async (user, values) => {
   // Update profile data.
   const params = {
     TableName: 'profiles',
     Key: {
-      id: payload.user.id
+      id: user
     },
     UpdateExpression: 'set wp_experience = :wp_experience, wp_bio = :wp_bio',
     ExpressionAttributeValues: {
-      ':wp_experience': payload.submission.wp_experience,
-      ':wp_bio': payload.submission.wp_bio
+      ':wp_experience': values.wp_experience.val.selected_option.value,
+      ':wp_bio': values.wp_bio.val.value
     }
   }
 

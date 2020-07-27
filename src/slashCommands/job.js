@@ -1,6 +1,5 @@
 const crypto = require('crypto')
 
-const api = require('../util/api')
 const dynamodb = require('../util/dynamodb')
 const jobsForm = require('../blocks/jobsForm')
 const notesForm = require('../blocks/notesForm')
@@ -9,9 +8,9 @@ const { getUser } = require('../util/userProfiles')
 const slackFormData = require('../util/slackFormData')
 const userProfiles = require('../util/userProfiles')
 
-module.exports.listJobs = async (req, res) => {
+module.exports.listJobs = async userId => {
   try {
-    const currentUser = await getUser(req.body.user_id)
+    const currentUser = await getUser(userId)
 
     const blocks = await module.exports.getJobs()
       .then(jobs => currentUser.is_admin ? jobs : jobs.filter(job => job.active === 'enabled'))
@@ -118,41 +117,32 @@ module.exports.listJobs = async (req, res) => {
         .flat()
       )
 
-    res.send({ blocks: blocks })
+    return { blocks: blocks }
   } catch (err) {
     if (err) return err
   }
 }
 
-module.exports.confirmApplication = async (res, triggerId, job) => {
+module.exports.confirmApplication = async job => {
   try {
-    const dialog = {
-      trigger_id: triggerId,
-      view: JSON.stringify({
-        title: {
-          type: 'plain_text',
-          text: 'Confirmation'
-        },
-        callback_id: 'confirm_app',
-        submit: {
-          type: 'plain_text',
-          text: 'Confirm'
-        },
-        close: {
-          type: 'plain_text',
-          text: 'Cancel'
-        },
-        type: 'modal',
-        private_metadata: job,
-        blocks: []
-      })
+    return {
+      title: {
+        type: 'plain_text',
+        text: 'Confirmation'
+      },
+      callback_id: 'confirm_app',
+      submit: {
+        type: 'plain_text',
+        text: 'Confirm'
+      },
+      close: {
+        type: 'plain_text',
+        text: 'Cancel'
+      },
+      type: 'modal',
+      private_metadata: job,
+      blocks: []
     }
-
-    await api.bot().post('views.open', dialog)
-      .then(() => res.send())
-      .catch(e => {
-        console.log('dialog.open call failed: %o', e)
-      })
   } catch (err) {
     if (err) console.log(err)
   }
@@ -236,136 +226,106 @@ module.exports.updateJob = async (jobId, values) => {
   return await dynamodb.update(params).promise()
 }
 
-module.exports.addJobForm = async (req, res) => {
-  const isAdmin = await userProfiles.isAdmin(req.body.user_id)
+module.exports.addJobForm = async userId => {
+  const isAdmin = await userProfiles.isAdmin(userId)
 
-  const dialog = {
-    token: process.env.SLACK_TOKEN_BOT,
-    trigger_id: req.body.trigger_id,
-    view: JSON.stringify({
-      title: {
-        type: 'plain_text',
-        text: 'Add New Job'
-      },
-      type: 'modal',
-      callback_id: 'add_job',
-      submit: {
-        type: 'plain_text',
-        text: 'Create'
-      },
-      close: {
-        type: 'plain_text',
-        text: 'Cancel'
-      },
-      blocks: jobsForm(isAdmin)
-    })
+  return {
+    title: {
+      type: 'plain_text',
+      text: 'Add New Job'
+    },
+    type: 'modal',
+    callback_id: 'add_job',
+    submit: {
+      type: 'plain_text',
+      text: 'Create'
+    },
+    close: {
+      type: 'plain_text',
+      text: 'Cancel'
+    },
+    blocks: jobsForm(isAdmin)
   }
-
-  await api.bot().post('views.open', dialog)
-    .then(() => res.send())
-    .catch(e => {
-      console.log('dialog.open call failed: %o', e)
-    })
-
-  res.send()
 }
 
-module.exports.editJobForm = async (triggerId, jobId, userId) => {
+module.exports.editJobForm = async (jobId, userId) => {
   try {
     const job = await module.exports.getJobs(jobId)
     const isAdmin = await userProfiles.isAdmin(userId)
     const blocks = slackFormData.set(jobsForm(isAdmin), job)
 
-    const dialog = {
-      trigger_id: triggerId,
-      view: JSON.stringify({
-        title: {
-          type: 'plain_text',
-          text: 'Edit Jobs'
-        },
-        callback_id: 'edit_job',
-        submit: {
-          type: 'plain_text',
-          text: 'Update'
-        },
-        close: {
-          type: 'plain_text',
-          text: 'Cancel'
-        },
-        type: 'modal',
-        blocks: blocks,
-        private_metadata: jobId
-      })
+    return {
+      title: {
+        type: 'plain_text',
+        text: 'Edit Jobs'
+      },
+      callback_id: 'edit_job',
+      submit: {
+        type: 'plain_text',
+        text: 'Update'
+      },
+      close: {
+        type: 'plain_text',
+        text: 'Cancel'
+      },
+      type: 'modal',
+      blocks: blocks,
+      private_metadata: jobId
     }
-
-    return await api.bot().post('views.open', dialog)
-      .catch(e => {
-        console.log('dialog.open call failed: %o', e)
-      })
   } catch (err) {
     if (err) console.log(err)
   }
 }
 
-module.exports.addJobNoteForm = async (triggerId, jobId) => {
-  const blocks = await module.exports.getJobs(jobId)
-    .then(job => {
-      if (job.notes !== undefined) {
-        return Promise.all(job.notes.map(note => {
-          return userProfiles.getUser(note.user)
-            .then(user => {
-              const date = parseInt(Date.parse(note.date) / 1000).toFixed(0)
-
-              return {
-                type: 'section',
-                text: {
-                  type: 'mrkdwn',
-                  text: `*${user.profile.real_name} [<!date^${date}^{date} at {time}|Timestamp>]*: ${note.note}`
-                }
-              }
-            })
-        }))
-      } else {
-        return []
-      }
-    })
-    .then(notes => notesForm.concat({
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: '*Prior Notes*'
-      }
-    }).concat(notes)
-    )
-
+module.exports.addJobNoteForm = async jobId => {
   try {
-    const dialog = {
-      token: process.env.SLACK_TOKEN_BOT,
-      trigger_id: triggerId,
-      view: JSON.stringify({
-        title: {
-          type: 'plain_text',
-          text: 'Job Notes'
-        },
-        callback_id: 'add_job_notes',
-        submit: {
-          type: 'plain_text',
-          text: 'Add'
-        },
-        close: {
-          type: 'plain_text',
-          text: 'Cancel'
-        },
-        type: 'modal',
-        blocks: blocks,
-        private_metadata: jobId
-      })
-    }
+    const blocks = await module.exports.getJobs(jobId)
+      .then(job => {
+        if (job.notes !== undefined) {
+          return Promise.all(job.notes.map(note => {
+            return userProfiles.getUser(note.user)
+              .then(user => {
+                const date = parseInt(Date.parse(note.date) / 1000).toFixed(0)
 
-    return await api.bot().post('views.open', dialog)
-      .catch(e => {
-        console.log('dialog.open call failed: %o', e)
+                return {
+                  type: 'section',
+                  text: {
+                    type: 'mrkdwn',
+                    text: `*${user.profile.real_name} [<!date^${date}^{date} at {time}|Timestamp>]*: ${note.note}`
+                  }
+                }
+              })
+          }))
+        } else {
+          return []
+        }
       })
+      .then(notes => notesForm.concat({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: '*Prior Notes*'
+        }
+      }).concat(notes))
+
+    return {
+      title: {
+        type: 'plain_text',
+        text: 'Job Notes'
+      },
+      callback_id: 'add_job_notes',
+      submit: {
+        type: 'plain_text',
+        text: 'Add'
+      },
+      close: {
+        type: 'plain_text',
+        text: 'Cancel'
+      },
+      type: 'modal',
+      blocks: blocks,
+      private_metadata: jobId
+    }
   } catch (err) {
     if (err) console.log(err)
   }

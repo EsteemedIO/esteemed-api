@@ -1,4 +1,3 @@
-const api = require('../util/api')
 const dynamodb = require('../util/dynamodb')
 
 const defaultBlocks = require('../blocks/defaultHome')
@@ -6,7 +5,7 @@ const drupal = require('../blocks/drupal')
 const wp = require('../blocks/wp')
 const slackFormData = require('../util/slackFormData')
 
-module.exports = async user => {
+module.exports.get = async user => {
   // Get values.
   const params = {
     TableName: 'profiles',
@@ -42,17 +41,42 @@ module.exports = async user => {
   const blocksWithValues = slackFormData.set(blocks, profile)
 
   // Prepare home view.
-  const home = {
-    user_id: user,
-    callback_id: 'profile_home',
-    view: {
-      type: 'home',
-      blocks: blocksWithValues
+  return {
+    type: 'home',
+    blocks: blocksWithValues
+  }
+}
+
+module.exports.update = async (user, action) => {
+  let values = []
+
+  switch (action.type) {
+    case 'static_select':
+      values = action.selected_option.value
+      break
+    case 'multi_static_select':
+      values = action.selected_options.map(option => option.value)
+      break
+    case 'datepicker':
+      values = action.selected_date
+      break
+  }
+
+  // Update profile data.
+  const params = {
+    TableName: 'profiles',
+    Key: {
+      id: user
+    },
+    UpdateExpression: 'set ' + action.action_id + ' = :v',
+    ExpressionAttributeValues: {
+      ':v': values
     }
   }
 
-  // Update home view.
-  return await api.bot().post('views.publish', home)
-    .then(() => ({ statusCode: 200, body: '' }))
-    .catch((e) => { console.log('dialog.open call failed: %o', e) })
+  await dynamodb.update(params).promise()
+    .then(res => console.log(res))
+    .catch(e => console.log(e))
+
+  await module.exports.get(user)
 }

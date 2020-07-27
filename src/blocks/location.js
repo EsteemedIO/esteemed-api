@@ -1,40 +1,47 @@
 const { Client, Status } = require('@googlemaps/google-maps-services-js')
 
-const api = require('../util/api')
-const getProfileHome = require('../event/getProfileHome')
 const dynamodb = require('../util/dynamodb')
 
-module.exports.dialog = async (payload, res) => {
-  const dialog = {
-    token: process.env.SLACK_TOKEN_BOT,
-    trigger_id: payload.trigger_id,
-    dialog: JSON.stringify({
-      title: 'Look up my address',
-      callback_id: 'update_location',
-      submit_label: 'Lookup',
-      elements: [
-        {
-          label: 'Location',
-          type: 'text',
-          name: 'locality',
-          placeholder: 'i.e. Olympia, WA'
+module.exports.modal = async () => {
+  return {
+    title: {
+      type: 'plain_text',
+      text: 'Location'
+    },
+    callback_id: 'update_location',
+    submit: {
+      type: 'plain_text',
+      text: 'Lookup'
+    },
+    close: {
+      type: 'plain_text',
+      text: 'Cancel'
+    },
+    type: 'modal',
+    blocks: [{
+      type: 'input',
+      block_id: 'update_location',
+      element: {
+        type: 'plain_text_input',
+        action_id: 'val',
+        placeholder: {
+          type: 'plain_text',
+          text: 'i.e. Olympia, WA'
         }
-      ]
-    })
+      },
+      label: {
+        type: 'plain_text',
+        text: 'Location'
+      }
+    }]
   }
-
-  await api.user().post('dialog.open', null, { params: dialog })
-    .then(data => {
-      console.log(data)
-      res.send()
-    })
 }
 
-module.exports.update = async payload => {
+module.exports.update = async (user, locality) => {
   const client = new Client({})
   const location = await client.geocode({
     params: {
-      address: payload.submission.locality,
+      address: locality,
       key: process.env.GOOGLE_MAPS
     },
     timeout: 1000
@@ -62,7 +69,7 @@ module.exports.update = async payload => {
   const params = {
     TableName: 'profiles',
     Key: {
-      id: payload.user.id
+      id: user
     },
     UpdateExpression: 'set locality = :locality',
     ExpressionAttributeValues: {
@@ -73,8 +80,4 @@ module.exports.update = async payload => {
   await dynamodb.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
-
-  await getProfileHome(payload.user.id)
-
-  return { statusCode: 200, body: '' }
 }
