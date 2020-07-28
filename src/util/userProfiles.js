@@ -11,22 +11,19 @@ module.exports.loadUsers = () => {
     .then(data => data.filter(member => member.id !== 'USLACKBOT'))
 }
 
-module.exports.loadChannelMembers = (channel, cursor) => {
+module.exports.loadChannelMembers = async (channel) => {
+  let members = []
+
   const params = {
     channel: channel,
     limit: 1000
   }
 
-  if (cursor !== '') {
-    params.cursor = cursor
+  for await (const page of slackClient.paginate('conversations.members', params)) {
+    members = [...members, ...page.members]
   }
 
-  return slackClient.conversations.members(params)
-    .then(data => ({
-      members: data.members,
-      cursor: data.response_metadata.next_cursor,
-      more: (data.response_metadata.next_cursor !== '')
-    }))
+  return members
 }
 
 module.exports.allProfiles = async () => {

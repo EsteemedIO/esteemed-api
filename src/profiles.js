@@ -17,16 +17,7 @@ module.exports = async (req, res, next) => {
     const profiles = await profilesPromise
 
     // Iterate the conversation.members call due to its pagination limit.
-    let members = []
-    let moreMembers = true
-    let cursor = ''
-
-    while (moreMembers) {
-      const membersPaged = await userProfiles.loadChannelMembers(channel, cursor)
-      moreMembers = membersPaged.more
-      cursor = membersPaged.cursor
-      members = members.concat(membersPaged.members)
-    }
+    const members = await userProfiles.loadChannelMembers(channel)
 
     res.send(members
       .map(data => users.find(user => data.includes(user.id)))
