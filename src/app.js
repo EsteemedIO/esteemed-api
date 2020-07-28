@@ -50,7 +50,7 @@ app.event('team_join', async ({ context }) => {
   }
 })
 
-app.command('/dev-profile', async ({ command, ack, respond }) => {
+app.command('/profile', async ({ command, ack, respond }) => {
   await ack()
 
   const profile = await commandProfile(command.text)
@@ -58,7 +58,7 @@ app.command('/dev-profile', async ({ command, ack, respond }) => {
   await respond(profile)
 })
 
-app.command('/dev-profiles-latest', async ({ ack, command, respond }) => {
+app.command('/profiles-latest', async ({ ack, command, respond }) => {
   await ack()
 
   const profiles = await commandLatestProfiles(command.user_id)
@@ -66,7 +66,7 @@ app.command('/dev-profiles-latest', async ({ ack, command, respond }) => {
   await respond(profiles)
 })
 
-app.command('/dev-jobs-list', async ({ ack, command, respond }) => {
+app.command('/jobs-list', async ({ ack, command, respond }) => {
   // Acknowledge command request
   await ack()
 
@@ -75,7 +75,7 @@ app.command('/dev-jobs-list', async ({ ack, command, respond }) => {
   await respond(jobs)
 })
 
-app.command('/dev-add-job', async ({ ack, command, context, client }) => {
+app.command('/add-job', async ({ ack, command, context, client }) => {
   try {
     await ack()
 
