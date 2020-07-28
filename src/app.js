@@ -51,33 +51,31 @@ app.event('team_join', async ({ context }) => {
 })
 
 app.command('/profile', async ({ command, ack, respond }) => {
-  await ack()
-
   const profile = await commandProfile(command.text)
 
   await respond(profile)
+
+  await ack()
 })
 
 app.command('/profiles-latest', async ({ ack, command, respond }) => {
-  await ack()
-
   const profiles = await commandLatestProfiles(command.user_id)
 
   await respond(profiles)
+
+  await ack()
 })
 
 app.command('/jobs-list', async ({ ack, command, respond }) => {
-  // Acknowledge command request
-  await ack()
-
   const jobs = await job.listJobs(command.user_id)
 
   await respond(jobs)
+
+  await ack()
 })
 
 app.command('/add-job', async ({ ack, command, context, client }) => {
   try {
-    await ack()
 
     const jobForm = await job.addJobForm(command.user_id)
 
@@ -87,6 +85,8 @@ app.command('/add-job', async ({ ack, command, context, client }) => {
       view: jobForm
     })
     console.log(result)
+
+    await ack()
   } catch (error) {
     console.error(error)
   }
@@ -94,8 +94,6 @@ app.command('/add-job', async ({ ack, command, context, client }) => {
 
 // Actions.
 app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }) => {
-  await ack()
-
   const modal = await drupal.modal(body.user.id)
 
   const result = await client.views.open({
@@ -104,6 +102,8 @@ app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }
     view: modal
   })
   console.log(result)
+
+  await ack()
 })
 
 // TODO
@@ -114,8 +114,6 @@ app.action({ callback_id: 'update_drupal_profile' }, async ({ action, ack }) => 
 })
 
 app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) => {
-  await ack()
-
   const modal = await wp.modal(body.user.id)
 
   const result = await client.views.open({
@@ -124,11 +122,11 @@ app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) =>
     view: modal
   })
   console.log(result)
+
+  await ack()
 })
 
 app.action({ block_id: 'locality' }, async ({ context, client, body, ack }) => {
-  await ack()
-
   const modal = await location.modal()
 
   const result = await client.views.open({
@@ -137,6 +135,8 @@ app.action({ block_id: 'locality' }, async ({ context, client, body, ack }) => {
     view: modal
   })
   console.log(result)
+
+  await ack()
 })
 
 app.action('add_job', async ({ action, ack }) => {
@@ -146,8 +146,6 @@ app.action('add_job', async ({ action, ack }) => {
 })
 
 app.action('edit_job', async ({ action, ack, context, client, body }) => {
-  await ack()
-
   const jobForm = await job.editJobForm(action.value, body.user.id)
 
   const result = await client.views.open({
@@ -156,12 +154,11 @@ app.action('edit_job', async ({ action, ack, context, client, body }) => {
     view: jobForm
   })
   console.log(result)
+
+  await ack()
 })
 
 app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
-  await ack()
-  console.log(action)
-
   const jobNotesForm = await job.addJobNoteForm(action.value)
 
   const result = await client.views.open({
@@ -170,12 +167,12 @@ app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
     view: jobNotesForm
   })
   console.log(result)
+
+  await ack()
 })
 
 // TODO: confirm this working
 app.action('apply_btn', async ({ action, ack, context, client, body }) => {
-  await ack()
-
   const confirmForm = await job.confirmApplication(action.value)
 
   const result = await client.views.open({
@@ -184,11 +181,11 @@ app.action('apply_btn', async ({ action, ack, context, client, body }) => {
     view: confirmForm
   })
   console.log(result)
+
+  await ack()
 })
 
 app.action(/^(titles|skills|builders|languages|cms|date_available|availability|citizen|english)$/, async ({ ack, body, action, context, client }) => {
-  await ack()
-
   await profileHome.update(body.user.id, action)
 
   const home = await profileHome.get(body.user.id)
@@ -199,31 +196,30 @@ app.action(/^(titles|skills|builders|languages|cms|date_available|availability|c
     view: home
   })
   console.log(result)
+
+  await ack()
 })
 
 // Views submissions.
 app.view('edit_job', async ({ ack, view }) => {
-  await ack()
-
-  console.log(view)
   await job.updateJob(view.private_metadata, view.state.values)
+
+  await ack()
 })
 
 app.view('add_job_notes', async ({ ack, body, view }) => {
-  await ack()
-
   await job.updateNotes(view.private_metadata, body.user.id, view.state.values)
+
+  await ack()
 })
 
 app.view('confirm_app', async ({ ack, body, view }) => {
-  await ack()
-
   await job.saveApplication(view.private_metadata, body.user.id)
+
+  await ack()
 })
 
 app.view('update_location', async ({ ack, body, view, context, client }) => {
-  await ack()
-
   await location.update(body.user.id, view.state.values.update_location.val.value)
 
   const home = await profileHome.get(body.user.id)
@@ -234,6 +230,8 @@ app.view('update_location', async ({ ack, body, view, context, client }) => {
     view: home
   })
   console.log(result)
+
+  await ack()
 })
 
 app.view('update_drupal_profile', async ({ ack, body, view }) => {
@@ -243,9 +241,9 @@ app.view('update_drupal_profile', async ({ ack, body, view }) => {
 })
 
 app.view('update_wp_profile', async ({ ack, body, view }) => {
-  await ack()
-
   await wp.updateProfile(body.user.id, view.state.values)
+
+  await ack()
 })
 
 // Endpoints.
