@@ -1,14 +1,14 @@
-module.exports = submission => {
+module.exports = values => {
   const errors = []
 
-  if (submission.linkedin) {
-    const linkedin = new URL(submission.linkedin)
+  if (values.linkedin) {
+    const linkedin = new URL(values.linkedin)
     const linkedinValid = (linkedin.host === 'linkedin.com') && (linkedin.pathname.split('/')[1] === 'in')
     if (!linkedinValid) errors.push({ name: 'linkedin', error: 'This is not a valid LinkedIn URL' })
   }
 
-  if (submission.drupal_profile) {
-    const drupal = new URL(submission.drupal_profile)
+  if (values.drupal_profile) {
+    const drupal = new URL(values.drupal_profile.val.value)
 
     // Apply heuristics.
     const drupalValid = (drupal.host === 'drupal.org' || drupal.host === 'www.drupal.org') && (drupal.pathname.split('/')[1] === 'u')

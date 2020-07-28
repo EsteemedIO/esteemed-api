@@ -1,24 +1,10 @@
 const profiles = require('./../util/userProfiles')
 
-module.exports = async (req, res, next) => {
+module.exports = async handle => {
   try {
-    await Promise.all([profiles.loadUsers(), profiles.allProfiles()])
+    return Promise.all([profiles.loadUsers(), profiles.allProfiles()])
       .then(([users, allProfiles]) => {
-        const currentUser = users.find(user => user.id === req.body.user_id)
-
-        if (!(currentUser.is_admin || currentUser.is_owner)) {
-          return [
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: 'Only admin or owner can use this command'
-              }
-            }
-          ]
-        }
-
-        const requestedUser = users.find(user => user.name === req.body.text.replace('@', '')) || false
+        const requestedUser = users.find(user => user.name === handle.replace('@', '')) || false
 
         if (requestedUser) {
           const externalProfile = allProfiles.find(profile => profile.id === requestedUser.id)
@@ -58,12 +44,9 @@ module.exports = async (req, res, next) => {
           ]
         }
       })
-      .then(blocks => res.send({ response_type: 'in_channel', blocks: blocks }))
+      .then(blocks => ({ response_type: 'in_channel', blocks: blocks }))
       .catch(e => console.log(e))
   } catch (e) {
     console.log(e)
-    next(e)
   }
-
-  res.send()
 }

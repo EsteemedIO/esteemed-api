@@ -2,7 +2,7 @@
   "name": "esteemed-api",
   "version": "1.0.0",
   "description": "",
-  "main": "handler.js",
+  "main": "src/app.js",
   "scripts": {
     "develop": "NODE_ENV=development nodemon --exec 'sls offline start'",
     "deploy": "sls deploy",
@@ -13,13 +13,12 @@
   "license": "ISC",
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^2.6.1",
+    "@slack/bolt": "^2.2.3",
     "aws-sdk": "^2.710.0",
+    "aws-serverless-express": "^3.3.8",
     "axios": "^0.19.2",
-    "cors": "^2.8.5",
     "crypto": "^1.0.1",
-    "express": "^4.17.1",
-    "query-string": "^6.12.1",
-    "serverless-http": "^2.5.0"
+    "query-string": "^6.12.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.4",

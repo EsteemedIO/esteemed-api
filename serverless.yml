@@ -3,7 +3,6 @@ service: esteemed-profile
 # Configuration variables
 custom:
   secrets:
-    slackToken: ${file(secrets.yml):slackToken}
     slackTokenBot: ${file(secrets.yml):slackTokenBot}
     slackSigning: ${file(secrets.yml):slackSigning}
     allowedChannels: ${file(secrets.yml):allowedChannels}
@@ -25,7 +24,6 @@ provider:
   region: us-east-1
   memorySize: 192
   environment:
-    SLACK_TOKEN: ${self:custom.secrets.slackToken}
     SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
     SLACK_SIGNING_SECRET: ${self:custom.secrets.slackSigning}
     SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
@@ -48,7 +46,7 @@ provider:
 
 functions:
   app:
-    handler: src/web.handler
+    handler: src/app.handler
     events:
       - http:
           path: /{any+}

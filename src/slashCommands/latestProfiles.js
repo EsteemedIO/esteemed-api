@@ -1,10 +1,10 @@
 const profiles = require('../util/userProfiles')
 
-module.exports = async (req, res, next) => {
+module.exports = async userId => {
   try {
     return await Promise.all([profiles.loadUsers(), profiles.allProfiles()])
       .then(([users, allProfiles]) => {
-        const currentUser = users.find(user => user.id === req.body.user_id)
+        const currentUser = users.find(user => user.id === userId)
 
         if (!(currentUser.is_admin || currentUser.is_owner)) {
           return [
@@ -62,13 +62,10 @@ module.exports = async (req, res, next) => {
             })
         }))
           .then(blocks => blocks.flatMap((v, i, a) => a.length - 1 !== i ? [v, { type: 'divider' }] : v))
-          .then(blocks => res.send({ response_type: 'in_channel', blocks: blocks }))
+          .then(blocks => ({ response_type: 'in_channel', blocks: blocks }))
           .catch(e => console.log(e))
       })
   } catch (e) {
     console.log(e)
-    next(e)
   }
-
-  res.send()
 }

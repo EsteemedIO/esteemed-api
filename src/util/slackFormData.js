@@ -43,11 +43,11 @@ module.exports.set = (blocks, record) => {
           case 'static_select':
             block.element.initial_option = block.element.options.find(option => option.value === value)
             break
-          case 'datepicker':
-            block.element.initial_date = value
-            break
           case 'plain_text_input':
             block.element.initial_value = value
+            break
+          case 'datepicker':
+            block.element.initial_date = value
             break
           default:
             block.element.initial_options = block.element.options.filter(option => value.includes(option.value))

@@ -1,10 +1,11 @@
-const api = require('./api')
+const { WebClient } = require('@slack/web-api')
 const dynamodb = require('../util/dynamodb')
 const keyValue = require('../util/keyValue')
+const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 
 module.exports.loadUsers = () => {
-  return api.user().get('users.list')
-    .then(({ data }) => data.members.filter(member => !member.is_bot))
+  return slackClient.users.list()
+    .then(({ members }) => members.filter(member => !member.is_bot))
     // .then(data => data.filter(member => !member.is_admin))
     .then(data => data.filter(member => !member.deleted))
     .then(data => data.filter(member => member.id !== 'USLACKBOT'))
@@ -20,8 +21,8 @@ module.exports.loadChannelMembers = (channel, cursor) => {
     params.cursor = cursor
   }
 
-  return api.user().get('conversations.members', { params: params })
-    .then(({ data }) => ({
+  return slackClient.conversations.members(params)
+    .then(data => ({
       members: data.members,
       cursor: data.response_metadata.next_cursor,
       more: (data.response_metadata.next_cursor !== '')
@@ -37,8 +38,8 @@ module.exports.allProfiles = async () => {
 }
 
 module.exports.getUser = userId => {
-  return api.user().get('users.info', { params: { user: userId } })
-    .then(({ data }) => data.user)
+  return slackClient.users.info({ user: userId })
+    .then(({ user }) => user)
     .catch(err => console.log(err))
 }
 
