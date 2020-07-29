@@ -105,13 +105,6 @@ app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }
   await ack()
 })
 
-// TODO
-app.action({ callback_id: 'update_drupal_profile' }, async ({ action, ack }) => {
-  await drupal.updateProfile(action)
-
-  await ack()
-})
-
 app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) => {
   const modal = await wp.modal(body.user.id)
 
