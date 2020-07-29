@@ -157,7 +157,6 @@ app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
   await ack()
 })
 
-// TODO: confirm this working
 app.action('apply_btn', async ({ action, ack, context, client, body }) => {
   const confirmForm = await confirmApplication(action.value)
 
