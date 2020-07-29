@@ -1,6 +1,6 @@
-const dynamodb = require('../util/dynamodb')
+import db from '../util/dynamodb'
 
-module.exports = async user => {
+export default async user => {
   const date = new Date(user.updated * 1000)
 
   // Add join date.
@@ -15,7 +15,7 @@ module.exports = async user => {
     }
   }
 
-  await dynamodb.update(params).promise()
+  await db.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 

@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     label: 'LinkedIn Profile URL',
     type: 'text',

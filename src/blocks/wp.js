@@ -1,7 +1,7 @@
-const dynamodb = require('../util/dynamodb')
-const keyValue = require('../util/keyValue')
+import db from '../util/dynamodb'
+import keyValue from '../util/keyValue'
 
-module.exports.blocks = () => {
+export function blocks() {
   return [
     {
       type: 'section',
@@ -22,14 +22,14 @@ module.exports.blocks = () => {
   ]
 }
 
-module.exports.modal = async user => {
+export async function modal(user) {
   const params = {
     TableName: 'profiles',
     Key: {
       id: user
     }
   }
-  const profile = (await dynamodb.get(params).promise().then(({ Item }) => Item) || {})
+  const profile = (await db.get(params).promise().then(({ Item }) => Item) || {})
 
   const modal = {
     title: {
@@ -120,7 +120,7 @@ module.exports.modal = async user => {
   return modal
 }
 
-module.exports.updateProfile = async (user, values) => {
+export async function updateProfile(user, values) {
   // Update profile data.
   const params = {
     TableName: 'profiles',
@@ -134,7 +134,7 @@ module.exports.updateProfile = async (user, values) => {
     }
   }
 
-  await dynamodb.update(params).promise()
+  await db.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 }

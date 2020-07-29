@@ -1,9 +1,9 @@
-const profiles = require('../util/userProfiles')
+import { loadUsers, allProfiles, getUser, format } from '../util/userProfiles'
 
-module.exports = async userId => {
+export default async userId => {
   try {
-    return await Promise.all([profiles.loadUsers(), profiles.allProfiles()])
-      .then(([users, allProfiles]) => {
+    return await Promise.all([loadUsers(), allProfiles()])
+      .then(([users, profiles]) => {
         const currentUser = users.find(user => user.id === userId)
 
         if (!(currentUser.is_admin || currentUser.is_owner)) {
@@ -30,21 +30,21 @@ module.exports = async userId => {
           ]
         }
 
-        const latestProfilesSortedArray = allProfiles
+        const latestProfilesSortedArray = profiles
           .sort((a, b) => { return Number(b.join_date.split('-').join('')) - Number(a.join_date.split('-').join('')) })
           .slice(0, 10)
 
         return Promise.all(latestProfilesSortedArray.map(item => {
-          return profiles.getUser(item.id)
+          return getUser(item.id)
             .then(requestedUser => {
-              const text = profiles.format(requestedUser.profile)
+              const text = format(requestedUser.profile)
 
-              if (Object.prototype.hasOwnProperty.call(allProfiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
-                // text += "\n" + "<" + allProfiles[item].drupal_profile + "|" + allProfiles[item].drupal_bio + ">"
+              if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
+                // text += "\n" + "<" + profiles[item].drupal_profile + "|" + profiles[item].drupal_bio + ">"
               }
 
-              if (Object.prototype.hasOwnProperty.call(allProfiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
-                // text += "\n" + "<" + allProfiles[item].wp_profile + "|" + allProfiles[item].wp_bio + ">"
+              if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
+                // text += "\n" + "<" + profiles[item].wp_profile + "|" + profiles[item].wp_bio + ">"
               }
 
               return {

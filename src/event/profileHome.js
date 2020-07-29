@@ -1,11 +1,11 @@
-const dynamodb = require('../util/dynamodb')
+import db from '../util/dynamodb'
 
-const defaultBlocks = require('../blocks/defaultHome')
-const drupal = require('../blocks/drupal')
-const wp = require('../blocks/wp')
-const slackFormData = require('../util/slackFormData')
+import defaultBlocks from '../blocks/defaultHome'
+import * as drupal from '../blocks/drupal'
+import * as wp from '../blocks/wp'
+import * as slackFormData from '../util/slackFormData'
 
-module.exports.get = async user => {
+export async function get(user) {
   // Get values.
   const params = {
     TableName: 'profiles',
@@ -13,7 +13,7 @@ module.exports.get = async user => {
       id: user
     }
   }
-  const profile = (await dynamodb.get(params).promise().then(({ Item }) => Item) || {})
+  const profile = (await db.get(params).promise().then(({ Item }) => Item) || {})
 
   // Get default blocks.
   let blocks = defaultBlocks
@@ -47,7 +47,7 @@ module.exports.get = async user => {
   }
 }
 
-module.exports.update = async (user, action) => {
+export async function update(user, action) {
   let values = []
 
   switch (action.type) {
@@ -74,9 +74,9 @@ module.exports.update = async (user, action) => {
     }
   }
 
-  await dynamodb.update(params).promise()
+  await db.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 
-  await module.exports.get(user)
+  await get(user)
 }

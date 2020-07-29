@@ -1,18 +1,18 @@
-const crypto = require('crypto')
+import crypto from 'crypto'
 
-const dynamodb = require('../util/dynamodb')
-const jobsForm = require('../blocks/jobsForm')
-const notesForm = require('../blocks/notesForm')
-const keyValue = require('../util/keyValue')
-const { getUser } = require('../util/userProfiles')
-const slackFormData = require('../util/slackFormData')
-const userProfiles = require('../util/userProfiles')
+import db from '../util/dynamodb'
+import jobsForm from '../blocks/jobsForm'
+import notesForm from '../blocks/notesForm'
+import keyValue from '../util/keyValue'
+import { getUser } from '../util/userProfiles'
+import * as slackFormData from '../util/slackFormData'
+import * as userProfiles from '../util/userProfiles'
 
-module.exports.listJobs = async userId => {
+export async function listJobs(userId) {
   try {
     const currentUser = await getUser(userId)
 
-    const blocks = await module.exports.getJobs()
+    const blocks = await getJobs()
       .then(jobs => currentUser.is_admin ? jobs : jobs.filter(job => job.active === 'enabled'))
       .then(jobs => jobs.map(job => {
         const text = [
@@ -123,7 +123,7 @@ module.exports.listJobs = async userId => {
   }
 }
 
-module.exports.confirmApplication = async job => {
+export async function confirmApplication(job) {
   try {
     return {
       title: {
@@ -148,7 +148,7 @@ module.exports.confirmApplication = async job => {
   }
 }
 
-module.exports.saveApplication = async (jobId, userId) => {
+export async function saveApplication(jobId, userId) {
   let applicants = [
     {
       user: userId,
@@ -156,7 +156,7 @@ module.exports.saveApplication = async (jobId, userId) => {
     }
   ]
 
-  const job = await module.exports.getJobs(jobId)
+  const job = await getJobs(jobId)
 
   if (job.applicants) {
     applicants = applicants.concat(job.applicants)
@@ -173,10 +173,10 @@ module.exports.saveApplication = async (jobId, userId) => {
     }
   }
 
-  return await dynamodb.update(params).promise()
+  return await db.update(params).promise()
 }
 
-module.exports.addJob = async job => {
+export async function addJob(job) {
   const date = new Date()
   const created = date.toISOString().split('T')[0]
 
@@ -189,10 +189,10 @@ module.exports.addJob = async job => {
     Item: item
   }
 
-  return await dynamodb.put(params).promise()
+  return await db.put(params).promise()
 }
 
-module.exports.updateJob = async (jobId, values) => {
+export async function updateJob(jobId, values) {
   const job = slackFormData.get(values)
   const params = {
     TableName: 'jobs',
@@ -223,10 +223,10 @@ module.exports.updateJob = async (jobId, values) => {
     }
   }
 
-  return await dynamodb.update(params).promise()
+  return await db.update(params).promise()
 }
 
-module.exports.addJobForm = async userId => {
+export async function addJobForm(userId) {
   const isAdmin = await userProfiles.isAdmin(userId)
 
   return {
@@ -248,9 +248,9 @@ module.exports.addJobForm = async userId => {
   }
 }
 
-module.exports.editJobForm = async (jobId, userId) => {
+export async function editJobForm(jobId, userId) {
   try {
-    const job = await module.exports.getJobs(jobId)
+    const job = await getJobs(jobId)
     const isAdmin = await userProfiles.isAdmin(userId)
     const blocks = slackFormData.set(jobsForm(isAdmin), job)
 
@@ -277,9 +277,9 @@ module.exports.editJobForm = async (jobId, userId) => {
   }
 }
 
-module.exports.addJobNoteForm = async jobId => {
+export async function addJobNoteForm(jobId) {
   try {
-    const blocks = await module.exports.getJobs(jobId)
+    const blocks = await getJobs(jobId)
       .then(job => {
         if (job.notes !== undefined) {
           return Promise.all(job.notes.map(note => {
@@ -331,7 +331,7 @@ module.exports.addJobNoteForm = async jobId => {
   }
 }
 
-module.exports.updateNotes = async (jobId, userId, values) => {
+export async function updateNotes(jobId, userId, values) {
   let notes = [
     {
       user: userId,
@@ -340,7 +340,7 @@ module.exports.updateNotes = async (jobId, userId, values) => {
     }
   ]
 
-  const job = await module.exports.getJobs(jobId)
+  const job = await getJobs(jobId)
 
   if (job.notes) {
     notes = notes.concat(job.notes)
@@ -357,10 +357,10 @@ module.exports.updateNotes = async (jobId, userId, values) => {
     }
   }
 
-  return await dynamodb.update(params).promise()
+  return await db.update(params).promise()
 }
 
-module.exports.getJobs = async (item = null) => {
+export async function getJobs(item = null) {
   try {
     const params = {
       TableName: 'jobs'
@@ -368,11 +368,11 @@ module.exports.getJobs = async (item = null) => {
 
     if (item !== null) {
       params.Key = { id: item }
-      return await dynamodb.get(params).promise()
+      return await db.get(params).promise()
         .then(({ Item }) => Item)
         .catch(e => console.log(e))
     } else {
-      return await dynamodb.scan(params).promise()
+      return await db.scan(params).promise()
         .then(({ Items }) => Items)
         .catch(e => console.log(e))
     }

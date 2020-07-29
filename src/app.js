@@ -1,11 +1,11 @@
-const awsServerlessExpress = require('aws-serverless-express')
-const { App, ExpressReceiver } = require('@slack/bolt')
+import { createServer, proxy } from 'aws-serverless-express'
+import { App, ExpressReceiver } from '@slack/bolt'
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET
 })
 
-const server = awsServerlessExpress.createServer(receiver.app)
+const server = createServer(receiver.app)
 
 const app = new App({
   token: process.env.SLACK_TOKEN_BOT,
@@ -13,18 +13,18 @@ const app = new App({
   receiver
 })
 
-const configuration = require('./configuration')
-const profiles = require('./profiles')
-const jobs = require('./jobs')
-const commandProfile = require('./slashCommands/profile')
-const commandLatestProfiles = require('./slashCommands/latestProfiles')
-const setUserJoinDate = require('./event/setUserJoinDate')
+import configuration from './configuration'
+import profiles from './profiles'
+import jobs from './jobs'
+import commandProfile from './slashCommands/profile'
+import commandLatestProfiles from './slashCommands/latestProfiles'
+import setUserJoinDate from './event/setUserJoinDate'
 
-const job = require('./slashCommands/job')
-const profileHome = require('./event/profileHome')
-const wp = require('./blocks/wp')
-const drupal = require('./blocks/drupal')
-const location = require('./blocks/location')
+import { listJobs, addJobForm, addJob, editJobForm, addJobNoteForm, confirmApplication, updateJob, updateNotes, saveApplication } from './slashCommands/job'
+import * as profileHome from './event/profileHome'
+import * as wp from './blocks/wp'
+import * as drupal from './blocks/drupal'
+import * as location from './blocks/location'
 
 // Events.
 app.event('app_home_opened', async ({ event, context, client }) => {
@@ -67,7 +67,7 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
 })
 
 app.command('/jobs-list', async ({ ack, command, respond }) => {
-  const jobs = await job.listJobs(command.user_id)
+  const jobs = await listJobs(command.user_id)
 
   await respond(jobs)
 
@@ -76,8 +76,7 @@ app.command('/jobs-list', async ({ ack, command, respond }) => {
 
 app.command('/add-job', async ({ ack, command, context, client }) => {
   try {
-
-    const jobForm = await job.addJobForm(command.user_id)
+    const jobForm = await addJobForm(command.user_id)
 
     const result = await client.views.open({
       token: context.botToken,
@@ -146,7 +145,7 @@ app.action('add_job', async ({ action, ack }) => {
 })
 
 app.action('edit_job', async ({ action, ack, context, client, body }) => {
-  const jobForm = await job.editJobForm(action.value, body.user.id)
+  const jobForm = await editJobForm(action.value, body.user.id)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -159,7 +158,7 @@ app.action('edit_job', async ({ action, ack, context, client, body }) => {
 })
 
 app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
-  const jobNotesForm = await job.addJobNoteForm(action.value)
+  const jobNotesForm = await addJobNoteForm(action.value)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -173,7 +172,7 @@ app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
 
 // TODO: confirm this working
 app.action('apply_btn', async ({ action, ack, context, client, body }) => {
-  const confirmForm = await job.confirmApplication(action.value)
+  const confirmForm = await confirmApplication(action.value)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -202,19 +201,19 @@ app.action(/^(titles|skills|builders|languages|cms|date_available|availability|c
 
 // Views submissions.
 app.view('edit_job', async ({ ack, view }) => {
-  await job.updateJob(view.private_metadata, view.state.values)
+  await updateJob(view.private_metadata, view.state.values)
 
   await ack()
 })
 
 app.view('add_job_notes', async ({ ack, body, view }) => {
-  await job.updateNotes(view.private_metadata, body.user.id, view.state.values)
+  await updateNotes(view.private_metadata, body.user.id, view.state.values)
 
   await ack()
 })
 
 app.view('confirm_app', async ({ ack, body, view }) => {
-  await job.saveApplication(view.private_metadata, body.user.id)
+  await saveApplication(view.private_metadata, body.user.id)
 
   await ack()
 })
@@ -251,4 +250,4 @@ receiver.router.get('/config', (req, res) => configuration(res))
 receiver.router.get('/profiles', (req, res, next) => profiles(req, res, next))
 receiver.router.get('/jobs', (req, res, next) => jobs(res, next))
 
-module.exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context)
+export function handler(event, context) { return proxy(server, event, context) }

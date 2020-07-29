@@ -1,6 +1,6 @@
-const values = require('./util/keyValue')
+import values from './util/keyValue'
 
-module.exports = res => {
+export default res => {
   res.send({
     valueMap: values,
     titles: [

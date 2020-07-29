@@ -1,6 +1,6 @@
-const axios = require('axios')
+import { post } from 'axios'
 
-module.exports = () => {
+export default () => {
   const data = { request: { branch: 'develop' } }
   const headers = {
     'Content-Type': 'application/json',
@@ -9,7 +9,7 @@ module.exports = () => {
     Authorization: 'token ' + process.env.TRAVIS_TOKEN
   }
 
-  return axios.post('https://api.travis-ci.com/repo/WPContractors%2Fwpcontractors.github.io/requests', JSON.stringify(data), { headers: headers })
+  return post('https://api.travis-ci.com/repo/WPContractors%2Fwpcontractors.github.io/requests', JSON.stringify(data), { headers: headers })
     .then(response => { console.log(response.data) })
     .catch((e) => { console.log('travisCI call failed: %o', e.response.data) })
 }

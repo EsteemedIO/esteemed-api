@@ -1,4 +1,4 @@
-module.exports = values => {
+export default values => {
   const errors = []
 
   if (values.linkedin) {

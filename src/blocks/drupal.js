@@ -1,7 +1,7 @@
-const dynamodb = require('../util/dynamodb')
-const verifyData = require('../util/verifyData')
+import db from '../util/dynamodb'
+import verifyData from '../util/verifyData'
 
-module.exports.blocks = () => {
+export function blocks() {
   return [
     {
       type: 'section',
@@ -22,14 +22,14 @@ module.exports.blocks = () => {
   ]
 }
 
-module.exports.modal = async user => {
+export async function modal(user) {
   const params = {
     TableName: 'profiles',
     Key: {
       id: user
     }
   }
-  const profile = (await dynamodb.get(params).promise().then(({ Item }) => Item) || {})
+  const profile = (await db.get(params).promise().then(({ Item }) => Item) || {})
 
   return {
     title: {
@@ -83,7 +83,7 @@ module.exports.modal = async user => {
   }
 }
 
-module.exports.updateProfile = async (user, values) => {
+export async function updateProfile(user, values) {
   try {
     // Check for valid data.
     const errors = await verifyData(values)
@@ -107,7 +107,7 @@ module.exports.updateProfile = async (user, values) => {
       }
     }
 
-    await dynamodb.update(params).promise()
+    await db.update(params).promise()
       .then(res => console.log(res))
       .catch(e => console.log(e))
   } catch (error) {

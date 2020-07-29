@@ -1,12 +1,12 @@
-const dynamodb = require('./util/dynamodb')
+import db from './util/dynamodb'
 
-module.exports = async (res, next) => {
+export default async (res, next) => {
   try {
     var params = {
       TableName: 'jobs'
     }
 
-    const jobs = await dynamodb.scan(params).promise().then(({ Items }) => Items)
+    const jobs = await db.scan(params).promise().then(({ Items }) => Items)
     res.send(Object.keys(jobs).reduce((acc, key) => {
       const job = {
         key: key,

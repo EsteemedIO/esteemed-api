@@ -1,21 +1,21 @@
-const profiles = require('./../util/userProfiles')
+import { loadUsers, allProfiles, format } from './../util/userProfiles'
 
-module.exports = async handle => {
+export default async handle => {
   try {
-    return Promise.all([profiles.loadUsers(), profiles.allProfiles()])
-      .then(([users, allProfiles]) => {
+    return Promise.all([loadUsers(), allProfiles()])
+      .then(([users, profiles]) => {
         const requestedUser = users.find(user => user.name === handle.replace('@', '')) || false
 
         if (requestedUser) {
-          const externalProfile = allProfiles.find(profile => profile.id === requestedUser.id)
-          const text = profiles.format(requestedUser.profile, externalProfile)
+          const externalProfile = profiles.find(profile => profile.id === requestedUser.id)
+          const text = format(requestedUser.profile, externalProfile)
 
-          if (Object.prototype.hasOwnProperty.call(allProfiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
-            // text += "\n" + "<" + allProfiles[requestedUser.id].drupal_profile + "|" + allProfiles[requestedUser.id].drupal_bio + ">"
+          if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
+            // text += "\n" + "<" + profiles[requestedUser.id].drupal_profile + "|" + profiles[requestedUser.id].drupal_bio + ">"
           }
 
-          if (Object.prototype.hasOwnProperty.call(allProfiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
-            // text += "\n" + "<" + allProfiles[requestedUser.id].wp_profile + "|" + allProfiles[requestedUser.id].wp_bio + ">"
+          if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
+            // text += "\n" + "<" + profiles[requestedUser.id].wp_profile + "|" + profiles[requestedUser.id].wp_bio + ">"
           }
 
           return [

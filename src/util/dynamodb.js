@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk')
+import { DynamoDB } from 'aws-sdk'
 
 const config = {
   apiVersion: '2012-08-10'
@@ -11,6 +11,6 @@ if (process.env.IS_OFFLINE) {
   config.region = process.env.AWS_DEFAULT_REGION
 }
 
-var dynamodb = new AWS.DynamoDB.DocumentClient(config)
+var dynamodb = new DynamoDB.DocumentClient(config)
 
-module.exports = dynamodb
+export default dynamodb

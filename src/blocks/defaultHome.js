@@ -1,6 +1,6 @@
-const keyValue = require('../util/keyValue')
+import keyValue from '../util/keyValue'
 
-module.exports = [
+export default [
   {
     type: 'section',
     block_id: 'locality',

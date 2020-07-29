@@ -1,8 +1,8 @@
-const { Client, Status } = require('@googlemaps/google-maps-services-js')
+import { Client, Status } from '@googlemaps/google-maps-services-js'
 
-const dynamodb = require('../util/dynamodb')
+import db from '../util/dynamodb'
 
-module.exports.modal = async () => {
+export async function modal() {
   return {
     title: {
       type: 'plain_text',
@@ -37,7 +37,7 @@ module.exports.modal = async () => {
   }
 }
 
-module.exports.update = async (user, locality) => {
+export async function update(user, locality) {
   const client = new Client({})
   const location = await client.geocode({
     params: {
@@ -77,7 +77,7 @@ module.exports.update = async (user, locality) => {
     }
   }
 
-  await dynamodb.update(params).promise()
+  await db.update(params).promise()
     .then(res => console.log(res))
     .catch(e => console.log(e))
 }

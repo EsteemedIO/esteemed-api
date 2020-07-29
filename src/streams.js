@@ -1,4 +1,4 @@
-exports.record = (event, context, callback) => {
+export function record(event, context, callback) {
   event.Records.forEach((record) => {
     console.log(record.eventID)
     console.log(record.eventName)

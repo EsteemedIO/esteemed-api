@@ -1,4 +1,4 @@
-module.exports.get = data => {
+export function get(data) {
   return Object.keys(data).reduce((acc, key) => {
     const item = data[key]
 
@@ -19,7 +19,7 @@ module.exports.get = data => {
   }, {})
 }
 
-module.exports.set = (blocks, record) => {
+export function set(blocks, record) {
   return blocks.reduce((accum, block) => {
     if (block.accessory && record[block.accessory.action_id] !== undefined) {
       const value = record[block.accessory.action_id]

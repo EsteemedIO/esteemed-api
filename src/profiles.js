@@ -1,6 +1,6 @@
-const userProfiles = require('./util/userProfiles')
+import * as userProfiles from './util/userProfiles'
 
-module.exports = async (req, res, next) => {
+export default async (req, res, next) => {
   try {
     const allowedChannels = process.env.SLACK_CHANNELS.split(',')
     const channel = req.query.channel ? req.query.channel : false

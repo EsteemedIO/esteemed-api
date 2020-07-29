@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   architect: 'Architect',
   art_director: 'Art Director',
   backend: 'Backend Developer',

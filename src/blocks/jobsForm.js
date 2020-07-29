@@ -1,6 +1,6 @@
-const keyValue = require('../util/keyValue')
+import keyValue from '../util/keyValue'
 
-module.exports = (isAdmin = false) => {
+export default (isAdmin = false) => {
   const blocks = [
     {
       type: 'input',

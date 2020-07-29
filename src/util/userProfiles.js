@@ -1,9 +1,9 @@
-const { WebClient } = require('@slack/web-api')
-const dynamodb = require('../util/dynamodb')
-const keyValue = require('../util/keyValue')
+import { WebClient } from '@slack/web-api'
+import db from '../util/dynamodb'
+import keyValue from '../util/keyValue'
 const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 
-module.exports.loadUsers = () => {
+export async function loadUsers() {
   return slackClient.users.list()
     .then(({ members }) => members.filter(member => !member.is_bot))
     // .then(data => data.filter(member => !member.is_admin))
@@ -11,7 +11,7 @@ module.exports.loadUsers = () => {
     .then(data => data.filter(member => member.id !== 'USLACKBOT'))
 }
 
-module.exports.loadChannelMembers = async (channel) => {
+export async function loadChannelMembers(channel) {
   let members = []
 
   const params = {
@@ -26,21 +26,25 @@ module.exports.loadChannelMembers = async (channel) => {
   return members
 }
 
-module.exports.allProfiles = async () => {
+export async function allProfiles() {
   var params = {
     TableName: 'profiles'
   }
 
-  return await dynamodb.scan(params).promise().then(({ Items }) => Items)
+  return await db.scan(params).promise().then(({ Items }) => Items)
 }
 
-module.exports.getUser = userId => {
-  return slackClient.users.info({ user: userId })
-    .then(({ user }) => user)
-    .catch(err => console.log(err))
+export async function getUser(userId) {
+  try {
+    const { user } = await slackClient.users.info({ user: userId })
+    return user
+  }
+  catch (err) {
+    return console.log(err)
+  }
 }
 
-module.exports.format = (profile, externalProfile) => {
+export function format(profile, externalProfile) {
   let text = `*Name:* ${profile.real_name}
 *Title:* ${profile.title}
 *Email:* ${profile.email}
@@ -63,4 +67,4 @@ module.exports.format = (profile, externalProfile) => {
   return text
 }
 
-module.exports.isAdmin = userId => module.exports.getUser(userId).then(user => user.is_admin)
+export async function isAdmin(userId) { await getUser(userId).then(user => user.is_admin) }
