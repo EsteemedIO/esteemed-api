@@ -55,7 +55,7 @@ functions:
           method: ANY
           cors: true
   streamFunction:
-    handler: streams.handler
+    handler: src/streams.handler
     events:
       - stream:
           type: dynamodb
