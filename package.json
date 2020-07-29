@@ -12,13 +12,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@googlemaps/google-maps-services-js": "^2.6.1",
+    "@googlemaps/google-maps-services-js": "^3.1.4",
     "@slack/bolt": "^2.2.3",
-    "aws-sdk": "^2.710.0",
+    "aws-sdk": "^2.723.0",
     "aws-serverless-express": "^3.3.8",
     "axios": "^0.19.2",
     "crypto": "^1.0.1",
-    "query-string": "^6.12.1",
+    "query-string": "^6.13.1",
     "serverless-bundle": "^2.0.0"
   },
   "devDependencies": {
