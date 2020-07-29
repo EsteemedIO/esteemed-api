@@ -18,7 +18,6 @@
     "aws-serverless-express": "^3.3.8",
     "axios": "^0.19.2",
     "crypto": "^1.0.1",
-    "query-string": "^6.13.1",
     "serverless-bundle": "^2.0.0"
   },
   "devDependencies": {
