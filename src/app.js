@@ -131,12 +131,6 @@ app.action({ block_id: 'locality' }, async ({ context, client, body, ack }) => {
   await ack()
 })
 
-app.action('add_job', async ({ action, ack }) => {
-  await job.addJob(action.submission)
-
-  await ack()
-})
-
 app.action('edit_job', async ({ action, ack, context, client, body }) => {
   const jobForm = await editJobForm(action.value, body.user.id)
 
@@ -193,6 +187,12 @@ app.action(/^(titles|skills|builders|languages|cms|date_available|availability|c
 })
 
 // Views submissions.
+app.view('add_job', async ({ view, ack }) => {
+  await addJob(view.state.values)
+
+  await ack()
+})
+
 app.view('edit_job', async ({ ack, view }) => {
   await updateJob(view.private_metadata, view.state.values)
 
