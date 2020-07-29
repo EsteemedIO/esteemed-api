@@ -17,6 +17,8 @@ custom:
       inMemory: false
     stages:
       - dev
+  bundle:
+    linting: false
 
 provider:
   name: aws
@@ -107,3 +109,4 @@ plugins:
   - serverless-offline
   - serverless-ngrok-tunnel
   - serverless-dynamodb-local
+  - serverless-bundle

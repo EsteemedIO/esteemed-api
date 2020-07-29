@@ -5,6 +5,7 @@ jspm_packages
 # Serverless directories
 .serverless
 .dynamodb
+.webpack
 
 # Secrets
 secrets.yml
