@@ -10,3 +10,5 @@ jspm_packages
 secrets.yml
 serviceAccountKey.json
 db
+
+.DS_Store

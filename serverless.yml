@@ -9,6 +9,9 @@ custom:
     allowedChannels: ${file(secrets.yml):allowedChannels}
     travisToken: ${file(secrets.yml):travisToken}
     googleMaps: ${file(secrets.yml):googleMaps}
+    googleDriveCredentials: ${file(secrets.yml):googleDriveCredentials}
+    googleDriveToken: ${file(secrets.yml):googleDriveToken}
+    templateResumeDocId: ${file(secrets.yml):templateResumeDocId}
   ngrokTunnel:
     tunnels:
       - port: 3000
@@ -31,6 +34,9 @@ provider:
     SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
     TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
     GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
+    GOOGLE_DRIVE_CREDENTIALS: ${self:custom.secrets.googleDriveCredentials}
+    GOOGLE_DRIVE_TOKEN: ${self:custom.secrets.googleDriveToken}
+    TEMPLATE_RESUME_DOC_ID: ${self:custom.secrets.templateResumeDocId}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
