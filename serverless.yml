@@ -42,6 +42,12 @@ provider:
       Resource:
         - { "Fn::GetAtt": ["profilesTable", "Arn"] }
         - { "Fn::GetAtt": ["JobsTable", "Arn"] }
+    - Effect: "Allow"
+      Action:
+        - logs:CreateLogGroup
+        - logs:PutLogEvents
+        - logs:CreateLogStream
+      Resource: "arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/esteemed-profile-dev-streamFunction:*"
 
 functions:
   app:
