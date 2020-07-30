@@ -24,6 +24,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: us-east-1
+  stage: prod
   memorySize: 192
   environment:
     SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
