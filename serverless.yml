@@ -2,12 +2,6 @@ service: esteemed-profile
 
 # Configuration variables
 custom:
-  secrets:
-    slackTokenBot: ${file(secrets.yml):slackTokenBot}
-    slackSigning: ${file(secrets.yml):slackSigning}
-    allowedChannels: ${file(secrets.yml):allowedChannels}
-    travisToken: ${file(secrets.yml):travisToken}
-    googleMaps: ${file(secrets.yml):googleMaps}
   ngrokTunnel:
     tunnels:
       - port: 3000
@@ -27,11 +21,11 @@ provider:
   stage: prod
   memorySize: 192
   environment:
-    SLACK_TOKEN_BOT: ${self:custom.secrets.slackTokenBot}
-    SLACK_SIGNING_SECRET: ${self:custom.secrets.slackSigning}
-    SLACK_CHANNELS: ${self:custom.secrets.allowedChannels}
-    TRAVIS_TOKEN: ${self:custom.secrets.travisToken}
-    GOOGLE_MAPS: ${self:custom.secrets.googleMaps}
+    SLACK_TOKEN_BOT: ${ssm:/${self:provider.stage}/slackTokenBot~true}
+    SLACK_SIGNING_SECRET: ${ssm:/${self:provider.stage}/slackSigning~true}
+    SLACK_CHANNELS: ${ssm:/${self:provider.stage}/allowedChannels~true}
+    TRAVIS_TOKEN: ${ssm:/${self:provider.stage}/travisToken~true}
+    GOOGLE_MAPS: ${ssm:/${self:provider.stage}/googleMaps~true}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -49,6 +43,13 @@ provider:
         - logs:PutLogEvents
         - logs:CreateLogStream
       Resource: "arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/esteemed-profile-dev-streamFunction:*"
+    - Effect: "Allow"
+      Action:
+        - kms:Decrypt*
+        - ssm:Describe*
+        - ssm:Get*
+        - ssm:List*
+      Resource: "arn:aws:ssm:${self:provider.region}:*:*"
 
 functions:
   app:
