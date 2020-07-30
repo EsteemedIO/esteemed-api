@@ -16,7 +16,7 @@ const app = new App({
 import configuration from './configuration'
 import profiles from './profiles'
 import jobs from './jobs'
-import commandProfile from './slashCommands/profile'
+import * as commandProfile from './slashCommands/profile'
 import commandLatestProfiles from './slashCommands/latestProfiles'
 import setUserJoinDate from './event/setUserJoinDate'
 
@@ -51,7 +51,7 @@ app.event('team_join', async ({ context }) => {
 })
 
 app.command('/profile', async ({ command, ack, respond }) => {
-  const profile = await commandProfile(command.text)
+  const profile = await commandProfile.view(command.text)
 
   await respond(profile)
 

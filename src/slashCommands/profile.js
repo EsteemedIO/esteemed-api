@@ -1,52 +1,76 @@
-import { loadUsers, allProfiles, format } from './../util/userProfiles'
+import * as userProfiles from './../util/userProfiles'
 
-export default async handle => {
-  try {
-    return Promise.all([loadUsers(), allProfiles()])
-      .then(([users, profiles]) => {
-        const requestedUser = users.find(user => user.name === handle.replace('@', '')) || false
+export async function view(handle) {
+  let blocks
 
-        if (requestedUser) {
-          const externalProfile = profiles.find(profile => profile.id === requestedUser.id)
-          const text = format(requestedUser.profile, externalProfile)
+  const usersAndProfiles = await loadUsersAndProfiles()
 
-          if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
-            // text += "\n" + "<" + profiles[requestedUser.id].drupal_profile + "|" + profiles[requestedUser.id].drupal_bio + ">"
-          }
-
-          if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
-            // text += "\n" + "<" + profiles[requestedUser.id].wp_profile + "|" + profiles[requestedUser.id].wp_bio + ">"
-          }
-
-          return [
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: text
-              },
-              accessory: {
-                type: 'image',
-                image_url: requestedUser.profile.image_192,
-                alt_text: requestedUser.profile.real_name
-              }
-            }
-          ]
-        } else {
-          return [
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: 'Wrong Username'
-              }
-            }
-          ]
+  if (usersAndProfiles.error) {
+    blocks = [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: usersAndProfiles.error
         }
-      })
-      .then(blocks => ({ response_type: 'in_channel', blocks: blocks }))
-      .catch(e => console.log(e))
-  } catch (e) {
-    console.log(e)
+      }
+    ]
+    return { response_type: 'in_channel', blocks: blocks }
   }
+
+  const allUsers = usersAndProfiles.allUsers
+  const allProfiles = usersAndProfiles.allProfiles
+
+  const requestedUser = allUsers.find(user => user.name === handle.replace('@', '')) || false
+
+  if (requestedUser) {
+    const externalProfile = allProfiles.find(profile => profile.id === requestedUser.id)
+    const text = userProfiles.format(requestedUser.profile, externalProfile)
+
+    if (Object.prototype.hasOwnProperty.call(allProfiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
+      // text += "\n" + "<" + allProfiles[requestedUser.id].drupal_profile + "|" + allProfiles[requestedUser.id].drupal_bio + ">"
+    }
+
+    if (Object.prototype.hasOwnProperty.call(allProfiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
+      // text += "\n" + "<" + allProfiles[requestedUser.id].wp_profile + "|" + allProfiles[requestedUser.id].wp_bio + ">"
+    }
+
+    blocks = [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: text
+        },
+        accessory: {
+          type: 'image',
+          image_url: requestedUser.profile.image_192,
+          alt_text: requestedUser.profile.real_name
+        }
+      }
+    ]
+  } else {
+    blocks = [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: 'Wrong Username'
+        }
+      }
+    ]
+  }
+
+  return { response_type: 'in_channel', blocks: blocks }
+}
+
+const loadUsersAndProfiles = async () => {
+  try {
+    return await Promise.all([userProfiles.loadUsers(), userProfiles.allProfiles()])
+      .then(([users, allProfiles]) => ({
+          allUsers: users,
+          allProfiles: allProfiles
+        }))
+      .catch(error => console.error(error))
+  } catch (error) { console.error(error) }
 }
