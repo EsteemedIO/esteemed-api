@@ -26,6 +26,9 @@ provider:
     SLACK_CHANNELS: ${ssm:/${self:provider.stage}/allowedChannels~true}
     TRAVIS_TOKEN: ${ssm:/${self:provider.stage}/travisToken~true}
     GOOGLE_MAPS: ${ssm:/${self:provider.stage}/googleMaps~true}
+    GOOGLE_DRIVE_CREDENTIALS: ${ssm:/${self:provider.stage}/googleDrive~true}
+    GOOGLE_DRIVE_TOKEN: ${ssm:/${self:provider.stage}/googleDriveToken~true}
+    TEMPLATE_RESUME_DOC_ID: ${ssm:/${self:provider.stage}/googleResumeTemplate~true}
   iamRoleStatements:
     - Effect: "Allow"
       Action:

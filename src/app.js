@@ -66,6 +66,14 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
   await ack()
 })
 
+app.command('/create-resume', async ({ ack, command, respond }) => {
+  const resume = await profile.createResume(command.text)
+
+  await respond(resume)
+
+  await ack()
+})
+
 app.command('/jobs-list', async ({ ack, command, respond }) => {
   const jobs = await listJobs(command.user_id)
 
