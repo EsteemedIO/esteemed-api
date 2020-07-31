@@ -178,7 +178,7 @@ export async function createResume (profile, externalProfile) {
     requests = addReplaceAllText(requests, '{{SUMMARY_CONTENT}}', externalProfile.summary ? externalProfile.summary : '')
 
     if (externalProfile.skills) {
-      externalProfile.skills.forEach((skill, index) => {
+      externalProfile.skills.map((skill, index) => {
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_skill_item + (index + 1) + '}}', skill)
 
         if (externalProfile.skills.length === index + 1) {
@@ -188,8 +188,8 @@ export async function createResume (profile, externalProfile) {
     }
 
     if (externalProfile.other_skills) {
-      externalProfile.other_skills.forEach((other_skills, index) => {
-        requests = addReplaceAllText(requests, '{{' + keyValue.doc_other_skill_item + (index + 1) + '}}', other_skills)
+      externalProfile.skills.map((other_skill, index) => {
+        requests = addReplaceAllText(requests, '{{' + keyValue.doc_other_skill_item + (index + 1) + '}}', other_skill)
 
         if (externalProfile.other_skills.length === index + 1) {
           requests = addReplaceAllText(requests, '{{' + keyValue.doc_other_skill_item + (index + 2) + '}}', '')
@@ -198,13 +198,13 @@ export async function createResume (profile, externalProfile) {
     }
 
     if (externalProfile.languages) {
-      externalProfile.languages.forEach((lang, index) => {
+      externalProfile.languages.map((lang, index) => {
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_lang_item + (index + 1) + '}}', lang)
       })
     }
 
     if (externalProfile.experience) {
-      externalProfile.experience.forEach((exp, index) => {
+      externalProfile.experience.map((exp, index) => {
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_exp_position + (index + 1) + '}}', exp.position)
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_exp_from + (index + 1) + '}}', exp.from)
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_exp_to + (index + 1) + '}}', exp.to)
@@ -214,7 +214,7 @@ export async function createResume (profile, externalProfile) {
     }
 
     if (externalProfile.projects) {
-      externalProfile.projects.forEach((proj, index) => {
+      externalProfile.projects.map((proj, index) => {
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_proj_title + (index + 1) + '}}', proj.title)
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_proj_url + (index + 1) + '}}', proj.url)
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_proj_from + (index + 1) + '}}', proj.from)
@@ -224,7 +224,7 @@ export async function createResume (profile, externalProfile) {
     }
 
     if (externalProfile.education) {
-      externalProfile.education.forEach((edu, index) => {
+      externalProfile.education.map((edu, index) => {
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_edu_place_name + (index + 1) + '}}', edu.university)
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_edu_from + (index + 1) + '}}', edu.from)
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_edu_to + (index + 1) + '}}', edu.to)
@@ -233,80 +233,52 @@ export async function createResume (profile, externalProfile) {
     }
 
     if (externalProfile.certificates) {
-      externalProfile.certificates.forEach((cert, index) => {
+      externalProfile.certificates.map((cert, index) => {
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_cert_title + (index + 1) + '}}', cert.title)
         requests = addReplaceAllText(requests, '{{' + keyValue.doc_cert_date + (index + 1) + '}}', cert.date)
       })
     }
 
     if (externalProfile.skills) {
-      for (let i = 0; i < maxSkillRows - Math.ceil(externalProfile.skills.length / 2); i++) {
-        requests = addDeleteTableRow(requests, namedRanges.skills.namedRanges[0].ranges[0].startIndex, Math.ceil(externalProfile.skills.length / 2))
-      }
+      requests = addDeleteTableRow(requests, namedRanges.skills.namedRanges[0].ranges[0].startIndex, Math.ceil(externalProfile.skills.length / 2), maxSkillRows - Math.ceil(externalProfile.skills.length / 2))
     } else {
-      for (let i = 0; i < maxSkillRows; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.skills.namedRanges[0].ranges[0].startIndex, 0)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.skills.namedRanges[0].ranges[0].startIndex, 0, maxSkillRows)
     }
 
     if (externalProfile.other_skills) {
-      for (let i = 0; i < maxOtherSkillRows - Math.ceil(externalProfile.other_skills.length / 2); i++) {
-        requests = addDeleteTableRow(requests, namedRanges.other_skills.namedRanges[0].ranges[0].startIndex, Math.ceil(externalProfile.other_skills.length / 2))
-      }
+      requests = addDeleteTableRow(requests, namedRanges.other_skills.namedRanges[0].ranges[0].startIndex, Math.ceil(externalProfile.other_skills.length / 2), maxOtherSkillRows - Math.ceil(externalProfile.other_skills.length / 2))
     } else {
-      for (let i = 0; i < maxOtherSkillRows; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.other_skills.namedRanges[0].ranges[0].startIndex, 0)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.other_skills.namedRanges[0].ranges[0].startIndex, 0, maxOtherSkillRows)
     }
 
     if (externalProfile.experience) {
-      for (let i = 0; i < maxExperienceRows - externalProfile.experience.length; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.experience.namedRanges[0].ranges[0].startIndex, externalProfile.experience.length)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.experience.namedRanges[0].ranges[0].startIndex, externalProfile.experience.length, maxExperienceRows - externalProfile.experience.length)
     } else {
-      for (let i = 0; i < maxExperienceRows; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.experience.namedRanges[0].ranges[0].startIndex, 0)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.experience.namedRanges[0].ranges[0].startIndex, 0, maxExperienceRows)
     }
 
     if (externalProfile.projects) {
-      for (let i = 0; i < maxProjectRows - externalProfile.projects.length; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.projects.namedRanges[0].ranges[0].startIndex, externalProfile.projects.length)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.projects.namedRanges[0].ranges[0].startIndex, externalProfile.projects.length, maxProjectRows - externalProfile.projects.length)
     } else {
-      for (let i = 0; i < maxProjectRows; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.projects.namedRanges[0].ranges[0].startIndex, 0)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.projects.namedRanges[0].ranges[0].startIndex, 0, maxProjectRows)
     }
 
     if (externalProfile.education) {
-      for (let i = 0; i < maxEducationRows - externalProfile.education.length; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.education.namedRanges[0].ranges[0].startIndex, externalProfile.education.length)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.education.namedRanges[0].ranges[0].startIndex, externalProfile.education.length, maxEducationRows - externalProfile.education.length)
     } else {
-      for (let i = 0; i < maxEducationRows; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.education.namedRanges[0].ranges[0].startIndex, 0)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.education.namedRanges[0].ranges[0].startIndex, 0, maxEducationRows)
     }
 
     if (externalProfile.certificates) {
-      for (let i = 0; i < maxCertificateRows - externalProfile.certificates.length; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.certificates.namedRanges[0].ranges[0].startIndex, externalProfile.certificates.length)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.certificates.namedRanges[0].ranges[0].startIndex, externalProfile.certificates.length, maxCertificateRows - externalProfile.certificates.length)
     } else {
-      for (let i = 0; i < maxCertificateRows; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.certificates.namedRanges[0].ranges[0].startIndex, 0)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.certificates.namedRanges[0].ranges[0].startIndex, 0, maxCertificateRows)
     }
 
     if (externalProfile.languages) {
-      for (let i = 0; i < maxLanguageRows - externalProfile.languages.length; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.languages.namedRanges[0].ranges[0].startIndex, externalProfile.languages.length)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.languages.namedRanges[0].ranges[0].startIndex, externalProfile.languages.length, maxLanguageRows - externalProfile.languages.length)
     } else {
-      for (let i = 0; i < maxLanguageRows; i++) {
-        requests = addDeleteTableRow(requests, namedRanges.languages.namedRanges[0].ranges[0].startIndex, 0)
-      }
+      requests = addDeleteTableRow(requests, namedRanges.languages.namedRanges[0].ranges[0].startIndex, 0, maxLanguageRows)
     }
   }
 
@@ -363,18 +335,24 @@ const addReplaceImage = (requests, imageObjectId, imageURI) => {
   ]
 }
 
-const addDeleteTableRow = (requests, startIndex, rowIndex) => {
-  return [
-    {
-      deleteTableRow: {
-        tableCellLocation: {
-          tableStartLocation: {
-            index: startIndex
-          },
-          rowIndex: rowIndex
+const addDeleteTableRow = (requests, startIndex, rowIndex, repeatCount) => {
+  let emptyArr = new Array(repeatCount);
+
+  Array.from(emptyArr, () => {
+    requests = [
+      {
+        deleteTableRow: {
+          tableCellLocation: {
+            tableStartLocation: {
+              index: startIndex
+            },
+            rowIndex: rowIndex
+          }
         }
-      }
-    },
-    ...requests
-  ]
+      },
+      ...requests
+    ];
+  });
+
+  return requests;
 }
