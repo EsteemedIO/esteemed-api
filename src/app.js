@@ -1,5 +1,6 @@
 import { createServer, proxy } from 'aws-serverless-express'
 import { App, ExpressReceiver } from '@slack/bolt'
+import { SNS } from 'aws-sdk'
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET
@@ -67,11 +68,25 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
 })
 
 app.command('/create-resume', async ({ ack, command, respond }) => {
-  const resume = await commandProfile.createResume(command.text)
+  const sns = new SNS()
+  const params = {
+    Message: JSON.stringify({
+      function: 'generate-resume',
+      params: command.text,
+    }),
+    TopicArn: process.env.SNS_TOPIC_ARN,
+  }
 
-  await respond(resume)
-
-  await ack()
+  sns.publish(params, async (error, data) => {
+    if (error) {
+      console.error(error)
+      await ack('Failed adding to the queue.')
+    } else {
+      // create a resonse
+      console.log(data)
+      await ack('Successfully added to the queue.')
+    }
+  })
 })
 
 app.command('/jobs-list', async ({ ack, command, respond }) => {
