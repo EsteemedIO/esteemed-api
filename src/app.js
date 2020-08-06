@@ -67,7 +67,7 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
 })
 
 app.command('/create-resume', async ({ ack, command, respond }) => {
-  const resume = await profile.createResume(command.text)
+  const resume = await commandProfile.createResume(command.text)
 
   await respond(resume)
 
