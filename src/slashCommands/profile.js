@@ -66,7 +66,7 @@ export async function view(handle) {
   return { response_type: 'in_channel', blocks: blocks }
 }
 
-export async function createResume(userId) {
+export async function createResume(handle) {
   let blocks
   const usersAndProfiles = await loadUsersAndProfiles()
 
@@ -86,8 +86,8 @@ export async function createResume(userId) {
 
   const allUsers = usersAndProfiles.allUsers
   const allProfiles = usersAndProfiles.allProfiles
-  const currentUser = allUsers.find(user => user.id === userId)
-  let currentExternalProfile = allProfiles.find(profile => profile.id === userId)
+  const requestedUser = allUsers.find(user => user.name === handle.replace('@', '')) || false
+  let currentExternalProfile = allProfiles.find(user => user.name === handle.replace('@', '')) || false
 
   // TODO remove START
   const tempExternalProfile = {
