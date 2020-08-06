@@ -1,5 +1,5 @@
 import * as userProfiles from './../util/userProfiles'
-import { createResume } from '../util/googleDocAPI'
+import * as drive from '../util/googleDocAPI'
 import db from '../util/dynamodb'
 
 export async function view(handle) {
@@ -175,7 +175,7 @@ export async function createResume(userId) {
 
     return { response_type: 'ephemeral', blocks: blocks }
   } else {
-    const docCreationResp = await createResume(currentUser.profile, currentExternalProfile)
+    const docCreationResp = await drive.createResume(requestedUser.profile, currentExternalProfile)
 
     if (docCreationResp.success) {
       await updateProfileResumeURL(userId, docCreationResp.resumeURL)
