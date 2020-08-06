@@ -70,7 +70,7 @@ export async function createResume(handle) {
   let blocks
   const usersAndProfiles = await loadUsersAndProfiles()
 
-  if (usersAndProfiles.error) {
+  if (usersAndProfiles.length === 0) {
     blocks = [
       {
         type: 'section',
@@ -231,7 +231,6 @@ const loadUsersAndProfiles = async () => {
           allUsers: users,
           allProfiles: allProfiles
         }))
-      .catch(error => console.error(error))
   } catch (error) { console.error(error) }
 }
 
