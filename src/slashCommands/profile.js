@@ -158,7 +158,7 @@ export async function createResume(handle) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "*Looks like you have your resume already.*"
+          text: `*${requestedUser.real_name}'s (previously generated) resume link*`
         }
       },
       {
@@ -184,7 +184,7 @@ export async function createResume(handle) {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: "*Your resume link*"
+            text: `*${requestedUser.real_name}'s resume link*`
           }
         },
         {
