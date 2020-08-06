@@ -178,7 +178,7 @@ export async function createResume(handle) {
     const docCreationResp = await drive.createResume(requestedUser.profile, currentExternalProfile)
 
     if (docCreationResp.success) {
-      await updateProfileResumeURL(userId, docCreationResp.resumeURL)
+      await updateProfileResumeURL(requestedUser.id, docCreationResp.resumeURL)
       blocks = [
         {
           type: "section",
