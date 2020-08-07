@@ -1,6 +1,5 @@
 import { createServer, proxy } from 'aws-serverless-express'
 import { App, ExpressReceiver } from '@slack/bolt'
-import { SNS } from 'aws-sdk'
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET
@@ -21,6 +20,7 @@ import * as commandProfile from './slashCommands/profile'
 import commandLatestProfiles from './slashCommands/latestProfiles'
 import setUserJoinDate from './event/setUserJoinDate'
 
+import sns from './util/sns'
 import { listJobs, addJobForm, addJob, editJobForm, addJobNoteForm, confirmApplication, updateJob, updateNotes, saveApplication } from './slashCommands/job'
 import * as profileHome from './event/profileHome'
 import * as wp from './blocks/wp'
@@ -68,7 +68,6 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
 })
 
 app.command('/create-resume', async ({ ack, command, respond }) => {
-  const sns = new SNS()
   const params = {
     Message: JSON.stringify({
       function: 'generate-resume',

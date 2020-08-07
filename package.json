@@ -22,10 +22,11 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.4",
+    "serverless-bundle": "^2.0.0",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-ngrok-tunnel": "0.0.3",
     "serverless-offline": "^6.4.0",
-    "serverless-bundle": "^2.0.0",
+    "serverless-offline-sns": "^0.68.0",
     "standard": "^14.3.4"
   }
 }

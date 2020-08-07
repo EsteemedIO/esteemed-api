@@ -16,6 +16,9 @@ custom:
   mySnsTopic: "dispatch"
   #mySnsTopicArn: { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:",  { "Ref" : "AWS::AccountId" }, ":${self:custom.mySnsTopic}" ] ]  }
   mySnsTopicArn: "arn:aws:sns:${self:provider.region}:346496949995:${self:custom.mySnsTopic}"
+  serverless-offline-sns:
+    port: 4002
+    debug: false
 
 provider:
   name: aws
@@ -127,6 +130,7 @@ resources:
 
 plugins:
   - serverless-offline
+  - serverless-offline-sns
   - serverless-ngrok-tunnel
   - serverless-dynamodb-local
   - serverless-bundle
