@@ -14,11 +14,11 @@ export default res => {
       },
       {
         key: 'backend',
-        value: 'Backend Developer'
+        value: 'Back-end Developer'
       },
       {
         key: 'frontend',
-        value: 'Frontend Developer'
+        value: 'Front-end Developer'
       },
       {
         key: 'full_stack',

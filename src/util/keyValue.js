@@ -1,8 +1,8 @@
 export default {
   architect: 'Architect',
   art_director: 'Art Director',
-  backend: 'Backend Developer',
-  frontend: 'Frontend Developer',
+  backend: 'Back-end Developer',
+  frontend: 'Front-end Developer',
   full_stack: 'Full-Stack Developer',
   pm: 'Project Manager',
   qa_tester: 'QA Tester',
