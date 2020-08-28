@@ -45,9 +45,9 @@ export default async (req, res, next) => {
               languages: externalProfile.languages ? externalProfile.languages : [],
               skills: externalProfile.skills ? externalProfile.skills : [],
               citizenship: externalProfile.citizen ? externalProfile.citizen : '',
-              drupal_bio: profiles[user.id] ? profiles[user.id].drupal_bio : '',
-              wp_experience: profiles[user.id] ? profiles[user.id].wp_experience : '',
-              wp_bio: profiles[user.id] ? profiles[user.id].wp_bio : ''
+              drupal_bio: externalProfile.drupal_bio ? externalProfile.drupal_bio : '',
+              wp_experience: externalProfile.wp_experience ? externalProfile.wp_experience : '',
+              wp_bio: externalProfile.wp_bio ? externalProfile.wp_bio : ''
             }
           }
         }
