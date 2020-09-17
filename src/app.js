@@ -15,13 +15,12 @@ const app = new App({
 
 import configuration from './configuration'
 import profiles from './profiles'
-import jobs from './jobs'
 import commandProfile from './slashCommands/profile'
 import commandLatestProfiles from './slashCommands/latestProfiles'
 import setUserJoinDate from './event/setUserJoinDate'
 
-import { listJobs, addJobForm, addJob, editJobForm, addJobNoteForm, confirmApplication, updateJob, updateNotes, saveApplication } from './slashCommands/job'
 import * as profileHome from './event/profileHome'
+import * as jobs from './slashCommands/job'
 import * as wp from './blocks/wp'
 import * as drupal from './blocks/drupal'
 import * as location from './blocks/location'
@@ -67,16 +66,14 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
 })
 
 app.command('/jobs-list', async ({ ack, command, respond }) => {
-  const jobs = await listJobs(command.user_id)
-
-  await respond(jobs)
+  await respond(jobs.listJobs(command.user_id))
 
   await ack()
 })
 
 app.command('/add-job', async ({ ack, command, context, client }) => {
   try {
-    const jobForm = await addJobForm(command.user_id)
+    const jobForm = await jobs.addJobForm(command.user_id)
 
     const result = await client.views.open({
       token: context.botToken,
@@ -132,7 +129,7 @@ app.action({ block_id: 'locality' }, async ({ context, client, body, ack }) => {
 })
 
 app.action('edit_job', async ({ action, ack, context, client, body }) => {
-  const jobForm = await editJobForm(action.value, body.user.id)
+  const jobForm = await jobs.editJobForm(action.value, body.user.id)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -145,7 +142,7 @@ app.action('edit_job', async ({ action, ack, context, client, body }) => {
 })
 
 app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
-  const jobNotesForm = await addJobNoteForm(action.value)
+  const jobNotesForm = await jobs.addJobNoteForm(action.value)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -187,19 +184,19 @@ app.action(/^(titles|skills|builders|languages|cms|date_available|availability|c
 
 // Views submissions.
 app.view('add_job', async ({ view, ack }) => {
-  await addJob(view.state.values)
+  await jobs.addJob(view.state.values)
 
   await ack()
 })
 
 app.view('edit_job', async ({ ack, view }) => {
-  await updateJob(view.private_metadata, view.state.values)
+  await jobs.updateJob(view.private_metadata, view.state.values)
 
   await ack()
 })
 
 app.view('add_job_notes', async ({ ack, body, view }) => {
-  await updateNotes(view.private_metadata, body.user.id, view.state.values)
+  await jobs.updateNotes(view.private_metadata, body.user.id, view.state.values)
 
   await ack()
 })
@@ -240,6 +237,9 @@ app.view('update_wp_profile', async ({ ack, body, view }) => {
 // Endpoints.
 receiver.router.get('/config', (req, res) => configuration(res))
 receiver.router.get('/profiles', (req, res, next) => profiles(req, res, next))
-receiver.router.get('/jobs', (req, res, next) => jobs(res, next))
+receiver.router.get('/jobs', async (req, res, next) => {
+  const allJobs = await jobs.getJobs()
+  res.send(jobs.apiFormat(allJobs))
+})
 
 export function handler(event, context) { return proxy(server, event, context) }
