@@ -43,6 +43,28 @@ export async function getUser(userId) {
     return console.log(err)
   }
 }
+export async function setUserJoinDate(user) {
+  const date = new Date(user.updated * 1000)
+
+  // Add join date.
+  const params = {
+    TableName: 'profiles',
+    Key: {
+      id: user.id
+    },
+    UpdateExpression: 'set join_date = :join_date',
+    ExpressionAttributeValues: {
+      ':join_date': date.toISOString().split('T')[0]
+    }
+  }
+  console.log('user joined: ', params)
+
+  await db.update(params).promise()
+    .then(res => console.log(res))
+    .catch(e => console.log(e))
+
+  return {}
+}
 
 export function format(profile, externalProfile) {
   let text = `*Name:* ${profile.real_name}

@@ -17,13 +17,13 @@ import configuration from './configuration'
 import profiles from './profiles'
 import commandProfile from './slashCommands/profile'
 import commandLatestProfiles from './slashCommands/latestProfiles'
-import setUserJoinDate from './event/setUserJoinDate'
 
 import * as profileHome from './event/profileHome'
 import * as jobs from './slashCommands/job'
 import * as wp from './blocks/wp'
 import * as drupal from './blocks/drupal'
 import * as location from './blocks/location'
+import * as userProfiles from './util/userProfiles'
 
 // Events.
 app.event('app_home_opened', async ({ event, context, client }) => {
@@ -43,7 +43,7 @@ app.event('app_home_opened', async ({ event, context, client }) => {
 
 app.event('team_join', async ({ event }) => {
   try {
-    await setUserJoinDate(event.user)
+    await userProfiles.setUserJoinDate(event.user)
   } catch (error) {
     console.error(error)
   }
