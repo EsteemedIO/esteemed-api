@@ -42,9 +42,9 @@ app.event('app_home_opened', async ({ event, context, client }) => {
   }
 })
 
-app.event('team_join', async ({ context }) => {
+app.event('team_join', async ({ event }) => {
   try {
-    await setUserJoinDate(context.user)
+    await setUserJoinDate(event.user)
   } catch (error) {
     console.error(error)
   }
