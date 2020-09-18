@@ -16,10 +16,11 @@ const app = new App({
 import configuration from './configuration'
 import profiles from './profiles'
 import jobs from './jobs'
-import commandProfile from './slashCommands/profile'
+import * as commandProfile from './slashCommands/profile'
 import commandLatestProfiles from './slashCommands/latestProfiles'
 import setUserJoinDate from './event/setUserJoinDate'
 
+import sns from './util/sns'
 import { listJobs, addJobForm, addJob, editJobForm, addJobNoteForm, confirmApplication, updateJob, updateNotes, saveApplication } from './slashCommands/job'
 import * as profileHome from './event/profileHome'
 import * as wp from './blocks/wp'
@@ -51,7 +52,7 @@ app.event('team_join', async ({ event }) => {
 })
 
 app.command('/profile', async ({ command, ack, respond }) => {
-  const profile = await commandProfile(command.text)
+  const profile = await commandProfile.view(command.text)
 
   await respond(profile)
 
@@ -64,6 +65,27 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
   await respond(profiles)
 
   await ack()
+})
+
+app.command('/create-resume', async ({ ack, command, respond }) => {
+  const params = {
+    Message: JSON.stringify({
+      function: 'generate-resume',
+      params: command.text,
+    }),
+    TopicArn: process.env.SNS_TOPIC_ARN,
+  }
+
+  sns.publish(params, async (error, data) => {
+    if (error) {
+      console.error(error)
+      await ack('Failed adding to the queue.')
+    } else {
+      // create a resonse
+      console.log(data)
+      await ack('Successfully added to the queue.')
+    }
+  })
 })
 
 app.command('/jobs-list', async ({ ack, command, respond }) => {

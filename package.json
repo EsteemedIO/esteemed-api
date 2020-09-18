@@ -17,14 +17,16 @@
     "aws-sdk": "^2.723.0",
     "aws-serverless-express": "^3.3.8",
     "axios": "^0.19.2",
-    "crypto": "^1.0.1"
+    "crypto": "^1.0.1",
+    "googleapis": "^39.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4",
+    "serverless-bundle": "^2.0.0",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-ngrok-tunnel": "0.0.3",
     "serverless-offline": "^6.4.0",
-    "serverless-bundle": "^2.0.0",
+    "serverless-offline-sns": "^0.68.0",
     "standard": "^14.3.4"
   }
 }

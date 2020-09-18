@@ -13,6 +13,12 @@ custom:
       - dev
   bundle:
     linting: false
+  mySnsTopic: "dispatch"
+  #mySnsTopicArn: { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:",  { "Ref" : "AWS::AccountId" }, ":${self:custom.mySnsTopic}" ] ]  }
+  mySnsTopicArn: "arn:aws:sns:${self:provider.region}:346496949995:${self:custom.mySnsTopic}"
+  serverless-offline-sns:
+    port: 4002
+    debug: false
 
 provider:
   name: aws
@@ -26,6 +32,10 @@ provider:
     SLACK_CHANNELS: ${ssm:/${self:provider.stage}/allowedChannels~true}
     TRAVIS_TOKEN: ${ssm:/${self:provider.stage}/travisToken~true}
     GOOGLE_MAPS: ${ssm:/${self:provider.stage}/googleMaps~true}
+    GOOGLE_DRIVE_CREDENTIALS: ${ssm:/${self:provider.stage}/googleDrive~true}
+    GOOGLE_DRIVE_TOKEN: ${ssm:/${self:provider.stage}/googleDriveToken~true}
+    TEMPLATE_RESUME_DOC_ID: ${ssm:/${self:provider.stage}/googleResumeTemplate~true}
+    SNS_TOPIC_ARN: ${self:custom.mySnsTopicArn}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -50,6 +60,10 @@ provider:
         - ssm:Get*
         - ssm:List*
       Resource: "arn:aws:ssm:${self:provider.region}:*:*"
+    - Effect: Allow
+      Action:
+        - SNS:Publish
+      Resource: { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:", { "Ref" : "AWS::AccountId" }, ":${self:custom.mySnsTopic}" ] ]  }
 
 functions:
   app:
@@ -76,6 +90,10 @@ functions:
               - JobsTable
               - StreamArn
           batchSize: 1
+  dispatcher:
+    handler: src/util/dispatcher.dispatch
+    events:
+      - sns: dispatch
 
 resources:
   Resources:
@@ -112,6 +130,7 @@ resources:
 
 plugins:
   - serverless-offline
+  - serverless-offline-sns
   - serverless-ngrok-tunnel
   - serverless-dynamodb-local
   - serverless-bundle
