@@ -43,6 +43,50 @@ export async function getUser(userId) {
     return console.log(err)
   }
 }
+
+export async function getProfile(userId) {
+  const params = {
+    TableName: 'profiles',
+    Key: {
+      id: userId
+    }
+  }
+
+  return (await db.get(params).promise().then(({ Item }) => Item) || {})
+}
+
+export async function updateProfile(user, action) {
+  let values = []
+
+  switch (action.type) {
+    case 'static_select':
+      values = action.selected_option.value
+      break
+    case 'multi_static_select':
+      values = action.selected_options.map(option => option.value)
+      break
+    case 'datepicker':
+      values = action.selected_date
+      break
+  }
+
+  // Update profile data.
+  const params = {
+    TableName: 'profiles',
+    Key: {
+      id: user
+    },
+    UpdateExpression: 'set ' + action.action_id + ' = :v',
+    ExpressionAttributeValues: {
+      ':v': values
+    }
+  }
+
+  await db.update(params).promise()
+    .then(res => console.log(res))
+    .catch(e => console.log(e))
+}
+
 export async function setUserJoinDate(user) {
   const date = new Date(user.updated * 1000)
 

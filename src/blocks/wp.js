@@ -1,26 +1,24 @@
 import db from '../util/dynamodb'
 import keyValue from '../util/keyValue'
 
-export function blocks() {
-  return [
-    {
-      type: 'section',
-      block_id: 'wp_profile',
+export const blocks = [
+  {
+    type: 'section',
+    block_id: 'wp_profile',
+    text: {
+      type: 'mrkdwn',
+      text: 'Click the button to the right to edit your WP profile'
+    },
+    accessory: {
+      type: 'button',
       text: {
-        type: 'mrkdwn',
-        text: 'Click the button to the right to edit your WP profile'
+        type: 'plain_text',
+        text: 'Edit WP Profile'
       },
-      accessory: {
-        type: 'button',
-        text: {
-          type: 'plain_text',
-          text: 'Edit WP Profile'
-        },
-        value: 'wp_profile'
-      }
+      value: 'wp_profile'
     }
-  ]
-}
+  }
+]
 
 export async function modal(user) {
   const params = {

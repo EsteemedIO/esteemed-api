@@ -2,7 +2,7 @@ import { Client, Status } from '@googlemaps/google-maps-services-js'
 
 import db from '../util/dynamodb'
 
-export async function modal() {
+export async function modal(locality) {
   return {
     title: {
       type: 'plain_text',
@@ -18,22 +18,31 @@ export async function modal() {
       text: 'Cancel'
     },
     type: 'modal',
-    blocks: [{
-      type: 'input',
-      block_id: 'update_location',
-      element: {
-        type: 'plain_text_input',
-        action_id: 'val',
-        placeholder: {
-          type: 'plain_text',
-          text: 'i.e. Olympia, WA'
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: '*Current Location:* ' + locality
         }
       },
-      label: {
-        type: 'plain_text',
-        text: 'Location'
+      {
+        type: 'input',
+        block_id: 'update_location',
+        element: {
+          type: 'plain_text_input',
+          action_id: 'val',
+          placeholder: {
+            type: 'plain_text',
+            text: 'i.e. Olympia, WA'
+          }
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Search for new location'
+        }
       }
-    }]
+    ]
   }
 }
 

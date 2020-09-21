@@ -18,22 +18,26 @@ import profiles from './profiles'
 import commandProfile from './slashCommands/profile'
 import commandLatestProfiles from './slashCommands/latestProfiles'
 
-import * as profileHome from './event/profileHome'
 import * as jobs from './slashCommands/job'
+import defaultBlocks from './blocks/profile'
 import * as wp from './blocks/wp'
 import * as drupal from './blocks/drupal'
 import * as location from './blocks/location'
+import * as home from './blocks/home'
 import * as userProfiles from './util/userProfiles'
+import * as slackFormData from './util/slackFormData'
+import * as tasks from './util/tasks'
 
 // Events.
 app.event('app_home_opened', async ({ event, context, client }) => {
   try {
-    const home = await profileHome.get(event.user)
-
     const result = await client.views.publish({
       token: context.botToken,
       user_id: event.user,
-      view: home
+      view: {
+        type: 'home',
+        blocks: await home.view(event.user)
+      }
     })
     console.log(result)
   } catch (error) {
@@ -61,12 +65,13 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
   const profiles = await commandLatestProfiles(command.user_id)
 
   await respond(profiles)
-
-  await ack()
 })
 
 app.command('/jobs-list', async ({ ack, command, respond }) => {
-  await respond(jobs.listJobs(command.user_id))
+  const jobsAll = await jobs.listJobs(command.user_id)
+  jobsAll.response_type = 'in_channel'
+
+  await respond(jobsAll)
 
   await ack()
 })
@@ -89,6 +94,35 @@ app.command('/add-job', async ({ ack, command, context, client }) => {
 })
 
 // Actions.
+app.action('edit_profile', async ({ action, ack, context, client, body }) => {
+  const profile = await userProfiles.getProfile(body.user.id)
+  const modal = slackFormData.set(defaultBlocks, profile)
+
+  await client.views.open({
+    token: context.botToken,
+    trigger_id: body.trigger_id,
+    view: {
+      callback_id: 'edit_profile',
+      type: "modal",
+      title: {
+        "type": "plain_text",
+        "text": "Edit Profile",
+      },
+      submit: {
+        "type": "plain_text",
+        "text": "Submit",
+      },
+      close: {
+        "type": "plain_text",
+        "text": "Cancel",
+      },
+      blocks: modal
+    }
+  })
+
+  await ack()
+})
+
 app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }) => {
   const modal = await drupal.modal(body.user.id)
 
@@ -115,8 +149,9 @@ app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) =>
   await ack()
 })
 
-app.action({ block_id: 'locality' }, async ({ context, client, body, ack }) => {
-  const modal = await location.modal()
+app.action('locality', async ({ context, client, body, ack }) => {
+  const profile = await userProfiles.getProfile(body.user.id)
+  const modal = await location.modal(profile.locality)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -168,16 +203,22 @@ app.action('apply_btn', async ({ action, ack, context, client, body }) => {
 })
 
 app.action(/^(titles|skills|builders|languages|cms|date_available|availability|citizen|english)$/, async ({ ack, body, action, context, client }) => {
-  await profileHome.update(body.user.id, action)
+  await userProfiles.updateProfile(body.user.id, action)
 
-  const home = await profileHome.get(body.user.id)
+  await ack()
+})
 
-  const result = await client.views.publish({
+app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action, body }) => {
+  await tasks.updateUserTasks(body.user.id, action.value)
+
+  await client.views.publish({
     token: context.botToken,
     user_id: body.user.id,
-    view: home
+    view: {
+      type: 'home',
+      blocks: await home.view(body.user.id)
+    }
   })
-  console.log(result)
 
   await ack()
 })
@@ -210,12 +251,13 @@ app.view('confirm_app', async ({ ack, body, view }) => {
 app.view('update_location', async ({ ack, body, view, context, client }) => {
   await location.update(body.user.id, view.state.values.update_location.val.value)
 
-  const home = await profileHome.get(body.user.id)
-
   const result = await client.views.publish({
     token: context.botToken,
     user_id: body.user.id,
-    view: home
+    view: {
+      type: 'home',
+      blocks: home
+    }
   })
   console.log(result)
 
@@ -231,6 +273,23 @@ app.view('update_drupal_profile', async ({ ack, body, view }) => {
 app.view('update_wp_profile', async ({ ack, body, view }) => {
   await wp.updateProfile(body.user.id, view.state.values)
 
+  await ack()
+})
+
+app.view('edit_profile', async ({ client, body, context, ack }) => {
+  try {
+    const result = await client.views.publish({
+      token: context.botToken,
+      user_id: body.user.id,
+      view: {
+        type: 'home',
+        blocks: await home.view(body.user.id)
+      }
+    })
+    console.log(result)
+  } catch (error) {
+    console.error(error)
+  }
   await ack()
 })
 

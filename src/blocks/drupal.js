@@ -1,26 +1,24 @@
 import db from '../util/dynamodb'
 import verifyData from '../util/verifyData'
 
-export function blocks() {
-  return [
-    {
-      type: 'section',
-      block_id: 'drupal_profile',
+export const blocks = [
+  {
+    type: 'section',
+    block_id: 'drupal_profile',
+    text: {
+      type: 'mrkdwn',
+      text: 'Click the button to the right to edit your Drupal profile'
+    },
+    accessory: {
+      type: 'button',
       text: {
-        type: 'mrkdwn',
-        text: 'Click the button to the right to edit your Drupal profile'
+        type: 'plain_text',
+        text: 'Edit Drupal Profile'
       },
-      accessory: {
-        type: 'button',
-        text: {
-          type: 'plain_text',
-          text: 'Edit Drupal Profile'
-        },
-        value: 'drupal_profile'
-      }
+      value: 'drupal_profile'
     }
-  ]
-}
+  }
+]
 
 export async function modal(user) {
   const params = {
