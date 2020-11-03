@@ -57,8 +57,8 @@ export async function view(userId) {
     const profile = await userProfiles.getProfile(userId)
 
     // Add buttons for each property.
-    if (profile.cms.includes('drupal')) homeBlocks = [...homeBlocks, ...drupal.blocks]
-    if (profile.cms.includes('wordpress')) homeBlocks = [...homeBlocks, ...wp.blocks]
+    if (profile && profile.cms && profile.cms.includes('drupal')) homeBlocks = [...homeBlocks, ...drupal.blocks]
+    if (profile && profile.cms && profile.cms.includes('wordpress')) homeBlocks = [...homeBlocks, ...wp.blocks]
 
     /*
     // Add job board.
