@@ -45,12 +45,14 @@ app.event('app_home_opened', async ({ event, context, client }) => {
   }
 })
 
-app.event('team_join', async ({ event }) => {
-  try {
-    await userProfiles.setUserJoinDate(event.user)
-  } catch (error) {
-    console.error(error)
-  }
+app.event('team_join', async ({ event, ack }) => {
+  let profile = await userProfiles.setUserJoinDate(event.user)
+
+  console.log('profile: ', profile)
+
+  await ack()
+
+  console.log('User added!')
 })
 
 app.command('/profile', async ({ command, ack, respond }) => {

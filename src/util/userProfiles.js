@@ -89,25 +89,19 @@ export async function updateProfile(user, action) {
 
 export async function setUserJoinDate(user) {
   const date = new Date(user.updated * 1000)
+  const join_date = date.toISOString().split('T')[0]
 
   // Add join date.
   const params = {
     TableName: 'profiles',
-    Key: {
-      id: user.id
-    },
-    UpdateExpression: 'set join_date = :join_date',
-    ExpressionAttributeValues: {
-      ':join_date': date.toISOString().split('T')[0]
+    Item: {
+      id: user.id,
+      join_date: join_date
     }
   }
   console.log('user joined: ', params)
 
-  await db.update(params).promise()
-    .then(res => console.log(res))
-    .catch(e => console.log(e))
-
-  return {}
+  return await db.put(params).promise()
 }
 
 export function format(profile, externalProfile) {
