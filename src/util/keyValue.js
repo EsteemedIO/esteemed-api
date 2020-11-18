@@ -6,7 +6,7 @@ export default {
   full_stack: 'Full-Stack Developer',
   pm: 'Project Manager',
   qa_tester: 'QA Tester',
-  sys_admin: 'System Administrator',
+  sys_admin: 'Sys Admin',
   ux_designer: 'UX Designer',
   visual_designer: 'Visual Designer',
   api: 'APIs',

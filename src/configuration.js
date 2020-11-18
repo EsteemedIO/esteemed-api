@@ -34,7 +34,7 @@ export default res => {
       },
       {
         key: 'sys_admin',
-        value: 'System Administrator'
+        value: 'Sys Admin'
       },
       {
         key: 'ux_designer',
