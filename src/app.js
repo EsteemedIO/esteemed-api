@@ -233,19 +233,19 @@ app.view('add_job', async ({ view, ack }) => {
 })
 
 app.view('edit_job', async ({ ack, view }) => {
-  await jobs.updateJob(view.private_metadata, view.state.values)
+  await jobs.update(view.private_metadata, view.state.values)
 
   await ack()
 })
 
 app.view('add_job_notes', async ({ ack, body, view }) => {
-  await jobs.updateNotes(view.private_metadata, body.user.id, view.state.values)
+  await jobs.update(view.private_metadata, body.user.id, { notes: view.state.values })
 
   await ack()
 })
 
 app.view('confirm_app', async ({ ack, body, view }) => {
-  await saveApplication(view.private_metadata, body.user.id)
+  await job.update(view.private_metadata, { applicants: body.user.id })
 
   await ack()
 })

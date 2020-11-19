@@ -1,6 +1,5 @@
-import profiles from '../profiles'
 import * as userProfiles from '../util/userProfiles'
-import db from '../util/dynamodb'
+import { profiles } from '../util/db'
 
 export const getTasks = [
   {
@@ -73,7 +72,7 @@ export async function filterUserTasks(profile) {
 }
 
 export async function getUserTasks(userId) {
-  const profile = await userProfiles.getProfile(userId)
+  const profile = await profiles.get(userId)
 
   return getTasks.map(item => {
     let completed = false
@@ -97,20 +96,7 @@ export async function updateUserTasks(userId, task) {
       return item
     }))
 
-  const params = {
-    TableName: 'profiles',
-    Key: {
-      id: userId
-    },
-    UpdateExpression: 'set tasks = :v',
-    ExpressionAttributeValues: {
-      ':v': tasks
-    }
-  }
-
-  await db.update(params).promise()
-    .then(res => console.log(res))
-    .catch(e => console.log(e))
+  await profiles.update(userId, { tasks: tasks })
 }
 
 export async function userTaskBlocks(userId) {

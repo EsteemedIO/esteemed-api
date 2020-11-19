@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import db from '../util/dynamodb'
+import { jobs } from '../util/db'
 import jobsForm from '../blocks/jobsForm'
 import notesForm from '../blocks/notesForm'
 import keyValue from '../util/keyValue'
@@ -162,18 +162,7 @@ export async function saveApplication(jobId, userId) {
     applicants = applicants.concat(job.applicants)
   }
 
-  const params = {
-    TableName: 'jobs',
-    Key: {
-      id: jobId
-    },
-    UpdateExpression: 'set applicants = :applicants',
-    ExpressionAttributeValues: {
-      ':applicants': applicants
-    }
-  }
-
-  return await db.update(params).promise()
+  return await jobs.update(jobId, { applicants: applicants })
 }
 
 export async function addJob(job) {
@@ -184,50 +173,12 @@ export async function addJob(job) {
   item.id = crypto.createHash('md5').update(created).digest('hex').substring(0, 12)
   item.created = created
 
-  const params = {
-    TableName: 'jobs',
-    Item: item
-  }
-
-  return await db.put(params).promise()
+  return await jobs.post(item)
 }
 
 export async function updateJob(jobId, values) {
   const job = slackFormData.get(values)
-  const params = {
-    TableName: 'jobs',
-    Key: {
-      id: jobId
-    },
-    UpdateExpression: 'set attendance = :attendance, categories = :categories, description = :description, #duration = :duration, engagement = :engagement, experience = :experience, location_req = :location_req, start_date = :start_date, title = :title, weekly_hours = :weekly_hours, rate_client = :rate_client, rate_esteemed = :rate_esteemed, #timezone = :timezone, skills = :skills',
-    ExpressionAttributeValues: {
-      ':attendance': job.attendance,
-      ':categories': job.categories,
-      ':description': job.description,
-      ':duration': job.duration,
-      ':engagement': job.engagement,
-      ':experience': job.experience,
-      ':location_req': job.location_req,
-      ':start_date': job.start_date,
-      ':title': job.title,
-      ':weekly_hours': job.weekly_hours,
-      ':rate_client': job.rate_client,
-      ':rate_esteemed': job.rate_esteemed,
-      ':timezone': job.timezone,
-      ':skills': job.skills
-    },
-    ExpressionAttributeNames: {
-      '#duration': 'duration',
-      '#timezone': 'timezone'
-    }
-  }
-
-  if (job.active !== undefined) {
-    params.UpdateExpression = params.UpdateExpression + ', active = :active'
-    params.ExpressionAttributeValues[':active'] = job.active
-  }
-
-  return await db.update(params).promise()
+  return await jobs.update(jobId, job)
 }
 
 export async function addJobForm(userId) {
@@ -350,36 +301,12 @@ export async function updateNotes(jobId, userId, values) {
     notes = notes.concat(job.notes)
   }
 
-  const params = {
-    TableName: 'jobs',
-    Key: {
-      id: jobId
-    },
-    UpdateExpression: 'set notes = :notes',
-    ExpressionAttributeValues: {
-      ':notes': notes
-    }
-  }
-
-  return await db.update(params).promise()
+  return await jobs.update(jobId, { notes: notes })
 }
 
 export async function getJobs(item = null) {
   try {
-    const params = {
-      TableName: 'jobs'
-    }
-
-    if (item !== null) {
-      params.Key = { id: item }
-      return await db.get(params).promise()
-        .then(({ Item }) => Item)
-        .catch(e => console.log(e))
-    } else {
-      return await db.scan(params).promise()
-        .then(({ Items }) => Items)
-        .catch(e => console.log(e))
-    }
+    return await jobs.get(item)
   } catch (e) {
     console.log(e)
 

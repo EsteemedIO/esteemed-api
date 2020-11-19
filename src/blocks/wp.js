@@ -1,4 +1,4 @@
-import db from '../util/dynamodb'
+import { profiles } from '../util/db'
 import keyValue from '../util/keyValue'
 
 export const blocks = [
@@ -21,13 +21,7 @@ export const blocks = [
 ]
 
 export async function modal(user) {
-  const params = {
-    TableName: 'profiles',
-    Key: {
-      id: user
-    }
-  }
-  const profile = (await db.get(params).promise().then(({ Item }) => Item) || {})
+  const profile = await profiles.get(user)
 
   const modal = {
     title: {
@@ -120,19 +114,10 @@ export async function modal(user) {
 
 export async function updateProfile(user, values) {
   // Update profile data.
-  const params = {
-    TableName: 'profiles',
-    Key: {
-      id: user
-    },
-    UpdateExpression: 'set wp_experience = :wp_experience, wp_bio = :wp_bio',
-    ExpressionAttributeValues: {
-      ':wp_experience': values.wp_experience.val.selected_option.value,
-      ':wp_bio': values.wp_bio.val.value
+  await profiles.update(user,
+    {
+      wp_experience: values.wp_experience.val.selected_option.value,
+      wp_bio: values.wp_bio.val.value
     }
-  }
-
-  await db.update(params).promise()
-    .then(res => console.log(res))
-    .catch(e => console.log(e))
+  )
 }
