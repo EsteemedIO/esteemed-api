@@ -192,7 +192,7 @@ app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
 })
 
 app.action('apply_btn', async ({ action, ack, context, client, body }) => {
-  const confirmForm = await confirmApplication(action.value)
+  const confirmForm = await jobs.confirmApplication(action.value)
 
   const result = await client.views.open({
     token: context.botToken,
