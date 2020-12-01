@@ -46,12 +46,10 @@ app.event('app_home_opened', async ({ event, context, client }) => {
   }
 })
 
-app.event('team_join', async ({ event, ack }) => {
+app.event('team_join', async ({ event }) => {
   let profile = await userProfiles.setUserJoinDate(event.user)
 
   console.log('profile: ', profile)
-
-  await ack()
 
   console.log('User added!')
 })
