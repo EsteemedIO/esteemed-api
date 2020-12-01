@@ -2,7 +2,8 @@ import { createServer, proxy } from 'aws-serverless-express'
 import { App, ExpressReceiver } from '@slack/bolt'
 
 const receiver = new ExpressReceiver({
-  signingSecret: process.env.SLACK_SIGNING_SECRET
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  processBeforeResponse: true
 })
 
 const server = createServer(receiver.app)
