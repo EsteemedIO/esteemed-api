@@ -257,7 +257,7 @@ app.view('update_location', async ({ ack, body, view, context, client }) => {
     user_id: body.user.id,
     view: {
       type: 'home',
-      blocks: home
+      blocks: await home.view(body.user.id)
     }
   })
   console.log(result)
