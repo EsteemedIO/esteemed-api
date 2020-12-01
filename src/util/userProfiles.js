@@ -1,5 +1,5 @@
 import { WebClient } from '@slack/web-api'
-import db from '../util/dynamodb'
+import { profiles } from '../util/db'
 import keyValue from '../util/keyValue'
 const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 
@@ -27,11 +27,7 @@ export async function loadChannelMembers(channel) {
 }
 
 export async function allProfiles() {
-  var params = {
-    TableName: 'profiles'
-  }
-
-  return await db.scan(params).promise().then(({ Items }) => Items)
+  return profiles.getAll()
 }
 
 export async function getUser(userId) {
@@ -45,14 +41,7 @@ export async function getUser(userId) {
 }
 
 export async function getProfile(userId) {
-  const params = {
-    TableName: 'profiles',
-    Key: {
-      id: userId
-    }
-  }
-
-  return (await db.get(params).promise().then(({ Item }) => Item) || {})
+  return await profiles.get(userId)
 }
 
 export async function updateProfile(user, action) {
@@ -71,20 +60,7 @@ export async function updateProfile(user, action) {
   }
 
   // Update profile data.
-  const params = {
-    TableName: 'profiles',
-    Key: {
-      id: user
-    },
-    UpdateExpression: 'set ' + action.action_id + ' = :v',
-    ExpressionAttributeValues: {
-      ':v': values
-    }
-  }
-
-  await db.update(params).promise()
-    .then(res => console.log(res))
-    .catch(e => console.log(e))
+  await profiles.update(user, { [action.action_id]: values })
 }
 
 export async function setUserJoinDate(user) {
@@ -92,16 +68,7 @@ export async function setUserJoinDate(user) {
   const join_date = date.toISOString().split('T')[0]
 
   // Add join date.
-  const params = {
-    TableName: 'profiles',
-    Item: {
-      id: user.id,
-      join_date: join_date
-    }
-  }
-  console.log('user joined: ', params)
-
-  return await db.put(params).promise()
+  return profiles.update(user.id, { join_date })
 }
 
 export function format(profile, externalProfile) {

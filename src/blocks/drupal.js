@@ -1,5 +1,5 @@
-import db from '../util/dynamodb'
 import verifyData from '../util/verifyData'
+import { profiles } from '../util/db'
 
 export const blocks = [
   {
@@ -21,13 +21,7 @@ export const blocks = [
 ]
 
 export async function modal(user) {
-  const params = {
-    TableName: 'profiles',
-    Key: {
-      id: user
-    }
-  }
-  const profile = (await db.get(params).promise().then(({ Item }) => Item) || {})
+  const profile = await profiles.get(user)
 
   return {
     title: {
@@ -93,21 +87,13 @@ export async function updateProfile(user, values) {
     const drupalProfile = 'https://drupal.org' + new URL(values.drupal_profile.val.value).pathname
 
     // Update profile data.
-    const params = {
-      TableName: 'profiles',
-      Key: {
-        id: user
-      },
-      UpdateExpression: 'set drupal_profile = :drupal_profile, drupal_bio = :drupal_bio',
-      ExpressionAttributeValues: {
-        ':drupal_profile': drupalProfile,
-        ':drupal_bio': values.drupal_bio.val.value
+    await profiles.update(
+      user,
+      {
+        drupal_profile: drupalProfile,
+        drupal_bio: values.drupal_bio.val.value
       }
-    }
-
-    await db.update(params).promise()
-      .then(res => console.log(res))
-      .catch(e => console.log(e))
+    )
   } catch (error) {
     console.error(error)
   }

@@ -1,6 +1,5 @@
 import { Client, Status } from '@googlemaps/google-maps-services-js'
-
-import db from '../util/dynamodb'
+import { profiles } from '../util/db'
 
 export async function modal(locality) {
   return {
@@ -75,18 +74,5 @@ export async function update(user, locality) {
     })
 
   // Update profile data.
-  const params = {
-    TableName: 'profiles',
-    Key: {
-      id: user
-    },
-    UpdateExpression: 'set locality = :locality',
-    ExpressionAttributeValues: {
-      ':locality': location
-    }
-  }
-
-  await db.update(params).promise()
-    .then(res => console.log(res))
-    .catch(e => console.log(e))
+  await profiles.update(user, { locality: location })
 }
