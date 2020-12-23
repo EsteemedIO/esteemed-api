@@ -2,6 +2,12 @@ export function get(data) {
   return Object.keys(data).reduce((acc, key) => {
     const item = data[key]
 
+    // Kludge fix for BH country codes.
+    if (item.bh_country_codes) {
+      acc[key] = item.bh_country_codes.selected_option.value
+      return acc
+    }
+
     if (
       item.val.type === 'static_select' ||
       item.val.type === 'radio_buttons'

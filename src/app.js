@@ -25,6 +25,7 @@ import * as wp from './blocks/wp'
 import * as drupal from './blocks/drupal'
 import * as location from './blocks/location'
 import * as home from './blocks/home'
+import countryCodes from './util/countryCodes'
 import * as userProfiles from './util/userProfiles'
 import * as slackFormData from './util/slackFormData'
 import * as tasks from './util/tasks'
@@ -250,7 +251,7 @@ app.view('confirm_app', async ({ ack, body, view }) => {
 })
 
 app.view('update_location', async ({ ack, body, view, context, client }) => {
-  await location.update(body.user.id, view.state.values.update_location.val.value)
+  await location.update(body.user.id, view.state.values)
 
   const result = await client.views.publish({
     token: context.botToken,
@@ -292,6 +293,13 @@ app.view('edit_profile', async ({ client, body, context, ack }) => {
     console.error(error)
   }
   await ack()
+})
+
+app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
+  // Return the country list filtered by the inputted search string.
+  ack({
+    options: countryCodes.filter(i => i.text.text.toLowerCase().indexOf(options.value.toLowerCase()) >= 0)
+  })
 })
 
 // Endpoints.

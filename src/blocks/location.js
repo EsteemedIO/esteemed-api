@@ -1,16 +1,17 @@
-import { Client, Status } from '@googlemaps/google-maps-services-js'
 import { profiles } from '../util/db'
+import { get as getSlackData } from '../util/slackFormData'
+import { countryOption } from '../util/countryCodes'
 
-export async function modal(locality) {
+export function modal(location) {
   return {
     title: {
       type: 'plain_text',
-      text: 'Location'
+      text: 'Address'
     },
     callback_id: 'update_location',
     submit: {
       type: 'plain_text',
-      text: 'Lookup'
+      text: 'Save'
     },
     close: {
       type: 'plain_text',
@@ -19,26 +20,107 @@ export async function modal(locality) {
     type: 'modal',
     blocks: [
       {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: '*Current Location:* ' + locality
-        }
-      },
-      {
         type: 'input',
-        block_id: 'update_location',
+        block_id: 'address1',
         element: {
           type: 'plain_text_input',
           action_id: 'val',
+          initial_value: location.address1 ? location.address1 : '',
           placeholder: {
             type: 'plain_text',
-            text: 'i.e. Olympia, WA'
+            text: 'Address 1',
           }
         },
         label: {
           type: 'plain_text',
-          text: 'Search for new location'
+          text: 'Address',
+        }
+      },
+      {
+        type: 'input',
+        block_id: 'address2',
+        optional: true,
+        element: {
+          type: 'plain_text_input',
+          action_id: 'val',
+          initial_value: location.address2 ? location.address2 : '',
+          placeholder: {
+            type: 'plain_text',
+            text: 'Address 2',
+          }
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Address2'
+        }
+      },
+      {
+        type: 'input',
+        block_id: 'city',
+        element: {
+          type: 'plain_text_input',
+          action_id: 'val',
+          initial_value: location.city ? location.city : '',
+          placeholder: {
+            type: 'plain_text',
+            text: 'City',
+          }
+        },
+        label: {
+          type: 'plain_text',
+          text: 'City'
+        }
+      },
+      {
+        type: 'input',
+        block_id: 'state',
+        element: {
+          type: 'plain_text_input',
+          action_id: 'val',
+          initial_value: location.state ? location.state : '',
+          placeholder: {
+            type: 'plain_text',
+            text: 'State',
+          }
+        },
+        label: {
+          type: 'plain_text',
+          text: 'State'
+        }
+      },
+      {
+        type: 'input',
+        block_id: 'zip',
+        element: {
+          type: 'plain_text_input',
+          action_id: 'val',
+          initial_value: location.zip ? location.zip : '',
+          placeholder: {
+            type: 'plain_text',
+            text: 'Zip',
+          }
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Zip'
+        }
+      },
+      {
+        type: 'input',
+        block_id: 'countryID',
+        element: {
+          type: 'external_select',
+          action_id: 'bh_country_codes',
+          initial_option: location.countryID ? countryOption(location.countryID) : countryOption('2378'),
+          placeholder: {
+            type: 'plain_text',
+            text: 'Country',
+          },
+          min_query_length: 3
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Country'
         }
       }
     ]
@@ -46,33 +128,6 @@ export async function modal(locality) {
 }
 
 export async function update(user, locality) {
-  const client = new Client({})
-  const location = await client.geocode({
-    params: {
-      address: locality,
-      key: process.env.GOOGLE_MAPS
-    },
-    timeout: 1000
-  })
-    .then(r => {
-      if (r.data.status === Status.OK) {
-        const addressElements = ['administrative_area_level_1', 'locality', 'country']
-        return r.data.results[0].address_components
-          .filter(component => component.types.some(type => addressElements.includes(type)))
-          .reduce((acc, item, index, src) => {
-            if (index < src.length - 1) {
-              return acc + item.long_name + ', '
-            }
-            return acc + item.short_name
-          }, '')
-      } else {
-        console.log(r.data.error_message)
-      }
-    })
-    .catch((e) => {
-      console.log(e)
-    })
-
   // Update profile data.
-  await profiles.update(user, { locality: location })
+  return profiles.update(user, { location: getSlackData(locality) })
 }
