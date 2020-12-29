@@ -56,11 +56,11 @@ app.event('team_join', async ({ event }) => {
 })
 
 app.command('/profile', async ({ command, ack, respond }) => {
+  await ack()
+
   const profile = await commandProfile(command.text)
 
   await respond(profile)
-
-  await ack()
 })
 
 app.command('/profiles-latest', async ({ ack, command, respond }) => {
@@ -70,15 +70,17 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
 })
 
 app.command('/jobs-list', async ({ ack, command, respond }) => {
+  await ack()
+
   const jobsAll = await jobs.listJobs(command.user_id)
   jobsAll.response_type = 'in_channel'
 
   await respond(jobsAll)
-
-  await ack()
 })
 
 app.command('/add-job', async ({ ack, command, context, client }) => {
+  await ack()
+
   try {
     const jobForm = await jobs.addJobForm(command.user_id)
 
@@ -88,8 +90,6 @@ app.command('/add-job', async ({ ack, command, context, client }) => {
       view: jobForm
     })
     console.log(result)
-
-    await ack()
   } catch (error) {
     console.error(error)
   }
@@ -97,6 +97,8 @@ app.command('/add-job', async ({ ack, command, context, client }) => {
 
 // Actions.
 app.action('edit_profile', async ({ action, ack, context, client, body }) => {
+  await ack()
+
   const profile = await userProfiles.getProfile(body.user.id)
   const modal = slackFormData.set(defaultBlocks, profile)
 
@@ -121,11 +123,11 @@ app.action('edit_profile', async ({ action, ack, context, client, body }) => {
       blocks: modal
     }
   })
-
-  await ack()
 })
 
 app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }) => {
+  await ack()
+
   const modal = await drupal.modal(body.user.id)
 
   const result = await client.views.open({
@@ -161,11 +163,11 @@ app.action('locality', async ({ context, client, body, ack }) => {
     view: modal
   })
   console.log(result)
-
-  await ack()
 })
 
 app.action('edit_job', async ({ action, ack, context, client, body }) => {
+  await ack()
+
   const jobForm = await jobs.editJobForm(action.value, body.user.id)
 
   const result = await client.views.open({
@@ -174,11 +176,11 @@ app.action('edit_job', async ({ action, ack, context, client, body }) => {
     view: jobForm
   })
   console.log(result)
-
-  await ack()
 })
 
 app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
+  await ack()
+
   const jobNotesForm = await jobs.addJobNoteForm(action.value)
 
   const result = await client.views.open({
@@ -187,11 +189,11 @@ app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
     view: jobNotesForm
   })
   console.log(result)
-
-  await ack()
 })
 
 app.action('apply_btn', async ({ action, ack, context, client, body }) => {
+  await ack()
+
   const confirmForm = await jobs.confirmApplication(action.value)
 
   const result = await client.views.open({
@@ -200,17 +202,16 @@ app.action('apply_btn', async ({ action, ack, context, client, body }) => {
     view: confirmForm
   })
   console.log(result)
-
-  await ack()
 })
 
 app.action(/^(titles|skills|builders|languages|cms|date_available|availability|citizen|english)$/, async ({ ack, body, action, context, client }) => {
-  await userProfiles.updateProfile(body.user.id, action)
-
   await ack()
+
+  await userProfiles.updateProfile(body.user.id, action)
 })
 
 app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action, body }) => {
+  await ack()
   await tasks.updateUserTasks(body.user.id, action.value)
 
   await client.views.publish({
@@ -221,36 +222,35 @@ app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action
       blocks: await home.view(body.user.id)
     }
   })
-
-  await ack()
 })
 
 // Views submissions.
 app.view('add_job', async ({ view, ack }) => {
-  await jobs.addJob(view.state.values)
-
   await ack()
+
+  await jobs.addJob(view.state.values)
 })
 
 app.view('edit_job', async ({ ack, view }) => {
-  await jobs.update(view.private_metadata, view.state.values)
-
   await ack()
+
+  await jobs.update(view.private_metadata, view.state.values)
 })
 
 app.view('add_job_notes', async ({ ack, body, view }) => {
-  await jobs.update(view.private_metadata, body.user.id, { notes: view.state.values })
-
   await ack()
+
+  await jobs.update(view.private_metadata, body.user.id, { notes: view.state.values })
 })
 
 app.view('confirm_app', async ({ ack, body, view }) => {
-  await job.update(view.private_metadata, { applicants: body.user.id })
-
   await ack()
+
+  await job.update(view.private_metadata, { applicants: body.user.id })
 })
 
 app.view('update_location', async ({ ack, body, view, context, client }) => {
+  await ack()
   await location.update(body.user.id, view.state.values)
 
   const result = await client.views.publish({
@@ -262,23 +262,23 @@ app.view('update_location', async ({ ack, body, view, context, client }) => {
     }
   })
   console.log(result)
-
-  await ack()
 })
 
 app.view('update_drupal_profile', async ({ ack, body, view }) => {
-  await drupal.updateProfile(body.user.id, view.state.values)
-
   await ack()
+
+  await drupal.updateProfile(body.user.id, view.state.values)
 })
 
 app.view('update_wp_profile', async ({ ack, body, view }) => {
-  await wp.updateProfile(body.user.id, view.state.values)
-
   await ack()
+
+  await wp.updateProfile(body.user.id, view.state.values)
 })
 
 app.view('edit_profile', async ({ client, body, context, ack }) => {
+  await ack()
+
   try {
     const result = await client.views.publish({
       token: context.botToken,
@@ -292,7 +292,6 @@ app.view('edit_profile', async ({ client, body, context, ack }) => {
   } catch (error) {
     console.error(error)
   }
-  await ack()
 })
 
 app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
