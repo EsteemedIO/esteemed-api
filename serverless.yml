@@ -20,6 +20,7 @@ provider:
   region: us-east-1
   stage: prod
   memorySize: 192
+  timeout: 10
   environment:
     SLACK_TOKEN_BOT: ${ssm:/${self:provider.stage}/slackTokenBot~true}
     SLACK_SIGNING_SECRET: ${ssm:/${self:provider.stage}/slackSigning~true}
