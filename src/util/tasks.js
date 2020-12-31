@@ -77,7 +77,7 @@ export async function getUserTasks(userId) {
   return getTasks.map(item => {
     let completed = false
     if (profile.tasks) {
-      let userTaskValue = profile.tasks.find(task => task.id === item.id)
+      let userTaskValue = JSON.parse(profile.tasks).find(task => task.id === item.id)
       completed = userTaskValue && userTaskValue.completed ? true : false
     }
 
@@ -96,7 +96,7 @@ export async function updateUserTasks(userId, task) {
       return item
     }))
 
-  await profiles.update(userId, { tasks: tasks })
+  await profiles.update(userId, { tasks: JSON.stringify(tasks) })
 }
 
 export async function userTaskBlocks(userId) {

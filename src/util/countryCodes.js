@@ -253,10 +253,16 @@ const bhCountryCodeMap = {
   "2370": "Zimbabwe",
 }
 
-export default Object.keys(bhCountryCodeMap).map(key => ({
+export function countryOption(key) {
+  return {
     text: {
       type: 'plain_text',
       text: bhCountryCodeMap[key]
     },
-    value: key
-  }))
+    value: key.toString()
+  }
+}
+
+export function countryOptions() {
+  return Object.keys(bhCountryCodeMap).map(key => countryOption(key))
+}

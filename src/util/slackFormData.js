@@ -1,3 +1,5 @@
+import keyValue from './keyValue'
+
 export function get(data) {
   return Object.keys(data).reduce((acc, key) => {
     const item = data[key]
@@ -31,7 +33,15 @@ export function set(blocks, record) {
       const value = record[block.accessory.action_id]
 
       if (value.length > 0 || value.value) {
-        if (block.accessory.type === 'static_select') {
+        console.log(block.accessory.type, value)
+        if (block.accessory.action_id == 'skills') {
+          // Condition for how Bullhorn stores skills (by display, instead of value)
+          const skills = block.accessory.options.filter(option => value.includes(option.text.text))
+
+          if (skills.length > 0) {
+            block.accessory.initial_options = skills
+          }
+        } else if (block.accessory.type === 'static_select') {
           block.accessory.initial_option = block.accessory.options.find(option => option.value === value)
         } else if (block.accessory.type === 'datepicker') {
           block.accessory.initial_date = value

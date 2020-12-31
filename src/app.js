@@ -25,7 +25,7 @@ import * as wp from './blocks/wp'
 import * as drupal from './blocks/drupal'
 import * as location from './blocks/location'
 import * as home from './blocks/home'
-import countryCodes from './util/countryCodes'
+import { countryOptions } from './util/countryCodes'
 import * as userProfiles from './util/userProfiles'
 import * as slackFormData from './util/slackFormData'
 import * as tasks from './util/tasks'
@@ -33,14 +33,15 @@ import * as tasks from './util/tasks'
 // Events.
 app.event('app_home_opened', async ({ event, context, client }) => {
   try {
-    const result = await client.views.publish({
-      token: context.botToken,
+    const blocks = await home.view(event.user)
+    const view = {
       user_id: event.user,
       view: {
         type: 'home',
-        blocks: await home.view(event.user)
+        blocks: blocks,
       }
-    })
+    }
+    const result = await client.views.publish(view)
     console.log(result)
   } catch (error) {
     console.error(error)
@@ -64,6 +65,8 @@ app.command('/profile', async ({ command, ack, respond }) => {
 })
 
 app.command('/profiles-latest', async ({ ack, command, respond }) => {
+  await ack()
+
   const profiles = await commandLatestProfiles(command.user_id)
 
   await respond(profiles)
@@ -136,26 +139,26 @@ app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }
     view: modal
   })
   console.log(result)
-
-  await ack()
 })
 
 app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) => {
+  await ack()
+
   const modal = await wp.modal(body.user.id)
 
-  const result = await client.views.open({
+  const result = client.views.open({
     token: context.botToken,
     trigger_id: body.trigger_id,
     view: modal
   })
   console.log(result)
-
-  await ack()
 })
 
 app.action('locality', async ({ context, client, body, ack }) => {
+  await ack()
+
   const profile = await userProfiles.getProfile(body.user.id)
-  const modal = await location.modal(profile.locality)
+  const modal = location.modal(profile.location)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -207,19 +210,44 @@ app.action('apply_btn', async ({ action, ack, context, client, body }) => {
 app.action(/^(titles|skills|builders|languages|cms|date_available|availability|citizen|english)$/, async ({ ack, body, action, context, client }) => {
   await ack()
 
-  await userProfiles.updateProfile(body.user.id, action)
+  userProfiles.updateProfile(body.user.id, action)
 })
 
 app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action, body }) => {
   await ack()
-  await tasks.updateUserTasks(body.user.id, action.value)
+
+  // Get faux state.
+  const preBlockState = [...body.view.blocks].map(block => {
+    if (block.accessory && block.accessory.value == action.value) {
+      block.text = {
+        type: 'mrkdwn',
+        text: `:white_check_mark: ${block.text.text}`
+      }
+      delete block.accessory
+      console.log(block)
+    }
+    return block
+  })
 
   await client.views.publish({
     token: context.botToken,
     user_id: body.user.id,
     view: {
       type: 'home',
-      blocks: await home.view(body.user.id)
+      blocks: preBlockState,
+    }
+  })
+
+  // Update user.
+  await tasks.updateUserTasks(body.user.id, action.value)
+  const blocks = await home.view(body.user.id)
+
+  await client.views.publish({
+    token: context.botToken,
+    user_id: body.user.id,
+    view: {
+      type: 'home',
+      blocks: blocks,
     }
   })
 })
@@ -251,8 +279,6 @@ app.view('confirm_app', async ({ ack, body, view }) => {
 
 app.view('update_location', async ({ ack, body, view, context, client }) => {
   await ack()
-  await location.update(body.user.id, view.state.values)
-
   const result = await client.views.publish({
     token: context.botToken,
     user_id: body.user.id,
@@ -261,6 +287,7 @@ app.view('update_location', async ({ ack, body, view, context, client }) => {
       blocks: await home.view(body.user.id)
     }
   })
+  location.update(body.user.id, view.state.values)
   console.log(result)
 })
 
@@ -273,7 +300,7 @@ app.view('update_drupal_profile', async ({ ack, body, view }) => {
 app.view('update_wp_profile', async ({ ack, body, view }) => {
   await ack()
 
-  await wp.updateProfile(body.user.id, view.state.values)
+  wp.updateProfile(body.user.id, view.state.values)
 })
 
 app.view('edit_profile', async ({ client, body, context, ack }) => {
@@ -297,7 +324,7 @@ app.view('edit_profile', async ({ client, body, context, ack }) => {
 app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
   // Return the country list filtered by the inputted search string.
   ack({
-    options: countryCodes.filter(i => i.text.text.toLowerCase().indexOf(options.value.toLowerCase()) >= 0)
+    options: countryOptions().filter(i => i.text.text.toLowerCase().indexOf(options.value.toLowerCase()) >= 0)
   })
 })
 
