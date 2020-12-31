@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@googlemaps/google-maps-services-js": "^3.1.13",
     "@slack/bolt": "^2.5.0",
     "aws-sdk": "^2.800.0",
     "aws-serverless-express": "^3.3.8",
