@@ -7,18 +7,32 @@ import { fetch as bhFetch } from './bullhorn'
 const jobs = {
   get: async (item) => {
     const params = {
-      TableName: 'jobs'
+      fields: Object.keys(jobFields).join(','),
     }
-    if (item !== null) {
-      params.Key = { id: item }
-      return await db.get(params).promise()
-        .then(({ Item }) => Item)
-        .catch(e => console.log(e))
-    } else {
-      return await db.scan(params).promise()
-        .then(({ Items }) => Items)
-        .catch(e => console.log(e))
+
+    // Fetch the BH data, then re-assign values to proper keys.
+    return bhFetch(`entity/JobOrder/${item}?` + stringify(params))
+      .then(res => reassignBHValues(jobFields, res.data.data))
+      .catch(e => console.log(e))
+  },
+
+  getAll: async () => {
+    const params = {
+      fields: Object.keys(jobFields).join(','),
+      query: [
+        'isDeleted:false',
+        'isOpen:true',
+      ].join(' AND '),
+      count: 200,
     }
+
+    return await bhFetch('search/JobOrder?' + stringify(params))
+      .then(jobs => jobs.data.data.map(job => reassignBHValues(jobFields, job)))
+      .then(jobs => jobs.map(job => ({ ...job, ...{
+          startDate: job.startDate ? new Date(job.startDate).toISOString().split('T')[0] : null,
+          type: job.type ? ['Hot', 'Warm', 'Cold'][job.type - 1] : null,
+        }})))
+      .catch(e => console.log(e))
   },
 
   post: async (item) => {
@@ -111,7 +125,18 @@ const profiles = {
 const slackIdField = 'customText10'
 
 const jobFields = {
+  'id': 'id',
   'title': 'title',
+  'status': 'status',
+  'type': 'type',
+  'startDate': 'startDate',
+  'payRate': 'payRate',
+  'onSite': 'onSite',
+  'numOpenings': 'numOpenings',
+  'notes': 'notes',
+  'hoursPerWeek': 'hoursPerWeek',
+  'durationWeeks': 'durationWeeks',
+  'description': 'description',
 }
 
 const profileFields = {
