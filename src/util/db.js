@@ -53,7 +53,7 @@ const profiles = {
 
     // Fetch the BH data, then re-assign values to proper keys.
     return bhFetch('search/Candidate?' + stringify(params))
-      .then(res => reassignBHValues(res.data.data[0]))
+      .then(res => reassignBHValues(profileFields, res.data.data[0]))
       .then(res => ({ ...res, ...{
           skills: reduceSkills(res.skills),
           date_available: profile.date_available ? new Date(profile.date_available).toISOString().split('T')[0] : null,
@@ -102,7 +102,7 @@ const profiles = {
   update: async (slackId, values) => {
     const bhId = await profiles.getBHId(slackId)
 
-    return bhFetch(`entity/Candidate/${bhId}`, 'post', reassignSlackValues(values))
+    return bhFetch(`entity/Candidate/${bhId}`, 'post', reassignSlackValues(profileFields, values))
       .then(res => console.log(res))
       .catch(res => console.log(res))
   }
@@ -131,16 +131,16 @@ const profileFields = {
   'customTextBlock4': 'tasks',
 }
 
-const reassignBHValues = values => Object.keys(values).reduce((acc, key) => {
-    if (profileFields[key] != null) {
-      acc[profileFields[key]] = values[key]
+const reassignBHValues = (fields, values) => Object.keys(values).reduce((acc, key) => {
+    if (fields[key] != null) {
+      acc[fields[key]] = values[key]
     }
 
     return acc
   }, {})
 
-const reassignSlackValues = values => Object.keys(values).reduce((acc, key) => {
-      const mappedKey = Object.keys(profileFields).find(field => profileFields[field] == key)
+const reassignSlackValues = (fields, values) => Object.keys(values).reduce((acc, key) => {
+      const mappedKey = Object.keys(fields).find(field => fields[field] == key)
       if (key == 'date_available') {
         const [year, month, day] = values[key].split('-')
         acc[mappedKey] = new Date(year, month - 1, day).getTime()
