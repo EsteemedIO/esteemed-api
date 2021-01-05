@@ -19,6 +19,7 @@ import profiles from './profiles'
 import commandProfile from './slashCommands/profile'
 import commandLatestProfiles from './slashCommands/latestProfiles'
 
+import { jobs as dbJobs } from './util/db'
 import * as jobs from './slashCommands/job'
 import defaultBlocks from './blocks/profile'
 import * as wp from './blocks/wp'
@@ -331,9 +332,6 @@ app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
 // Endpoints.
 receiver.router.get('/config', (req, res) => configuration(res))
 receiver.router.get('/profiles', (req, res, next) => profiles(req, res, next))
-receiver.router.get('/jobs', async (req, res, next) => {
-  const allJobs = await jobs.getJobs()
-  res.send(jobs.apiFormat(allJobs))
-})
+receiver.router.get('/jobs', async (req, res, next) => dbJobs.getAll().then(job => res.send(job)))
 
 export function handler(event, context) { return proxy(server, event, context) }
