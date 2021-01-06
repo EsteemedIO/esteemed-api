@@ -44,18 +44,16 @@ app.event('app_home_opened', async ({ event, client }) => {
       }
     }
     const result = await client.views.publish(view)
-    console.log(result)
+    console.log('App Home opened by', event.user)
   } catch (error) {
-    console.error(error)
+    console.error('Error when opening App Home', error)
   }
 })
 
 app.event('team_join', async ({ event }) => {
   let profile = await userProfiles.setUserJoinDate(event.user)
 
-  console.log('profile: ', profile)
-
-  console.log('User added!')
+  console.log('User joined', event.user)
 })
 
 app.command('/profile', async ({ command, ack, respond }) => {
@@ -66,6 +64,8 @@ app.command('/profile', async ({ command, ack, respond }) => {
   const profile = await commandProfile(userId)
 
   await respond(profile)
+
+  console.log('Profile', userId, 'queried by', command.user_id)
 })
 
 app.command('/profiles-latest', async ({ ack, command, respond }) => {
@@ -74,6 +74,8 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
   const profiles = await commandLatestProfiles(command.user_id)
 
   await respond(profiles)
+
+  console.log('Latest profiles queried by', command.user_id)
 })
 
 app.command('/jobs-list', async ({ ack, command, respond }) => {
@@ -130,6 +132,8 @@ app.action('edit_profile', async ({ action, ack, context, client, body }) => {
       blocks: modal
     }
   })
+
+  console.log('Profile edit form open by user', body.user.id)
 })
 
 app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }) => {
@@ -142,7 +146,8 @@ app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }
     trigger_id: body.trigger_id,
     view: modal
   })
-  console.log(result)
+
+  console.log('Drupal profile form opened by user', body.user.id)
 })
 
 app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) => {
@@ -155,7 +160,8 @@ app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) =>
     trigger_id: body.trigger_id,
     view: modal
   })
-  console.log(result)
+
+  console.log('WP profile form opened by user', body.user.id)
 })
 
 app.action('locality', async ({ context, client, body, ack }) => {
@@ -169,7 +175,8 @@ app.action('locality', async ({ context, client, body, ack }) => {
     trigger_id: body.trigger_id,
     view: modal
   })
-  console.log(result)
+
+  console.log('Location information updated by', body.user.id)
 })
 
 app.action('edit_job', async ({ action, ack, context, client, body }) => {
@@ -182,6 +189,7 @@ app.action('edit_job', async ({ action, ack, context, client, body }) => {
     trigger_id: body.trigger_id,
     view: jobForm
   })
+
   console.log(result)
 })
 
@@ -215,6 +223,8 @@ app.action(/^(titles|skills|builders|languages|cms|date_available|availability|c
   await ack()
 
   userProfiles.updateProfile(body.user.id, action)
+
+  console.log(action, 'field updated by user', body.user.id)
 })
 
 app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action, body }) => {
@@ -228,7 +238,6 @@ app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action
         text: `:white_check_mark: ${block.text.text}`
       }
       delete block.accessory
-      console.log(block)
     }
     return block
   })
@@ -254,6 +263,8 @@ app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action
       blocks: blocks,
     }
   })
+
+  console.log(action.value, '- task completed by', body.user.id)
 })
 
 // Views submissions.
@@ -292,19 +303,24 @@ app.view('update_location', async ({ ack, body, view, context, client }) => {
     }
   })
   location.update(body.user.id, view.state.values)
-  console.log(result)
+
+  console.log('Location data updated by user', body.user.id)
 })
 
 app.view('update_drupal_profile', async ({ ack, body, view }) => {
   await ack()
 
   await drupal.updateProfile(body.user.id, view.state.values)
+
+  console.log('Drupal profile updated by user', body.user.id)
 })
 
 app.view('update_wp_profile', async ({ ack, body, view }) => {
   await ack()
 
   wp.updateProfile(body.user.id, view.state.values)
+
+  console.log('WP profile updated by user', body.user.id)
 })
 
 app.view('edit_profile', async ({ client, body, context, ack }) => {
@@ -319,7 +335,8 @@ app.view('edit_profile', async ({ client, body, context, ack }) => {
         blocks: await home.view(body.user.id)
       }
     })
-    console.log(result)
+
+    console.log('Profile updated by user', body.user.id)
   } catch (error) {
     console.error(error)
   }

@@ -70,7 +70,7 @@ const profiles = {
           skills: reduceSkills(profile.skills),
           date_available: profile.date_available ? new Date(profile.date_available).toISOString().split('T')[0] : null,
         }}))
-      .catch(e => console.log(e))
+      .catch(e => console.error(e))
   },
 
   getAll: async () => {
@@ -91,7 +91,7 @@ const profiles = {
           allRecords = allRecords.concat(res.data.data)
           return (res.data.data.length >= params.count) ? doQuery(allRecords.length) : allRecords
         })
-        .catch(e => console.log(e))
+        .catch(e => console.error(e))
     }
 
     return doQuery()
@@ -115,8 +115,7 @@ const profiles = {
     const bhId = await profiles.getBHId(slackId)
 
     return bhFetch(`entity/Candidate/${bhId}`, 'post', reassignSlackValues(profileFields, values))
-      .then(res => console.log(res))
-      .catch(res => console.log(res))
+      .catch(res => console.error(res))
   }
 }
 
