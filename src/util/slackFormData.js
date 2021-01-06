@@ -33,7 +33,6 @@ export function set(blocks, record) {
       const value = record[block.accessory.action_id] ? record[block.accessory.action_id] : ''
 
       if (value.length > 0 || value.value) {
-        console.log(block.accessory.type, value)
         if (block.accessory.action_id == 'skills') {
           // Condition for how Bullhorn stores skills (by display, instead of value)
           const skills = block.accessory.options.filter(option => value.includes(option.text.text))
