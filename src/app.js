@@ -33,7 +33,7 @@ import * as slackFormData from './util/slackFormData'
 import * as tasks from './util/tasks'
 
 // Events.
-app.event('app_home_opened', async ({ event, context, client }) => {
+app.event('app_home_opened', async ({ event, client }) => {
   try {
     const blocks = await home.view(event.user)
     const view = {
