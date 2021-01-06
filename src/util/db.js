@@ -1,6 +1,4 @@
 import { stringify } from 'qs'
-
-import db from './dynamodb'
 import { fetch as bhFetch } from './bullhorn'
 
 // Job Calls
@@ -36,24 +34,24 @@ const jobs = {
   },
 
   post: async (item) => {
-    const params = {
-      TableName: 'jobs',
-      Item: item
-    }
-    return await db.put(params).promise()
+//    const params = {
+//      TableName: 'jobs',
+//      Item: item
+//    }
+//    return await db.put(params).promise()
   },
 
   update: async (jobId, job) => {
-    const params = formatDBQuery(job)
-    params.TableName = 'jobs'
-    params.Key = { id: jobId }
-
-    if (job.active !== undefined) {
-      params.UpdateExpression = params.UpdateExpression + ', active = :active'
-      params.ExpressionAttributeValues[':active'] = job.active
-    }
-
-    return db.update(params).promise()
+//    const params = formatDBQuery(job)
+//    params.TableName = 'jobs'
+//    params.Key = { id: jobId }
+//
+//    if (job.active !== undefined) {
+//      params.UpdateExpression = params.UpdateExpression + ', active = :active'
+//      params.ExpressionAttributeValues[':active'] = job.active
+//    }
+//
+//    return db.update(params).promise()
   }
 }
 
@@ -178,46 +176,6 @@ const reassignSlackValues = (fields, values) => Object.keys(values).reduce((acc,
     }, {})
 
 const reduceSkills = skills => skills.data.map(skill => skill.name)
-
-// Todo: Remove this function.
-function formatDBQuery(query) {
-  const dynamoReservedWords = [
-    'duration',
-    'timezone'
-  ]
-
-  const updateExpression = Object.keys(query)
-    .map(field => {
-      // Account for reserved keywords in DynamoDB.
-      const hash = dynamoReservedWords.includes(field) ? '#' : ''
-      return `${hash}${field} = :${field}`
-    })
-    .join(', ')
-
-  const objKeys = Object.keys(query)
-
-  const expressionAttributeValues = objKeys
-    .reduce((acc, cur) => {
-      acc[`:${cur}`] = query[cur]
-      return acc
-    }, {})
-
-  const expressionAttributeNames = objKeys
-    .filter(field => dynamoReservedWords.includes(field))
-    .reduce((acc, cur) => {
-      acc[`#${cur}`] = cur
-      return acc
-    }, {})
-
-  const params = {
-    UpdateExpression: `set ${updateExpression}`,
-    ExpressionAttributeValues: expressionAttributeValues
-  }
-
-  if (Object.keys(expressionAttributeNames).length) { params.ExpressionAttributeNames = expressionAttributeNames }
-
-  return params
-}
 
 export {
   jobs,

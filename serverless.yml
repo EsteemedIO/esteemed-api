@@ -5,12 +5,6 @@ custom:
   ngrokTunnel:
     tunnels:
       - port: 3000
-  dynamodb:
-    start:
-      migrate: true
-      inMemory: false
-    stages:
-      - dev
   bundle:
     linting: false
 
@@ -22,16 +16,6 @@ provider:
   memorySize: 192
   timeout: 10
   iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:Scan
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource:
-        - { "Fn::GetAtt": ["profilesTable", "Arn"] }
-        - { "Fn::GetAtt": ["JobsTable", "Arn"] }
     - Effect: "Allow"
       Action:
         - logs:CreateLogGroup
@@ -47,59 +31,8 @@ functions:
           path: /{any+}
           method: ANY
           cors: true
-  streamFunction:
-    handler: src/streams.handler
-    events:
-      - stream:
-          type: dynamodb
-          arn:
-            Fn::GetAtt:
-              - profilesTable
-              - StreamArn
-          batchSize: 1
-      - stream:
-          type: dynamodb
-          arn:
-            Fn::GetAtt:
-              - JobsTable
-              - StreamArn
-          batchSize: 1
-
-resources:
-  Resources:
-    profilesTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: profiles
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
-    JobsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: jobs
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
 
 plugins:
   - serverless-offline
   - serverless-ngrok-tunnel
-  - serverless-dynamodb-local
   - serverless-bundle
