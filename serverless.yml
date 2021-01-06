@@ -15,13 +15,6 @@ provider:
   stage: prod
   memorySize: 192
   timeout: 10
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - logs:CreateLogGroup
-        - logs:PutLogEvents
-        - logs:CreateLogStream
-      Resource: "arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/esteemed-profile-dev-streamFunction:*"
 
 functions:
   app:
