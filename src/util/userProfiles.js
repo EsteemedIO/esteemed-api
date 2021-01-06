@@ -72,7 +72,11 @@ export async function setUserJoinDate(user) {
   const join_date = date.toISOString().split('T')[0]
 
   // Add join date.
-  return profiles.update(user.id, { join_date })
+  return profiles.update(user.id, {
+    firstName: user.profile.real_name.split(' ')[0],
+    lastName: user.profile.real_name.split(' ').slice(1).join(' '),
+    dateAdded: join_date
+  })
 }
 
 export function format(profile, externalProfile) {
