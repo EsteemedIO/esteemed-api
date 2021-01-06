@@ -30,7 +30,7 @@ export function get(data) {
 export function set(blocks, record) {
   return blocks.reduce((accum, block) => {
     if (block.accessory && record[block.accessory.action_id] !== undefined) {
-      const value = record[block.accessory.action_id]
+      const value = record[block.accessory.action_id] ? record[block.accessory.action_id] : ''
 
       if (value.length > 0 || value.value) {
         console.log(block.accessory.type, value)
