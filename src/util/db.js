@@ -97,7 +97,7 @@ const profiles = {
     }
 
     return doQuery()
-      .then(res => res.map(item => reassignBHValues(item)))
+      .then(res => res.map(item => reassignBHValues(profileFields, item)))
       .then(profiles => profiles.map(profile => ({ ...profile, ...{
           skills: reduceSkills(profile.skills),
           date_available: profile.date_available ? new Date(profile.date_available).toISOString().split('T')[0] : null,
