@@ -26,7 +26,6 @@ provider:
     SLACK_SIGNING_SECRET: ${ssm:/${self:provider.stage}/slackSigning~true}
     SLACK_CHANNELS: ${ssm:/${self:provider.stage}/allowedChannels~true}
     TRAVIS_TOKEN: ${ssm:/${self:provider.stage}/travisToken~true}
-    GOOGLE_MAPS: ${ssm:/${self:provider.stage}/googleMaps~true}
     BH_CLIENT_ID: ${ssm:/${self:provider.stage}/BHClientId~true}
     BH_CLIENT_SECRET: ${ssm:/${self:provider.stage}/BHClientSecret~true}
     BH_CLIENT_USERNAME: ${ssm:/${self:provider.stage}/BHUserName~true}
