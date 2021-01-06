@@ -4,10 +4,9 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "develop": "NODE_ENV=development nodemon --exec 'npx sls offline start -o 0.0.0.0'",
-    "deploy": "npx sls deploy",
-    "import-db": "node admin/importDB.js",
-    "export-db": "node admin/exportDB.js && ls -lah db/"
+    "develop": "NODE_ENV=development nodemon --exec 'npx sls offline start'",
+    "host": "nodemon --exec 'npx sls offline start -o 0.0.0.0'",
+    "deploy": "npx sls deploy"
   },
   "author": "",
   "license": "ISC",
