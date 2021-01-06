@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { createServer, proxy } from 'aws-serverless-express'
 import { App, ExpressReceiver } from '@slack/bolt'
 

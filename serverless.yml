@@ -21,15 +21,6 @@ provider:
   stage: prod
   memorySize: 192
   timeout: 10
-  environment:
-    SLACK_TOKEN_BOT: ${ssm:/${self:provider.stage}/slackTokenBot~true}
-    SLACK_SIGNING_SECRET: ${ssm:/${self:provider.stage}/slackSigning~true}
-    SLACK_CHANNELS: ${ssm:/${self:provider.stage}/allowedChannels~true}
-    TRAVIS_TOKEN: ${ssm:/${self:provider.stage}/travisToken~true}
-    BH_CLIENT_ID: ${ssm:/${self:provider.stage}/BHClientId~true}
-    BH_CLIENT_SECRET: ${ssm:/${self:provider.stage}/BHClientSecret~true}
-    BH_CLIENT_USERNAME: ${ssm:/${self:provider.stage}/BHUserName~true}
-    BH_CLIENT_PASSWORD: ${ssm:/${self:provider.stage}/BHPassword~true}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -47,13 +38,6 @@ provider:
         - logs:PutLogEvents
         - logs:CreateLogStream
       Resource: "arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/esteemed-profile-dev-streamFunction:*"
-    - Effect: "Allow"
-      Action:
-        - kms:Decrypt*
-        - ssm:Describe*
-        - ssm:Get*
-        - ssm:List*
-      Resource: "arn:aws:ssm:${self:provider.region}:*:*"
 
 functions:
   app:

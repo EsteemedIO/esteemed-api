@@ -17,6 +17,7 @@
     "aws-serverless-express": "^3.3.8",
     "axios": "^0.21.0",
     "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
     "serverless": "^2.14.0"
   },
   "devDependencies": {
