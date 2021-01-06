@@ -1,21 +1,18 @@
-import { loadUsers, allProfiles, format } from './../util/userProfiles'
+import { loadUser, getProfile, format } from './../util/userProfiles'
 
 export default async handle => {
   try {
-    return Promise.all([loadUsers(), allProfiles()])
-      .then(([users, profiles]) => {
-        const requestedUser = users.find(user => user.name === handle.replace('@', '')) || false
+    return Promise.all([loadUser(handle), getProfile(handle)])
+      .then(([user, profile]) => {
+        if (user) {
+          const text = format(user.profile, profile)
 
-        if (requestedUser) {
-          const externalProfile = profiles.find(profile => profile.id === requestedUser.id)
-          const text = format(requestedUser.profile, externalProfile)
-
-          if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
-            // text += "\n" + "<" + profiles[requestedUser.id].drupal_profile + "|" + profiles[requestedUser.id].drupal_bio + ">"
+          if (Object.prototype.hasOwnProperty.call(profile, 'drupal_profile')) {
+            // text += "\n" + "<" + profile.drupal_profile + "|" + profile.drupal_bio + ">"
           }
 
-          if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
-            // text += "\n" + "<" + profiles[requestedUser.id].wp_profile + "|" + profiles[requestedUser.id].wp_bio + ">"
+          if (Object.prototype.hasOwnProperty.call(profile, 'wp_profile')) {
+            // text += "\n" + "<" + profile.wp_profile + "|" + profile.wp_bio + ">"
           }
 
           return [
@@ -27,8 +24,8 @@ export default async handle => {
               },
               accessory: {
                 type: 'image',
-                image_url: requestedUser.profile.image_192,
-                alt_text: requestedUser.profile.real_name
+                image_url: user.profile.image_192,
+                alt_text: user.profile.real_name
               }
             }
           ]

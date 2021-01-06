@@ -60,7 +60,9 @@ app.event('team_join', async ({ event }) => {
 app.command('/profile', async ({ command, ack, respond }) => {
   await ack()
 
-  const profile = await commandProfile(command.text)
+  const userId = command.text.substring(2).split('|')[0]
+
+  const profile = await commandProfile(userId)
 
   await respond(profile)
 })

@@ -3,6 +3,10 @@ import { profiles } from '../util/db'
 import keyValue from '../util/keyValue'
 const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 
+export async function loadUser(userId) {
+  return slackClient.users.profile.get({ user: userId })
+}
+
 export async function loadUsers() {
   return slackClient.users.list()
     .then(({ members }) => members.filter(member => !member.is_bot))
