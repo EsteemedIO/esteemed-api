@@ -351,7 +351,6 @@ app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
 
 // Endpoints.
 receiver.router.get('/config', (req, res) => configuration(res))
-receiver.router.get('/profiles', (req, res, next) => profiles(req, res, next))
 receiver.router.get('/jobs', async (req, res, next) => dbJobs.getAll().then(job => res.send(job)))
 
 export function handler(event, context) { return proxy(server, event, context) }
