@@ -351,6 +351,21 @@ app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
 
 // Endpoints.
 receiver.router.get('/config', (req, res) => configuration(res))
-receiver.router.get('/jobs', async (req, res, next) => dbJobs.getAll().then(job => res.send(job)))
+receiver.router.get('/jobs', async (req, res, next) => dbJobs.getAll()
+  .then(jobs => jobs.map(job => {
+    // Remove unnecessary and private fields.
+    const {
+      status,
+      type,
+      payRate,
+      onSite,
+      notes,
+      ...filteredJob
+    } = job
+
+    return filteredJob
+  }))
+  .then(jobs => res.send(jobs))
+)
 
 export function handler(event, context) { return proxy(server, event, context) }
