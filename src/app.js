@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { createServer, proxy } from 'aws-serverless-express'
 import { App, ExpressReceiver } from '@slack/bolt'
+import flatCache from 'flat-cache'
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -14,6 +15,26 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   receiver
 })
+
+let cache = flatCache.load('esteemed-api')
+let cacheMiddleware = (req, res, next) => {
+  let key =  '__express__' + req.originalUrl || req.url
+  let cacheContent = cache.getKey(key)
+
+  if (cacheContent) {
+    res.send(cacheContent)
+  }
+  else {
+    res.sendResponse = res.send
+    res.send = (body) => {
+      cache.setKey(key,body)
+      cache.save()
+      res.sendResponse(body)
+    }
+
+    next()
+  }
+}
 
 import configuration from './configuration'
 import profiles from './profiles'
@@ -351,7 +372,7 @@ app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
 
 // Endpoints.
 receiver.router.get('/config', (req, res) => configuration(res))
-receiver.router.get('/jobs', async (req, res, next) => dbJobs.getAll()
+receiver.router.get('/jobs', cacheMiddleware, async (req, res, next) => dbJobs.getAll()
   .then(jobs => jobs.map(job => ({
       ...job,
       address: [job.address.city, job.address.state].filter(i => i !== null).join(', '),
