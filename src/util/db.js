@@ -17,18 +17,17 @@ const jobs = {
   getAll: async () => {
     const params = {
       fields: Object.keys(jobFields).join(','),
-      query: [
-        'isDeleted:false',
-        'isOpen:true',
+      where: [
+        'isOpen=true',
+        'isPublic=1',
       ].join(' AND '),
       count: 200,
     }
 
-    return await bhFetch('search/JobOrder?' + stringify(params))
+    return await bhFetch('query/JobBoardPost?' + stringify(params))
       .then(jobs => jobs.data.data.map(job => reassignBHValues(jobFields, job)))
       .then(jobs => jobs.map(job => ({ ...job, ...{
           startDate: job.startDate ? new Date(job.startDate).toISOString().split('T')[0] : null,
-          type: job.type ? ['Hot', 'Warm', 'Cold'][job.type - 1] : null,
         }})))
       .catch(e => console.log(e))
   },
@@ -124,15 +123,9 @@ const slackIdField = 'customText10'
 const jobFields = {
   'id': 'id',
   'title': 'title',
-  'status': 'status',
-  'type': 'type',
   'startDate': 'startDate',
-  'payRate': 'payRate',
-  'onSite': 'onSite',
-  'numOpenings': 'numOpenings',
-  'notes': 'notes',
-  'hoursPerWeek': 'hoursPerWeek',
-  'durationWeeks': 'durationWeeks',
+  'address': 'address',
+  'employmentType': 'employmentType',
   'publicDescription': 'description',
 }
 
