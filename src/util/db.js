@@ -133,7 +133,7 @@ const jobFields = {
   'notes': 'notes',
   'hoursPerWeek': 'hoursPerWeek',
   'durationWeeks': 'durationWeeks',
-  'description': 'description',
+  'publicDescription': 'description',
 }
 
 const profileFields = {
