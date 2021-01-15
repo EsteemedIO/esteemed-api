@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import { jobs } from '../util/db.js'
+import { jobs as dbJobs } from '../util/db.js'
 import jobsForm from '../blocks/jobsForm.js'
 import notesForm from '../blocks/notesForm.js'
 import keyValue from '../util/keyValue.js'
@@ -12,7 +12,7 @@ export async function listJobs(userId) {
   try {
     const currentUser = await getUser(userId)
 
-    const blocks = await jobs.getAll()
+    const blocks = await dbJobs.getAll()
       .then(jobs => jobs.slice(0,15).map(job => {
         const text = [
           {
@@ -142,13 +142,13 @@ export async function saveApplication(jobId, userId) {
     }
   ]
 
-  const job = await jobs.get(jobId)
+  const job = await dbJobs.get(jobId)
 
   if (job.applicants) {
     applicants = applicants.concat(job.applicants)
   }
 
-  return await jobs.update(jobId, { applicants: applicants })
+  return await dbJobs.update(jobId, { applicants: applicants })
 }
 
 export async function addJob(job) {
@@ -159,12 +159,12 @@ export async function addJob(job) {
   item.id = crypto.createHash('md5').update(created).digest('hex').substring(0, 12)
   item.created = created
 
-  return await jobs.post(item)
+  return await dbJobs.post(item)
 }
 
 export async function updateJob(jobId, values) {
   const job = slackFormData.get(values)
-  return await jobs.update(jobId, job)
+  return await dbJobs.update(jobId, job)
 }
 
 export async function addJobForm(userId) {
@@ -191,7 +191,7 @@ export async function addJobForm(userId) {
 
 export async function editJobForm(jobId, userId) {
   try {
-    const job = await jobs.get(jobId)
+    const job = await dbJobs.get(jobId)
     const isAdmin = await userProfiles.isAdmin(userId)
     const blocks = slackFormData.set(jobsForm(isAdmin), job)
 
@@ -220,7 +220,7 @@ export async function editJobForm(jobId, userId) {
 
 export async function addJobNoteForm(jobId) {
   try {
-    const blocks = await jobs.get(jobId)
+    const blocks = await dbJobs.get(jobId)
       .then(job => {
         if (job.notes !== undefined) {
           return Promise.all(job.notes.map(note => {
@@ -281,13 +281,13 @@ export async function updateNotes(jobId, userId, values) {
     }
   ]
 
-  const job = await jobs.get(jobId)
+  const job = await dbJobs.get(jobId)
 
   if (job.notes) {
     notes = notes.concat(job.notes)
   }
 
-  return await jobs.update(jobId, { notes: notes })
+  return await dbJobs.update(jobId, { notes: notes })
 }
 
 export function apiFormat(jobs) {
