@@ -13,7 +13,7 @@ export async function listJobs(userId) {
     const currentUser = await getUser(userId)
 
     const blocks = await jobs.getAll()
-      .then(jobs => jobs.map(job => {
+      .then(jobs => jobs.slice(0,15).map(job => {
         const text = [
           {
             key: 'Title',
