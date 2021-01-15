@@ -100,7 +100,6 @@ app.command('/jobs-list', async ({ ack, command, respond }) => {
   await ack()
 
   const jobsAll = await jobs.listJobs(command.user_id)
-  jobsAll.response_type = 'in_channel'
 
   await respond(jobsAll)
 })
