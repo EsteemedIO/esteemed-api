@@ -220,34 +220,21 @@ export async function editJobForm(jobId, userId) {
 
 export async function addJobNoteForm(jobId) {
   try {
-    const blocks = await dbJobs.get(jobId)
-      .then(job => {
-        if (job.notes !== undefined) {
-          return Promise.all(job.notes.map(note => {
-            return userProfiles.getUser(note.user)
-              .then(user => {
-                const date = parseInt(Date.parse(note.date) / 1000).toFixed(0)
-
-                return {
-                  type: 'section',
-                  text: {
-                    type: 'mrkdwn',
-                    text: `*${user.profile.real_name} [<!date^${date}^{date} at {time}|Timestamp>]*: ${note.note}`
-                  }
-                }
-              })
-          }))
-        } else {
-          return []
+    const blocks = await dbJobs.getNotes(jobId)
+      .then(notes => notes.map(note => ({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*${note.commentingPerson.firstName} ${note.commentingPerson.lastName} [<!date^${note.dateAdded}^{date} at {time}|Timestamp>]*: ${note.comments}`
         }
-      })
-      .then(notes => notesForm.concat({
+      })))
+      .then(notes => ([{
         type: 'section',
         text: {
           type: 'mrkdwn',
           text: '*Prior Notes*'
         }
-      }).concat(notes))
+      }].concat(notes)))
 
     return {
       title: {
@@ -268,7 +255,7 @@ export async function addJobNoteForm(jobId) {
       private_metadata: jobId
     }
   } catch (err) {
-    if (err) console.log(err)
+    if (err) console.error(err)
   }
 }
 

@@ -33,6 +33,17 @@ const jobs = {
       .catch(e => console.log(e))
   },
 
+  getNotes: async (item) => {
+    const params = {
+      fields: 'notes(id,dateAdded,commentingPerson,comments)'
+    }
+
+    // Fetch the BH data, then re-assign values to proper keys.
+    return bhFetch(`entity/JobOrder/${item}?` + stringify(params))
+      .then(jobs => jobs.data.data.notes.data)
+      .catch(e => console.log(e))
+  },
+
   post: async (item) => {
 //    const params = {
 //      TableName: 'jobs',
