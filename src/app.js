@@ -196,20 +196,6 @@ app.action('locality', async ({ context, client, body, ack }) => {
   console.log('Location information updated by', body.user.id)
 })
 
-app.action('edit_job', async ({ action, ack, context, client, body }) => {
-  await ack()
-
-  const jobForm = await jobs.editJobForm(action.value, body.user.id)
-
-  const result = await client.views.open({
-    token: context.botToken,
-    trigger_id: body.trigger_id,
-    view: jobForm
-  })
-
-  console.log(result)
-})
-
 app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
   await ack()
 
@@ -283,6 +269,9 @@ app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action
 
   console.log(action.value, '- task completed by', body.user.id)
 })
+
+app.action('edit_job', async ({ ack }) => await ack())
+app.action('job_link', async ({ ack }) => await ack())
 
 // Views submissions.
 app.view('add_job', async ({ view, ack }) => {
