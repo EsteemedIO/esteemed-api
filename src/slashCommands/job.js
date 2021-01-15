@@ -12,7 +12,7 @@ export async function listJobs(userId) {
   try {
     const currentUser = await getUser(userId)
 
-    const blocks = await getJobs()
+    const blocks = await jobs.getAll()
       .then(jobs => jobs.map(job => {
         const text = [
           {
@@ -150,7 +150,7 @@ export async function saveApplication(jobId, userId) {
     }
   ]
 
-  const job = await getJobs(jobId)
+  const job = await jobs.get(jobId)
 
   if (job.applicants) {
     applicants = applicants.concat(job.applicants)
@@ -199,7 +199,7 @@ export async function addJobForm(userId) {
 
 export async function editJobForm(jobId, userId) {
   try {
-    const job = await getJobs(jobId)
+    const job = await jobs.get(jobId)
     const isAdmin = await userProfiles.isAdmin(userId)
     const blocks = slackFormData.set(jobsForm(isAdmin), job)
 
@@ -228,7 +228,7 @@ export async function editJobForm(jobId, userId) {
 
 export async function addJobNoteForm(jobId) {
   try {
-    const blocks = await getJobs(jobId)
+    const blocks = await jobs.get(jobId)
       .then(job => {
         if (job.notes !== undefined) {
           return Promise.all(job.notes.map(note => {
@@ -289,23 +289,13 @@ export async function updateNotes(jobId, userId, values) {
     }
   ]
 
-  const job = await getJobs(jobId)
+  const job = await jobs.get(jobId)
 
   if (job.notes) {
     notes = notes.concat(job.notes)
   }
 
   return await jobs.update(jobId, { notes: notes })
-}
-
-export async function getJobs(item = null) {
-  try {
-    return await jobs.get(item)
-  } catch (e) {
-    console.log(e)
-
-    return { statusCode: 400, body: JSON.stringify(e) }
-  }
 }
 
 export function apiFormat(jobs) {
