@@ -34,10 +34,6 @@ export async function listJobs(userId) {
           {
             key: 'Employment Type',
             value: job.employmentType
-          },
-          {
-            key: 'Description',
-            value: job.description.replace(/(([^\s]+\s\s*){20})(.*)/,"$1 …")
           }
         ]
 
