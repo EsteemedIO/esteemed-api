@@ -85,6 +85,18 @@ export async function listJobs(userId) {
           ]
         }
 
+        if (currentUser.id == 'UL8N9QSLU') {
+          button.elements.push({
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: 'Job Notes'
+            },
+            value: job.id,
+            action_id: 'add_job_notes'
+          })
+        }
+
         if (currentUser.is_admin) {
           button.elements.push({
             type: 'button',
