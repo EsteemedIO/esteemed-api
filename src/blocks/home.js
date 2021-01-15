@@ -60,7 +60,6 @@ export async function view(userId) {
     if (profile && profile.cms && profile.cms.includes('drupal')) homeBlocks = [...homeBlocks, ...drupal.blocks]
     if (profile && profile.cms && profile.cms.includes('wordpress')) homeBlocks = [...homeBlocks, ...wp.blocks]
 
-    /*
     // Add job board.
     const allJobs = await jobs.listJobs(userId)
     homeBlocks = [
@@ -77,7 +76,6 @@ export async function view(userId) {
       },
       ...allJobs.blocks
     ]
-    */
 
     // Add user tasks.
     homeBlocks = [
