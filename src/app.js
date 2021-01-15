@@ -1,14 +1,12 @@
-import 'dotenv/config'
-import { createServer, proxy } from 'aws-serverless-express'
-import { App, ExpressReceiver } from '@slack/bolt'
+import './util/config.js'
+import bolt from '@slack/bolt'
+const { App, ExpressReceiver } = bolt
 import flatCache from 'flat-cache'
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   processBeforeResponse: true
 })
-
-const server = createServer(receiver.app)
 
 const app = new App({
   token: process.env.SLACK_TOKEN_BOT,
@@ -36,22 +34,21 @@ let cacheMiddleware = (req, res, next) => {
   }
 }
 
-import configuration from './configuration'
-import profiles from './profiles'
-import commandProfile from './slashCommands/profile'
-import commandLatestProfiles from './slashCommands/latestProfiles'
+import configuration from './configuration.js'
+import commandProfile from './slashCommands/profile.js'
+import commandLatestProfiles from './slashCommands/latestProfiles.js'
 
-import { jobs as dbJobs } from './util/db'
-import * as jobs from './slashCommands/job'
-import defaultBlocks from './blocks/profile'
-import * as wp from './blocks/wp'
-import * as drupal from './blocks/drupal'
-import * as location from './blocks/location'
-import * as home from './blocks/home'
-import { countryOptions } from './util/countryCodes'
-import * as userProfiles from './util/userProfiles'
-import * as slackFormData from './util/slackFormData'
-import * as tasks from './util/tasks'
+import { jobs as dbJobs } from './util/db.js'
+import * as jobs from './slashCommands/job.js'
+import defaultBlocks from './blocks/profile.js'
+import * as wp from './blocks/wp.js'
+import * as drupal from './blocks/drupal.js'
+import * as location from './blocks/location.js'
+import * as home from './blocks/home.js'
+import { countryOptions } from './util/countryCodes.js'
+import * as userProfiles from './util/userProfiles.js'
+import * as slackFormData from './util/slackFormData.js'
+import * as tasks from './util/tasks.js'
 
 // Events.
 app.event('app_home_opened', async ({ event, client }) => {
@@ -380,4 +377,9 @@ receiver.router.get('/jobs', cacheMiddleware, async (req, res, next) => dbJobs.g
   .then(jobs => res.send(jobs))
 )
 
-export function handler(event, context) { return proxy(server, event, context) }
+;(async () => {
+  // Start your app
+  await app.start(process.env.PORT || 3000);
+
+  console.log('⚡️ Bolt app is running!');
+})()

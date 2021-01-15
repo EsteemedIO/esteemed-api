@@ -1,6 +1,7 @@
-import { WebClient } from '@slack/web-api'
-import { profiles } from '../util/db'
-import keyValue from '../util/keyValue'
+import slack from '@slack/web-api'
+const { WebClient } = slack
+import { profiles } from '../util/db.js'
+import keyValue from '../util/keyValue.js'
 const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 
 export async function loadUser(userId) {

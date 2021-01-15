@@ -1,5 +1,3 @@
-import keyValue from './keyValue'
-
 export function get(data) {
   return Object.keys(data).reduce((acc, key) => {
     const item = data[key]

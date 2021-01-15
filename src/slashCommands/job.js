@@ -1,12 +1,12 @@
 import crypto from 'crypto'
 
-import { jobs } from '../util/db'
-import jobsForm from '../blocks/jobsForm'
-import notesForm from '../blocks/notesForm'
-import keyValue from '../util/keyValue'
-import { getUser } from '../util/userProfiles'
-import * as slackFormData from '../util/slackFormData'
-import * as userProfiles from '../util/userProfiles'
+import { jobs } from '../util/db.js'
+import jobsForm from '../blocks/jobsForm.js'
+import notesForm from '../blocks/notesForm.js'
+import keyValue from '../util/keyValue.js'
+import { getUser } from '../util/userProfiles.js'
+import * as slackFormData from '../util/slackFormData.js'
+import * as userProfiles from '../util/userProfiles.js'
 
 export async function listJobs(userId) {
   try {

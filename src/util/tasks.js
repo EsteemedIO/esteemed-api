@@ -1,5 +1,4 @@
-import * as userProfiles from '../util/userProfiles'
-import { profiles } from '../util/db'
+import { profiles } from '../util/db.js'
 
 export const getTasks = [
   {

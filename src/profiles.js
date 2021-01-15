@@ -1,4 +1,4 @@
-import * as userProfiles from './util/userProfiles'
+import * as userProfiles from './util/userProfiles.js'
 
 export default async (req, res, next) => {
   try {

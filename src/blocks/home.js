@@ -1,8 +1,8 @@
-import * as drupal from '../blocks/drupal'
-import * as wp from '../blocks/wp'
-import * as jobs from '../slashCommands/job'
-import * as userProfiles from '../util/userProfiles'
-import * as tasks from '../util/tasks'
+import * as drupal from '../blocks/drupal.js'
+import * as wp from '../blocks/wp.js'
+import * as jobs from '../slashCommands/job.js'
+import * as userProfiles from '../util/userProfiles.js'
+import * as tasks from '../util/tasks.js'
 
 export const blocks = [
   {

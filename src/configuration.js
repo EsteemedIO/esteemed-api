@@ -1,4 +1,4 @@
-import values from './util/keyValue'
+import values from './util/keyValue.js'
 
 export default res => {
   res.send({

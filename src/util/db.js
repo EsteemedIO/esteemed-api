@@ -1,5 +1,6 @@
-import { stringify } from 'qs'
-import { fetch as bhFetch } from './bullhorn'
+import qs from 'qs'
+const { stringify } = qs
+import { fetch as bhFetch } from './bullhorn.js'
 
 // Job Calls
 const jobs = {

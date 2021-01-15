@@ -1,4 +1,4 @@
-import { loadUsers, allProfiles, getUser, format } from '../util/userProfiles'
+import { loadUsers, allProfiles, getUser, format } from '../util/userProfiles.js'
 
 export default async userId => {
   try {

@@ -1,4 +1,4 @@
-import keyValue from '../util/keyValue'
+import keyValue from '../util/keyValue.js'
 
 export default [
   {
