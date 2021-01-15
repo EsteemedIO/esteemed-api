@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import { jobs as dbJobs } from '../util/db.js'
+import { jobs as dbJobs, locationFormat } from '../util/db.js'
 import jobsForm from '../blocks/jobsForm.js'
 import notesForm from '../blocks/notesForm.js'
 import keyValue from '../util/keyValue.js'
@@ -21,7 +21,7 @@ export async function listJobs(userId) {
           },
           {
             key: 'Location',
-            value: job.address
+            value: locationFormat(job.address)
           },
           {
             key: 'Employment Type',

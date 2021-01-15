@@ -38,7 +38,7 @@ import configuration from './configuration.js'
 import commandProfile from './slashCommands/profile.js'
 import commandLatestProfiles from './slashCommands/latestProfiles.js'
 
-import { jobs as dbJobs } from './util/db.js'
+import { jobs as dbJobs, locationFormat } from './util/db.js'
 import * as jobs from './slashCommands/job.js'
 import defaultBlocks from './blocks/profile.js'
 import * as wp from './blocks/wp.js'
@@ -372,7 +372,7 @@ receiver.router.get('/config', (req, res) => configuration(res))
 receiver.router.get('/jobs', cacheMiddleware, async (req, res, next) => dbJobs.getAll()
   .then(jobs => jobs.map(job => ({
       ...job,
-      address: [job.address.city, job.address.state].filter(i => i !== null).join(', '),
+      address: locationFormat(job.address)
   })))
   .then(jobs => res.send(jobs))
 )

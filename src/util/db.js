@@ -173,7 +173,10 @@ const reassignSlackValues = (fields, values) => Object.keys(values).reduce((acc,
 
 const reduceSkills = skills => skills.data.map(skill => skill.name)
 
+const locationFormat = (address) => [address.city, address.state].filter(i => i !== null).join(', ')
+
 export {
   jobs,
-  profiles
+  locationFormat,
+  profiles,
 }
