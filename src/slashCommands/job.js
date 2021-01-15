@@ -21,20 +21,16 @@ export async function listJobs(userId) {
           },
           {
             key: 'Location',
-            value: job.location
-          },
-          {
-            key: 'Start Date',
-            value: job.startDate
-          },
-          {
-            key: 'Location',
             value: job.address
           },
           {
             key: 'Employment Type',
             value: job.employmentType
-          }
+          },
+          {
+            key: 'Start Date',
+            value: job.startDate
+          },
         ]
 
         /*
