@@ -13,49 +13,42 @@ export async function listJobs(userId) {
     const currentUser = await getUser(userId)
 
     const blocks = await getJobs()
-      .then(jobs => currentUser.is_admin ? jobs : jobs.filter(job => job.active === 'enabled'))
       .then(jobs => jobs.map(job => {
         const text = [
           {
-            key: keyValue.categories,
-            value: job.categories.map(x => keyValue[x]).reduce((acc, i) => `${acc}\n- ${i}`, '')
+            key: 'Title',
+            value: job.title
           },
           {
-            key: keyValue.attendance,
-            value: keyValue[job.attendance]
+            key: 'Location',
+            value: job.location
           },
           {
-            key: keyValue.experience,
-            value: keyValue[job.experience]
+            key: 'Start Date',
+            value: job.startDate
           },
           {
-            key: keyValue.engagement,
-            value: keyValue[job.engagement]
+            key: 'Location',
+            value: job.address
           },
           {
-            key: keyValue.duration,
-            value: keyValue[job.duration]
+            key: 'Employment Type',
+            value: job.employmentType
           },
           {
-            key: keyValue.weekly_hours,
-            value: keyValue[job.weekly_hours]
-          },
-          {
-            key: keyValue.location_req,
-            value: keyValue[job.location_req]
-          },
-          {
-            key: keyValue.description,
-            value: job.description.replace(/<[^>]*>?/gm, '').substr(0, 280) + '...'
+            key: 'Description',
+            value: job.description
           }
         ]
 
+        /*
         if (currentUser.is_admin) {
           text.push({
             key: keyValue.rate_client,
             value: `$${job.rate_client}`
           })
         }
+        */
 
         const block = {
           type: 'section',
@@ -74,6 +67,16 @@ export async function listJobs(userId) {
                 type: 'plain_text',
                 text: `Apply for ${job.title}`
               },
+              url: `https://talent.esteemed.io/jobs/#/jobs/${job.id}`,
+              action_id: 'job_link'
+            },
+            /*
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: `Apply for ${job.title}`
+              },
               value: job.id,
               action_id: 'apply_btn'
             },
@@ -86,6 +89,7 @@ export async function listJobs(userId) {
               value: job.id,
               action_id: 'recommend_btn'
             }
+            */
           ]
         }
 
@@ -94,19 +98,9 @@ export async function listJobs(userId) {
             type: 'button',
             text: {
               type: 'plain_text',
-              text: 'Job Notes'
-            },
-            value: job.id,
-            action_id: 'add_job_notes'
-          })
-
-          button.elements.push({
-            type: 'button',
-            text: {
-              type: 'plain_text',
               text: 'Edit Job'
             },
-            value: job.id,
+            url: `https://cls42.bullhornstaffing.com/BullhornSTAFFING/OpenWindow.cfm?Entity=JobOrder&id=${job.id}`,
             action_id: 'edit_job'
           })
         }
