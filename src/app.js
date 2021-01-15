@@ -20,7 +20,7 @@ let cacheMiddleware = (req, res, next) => {
   let cacheContent = cache.getKey(key)
 
   if (cacheContent) {
-    res.send(cacheContent)
+    res.send(JSON.parse(cacheContent))
   }
   else {
     res.sendResponse = res.send
