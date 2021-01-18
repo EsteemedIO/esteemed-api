@@ -41,6 +41,10 @@ const jobs = {
     // Fetch the BH data, then re-assign values to proper keys.
     return bhFetch(`entity/JobOrder/${item}?` + stringify(params))
       .then(jobs => jobs.data.data.notes.data)
+      .then(jobs => jobs.map(job => ({
+        ...job,
+        dateAdded: Math.floor(job.dateAdded / 1000)
+      })))
       .catch(e => console.log(e))
   },
 
