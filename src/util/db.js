@@ -51,6 +51,22 @@ const jobs = {
       .catch(e => console.log(e))
   },
 
+  addNote: async (jobId, slackId, notes) => {
+    const bhId = await profiles.getBHId(slackId)
+
+    const params = {
+      action: 'Slack Note',
+      commentingPerson: { id: 5962 },
+      personReference: { id: bhId },
+      comments: notes
+    }
+
+    return bhFetch(`entity/Note`, 'put', params)
+      .then(res => res.data.changedEntityId)
+      .then(noteId => bhFetch(`entity/JobOrder/${jobId}/notes/${noteId}`, 'put'))
+      .catch(res => console.error(res.response.data))
+  },
+
   post: async (item) => {
 //    const params = {
 //      TableName: 'jobs',

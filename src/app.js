@@ -290,7 +290,7 @@ app.view('edit_job', async ({ ack, view }) => {
 app.view('add_job_notes', async ({ ack, body, view }) => {
   await ack()
 
-  await jobs.update(view.private_metadata, body.user.id, { notes: view.state.values })
+  await dbJobs.addNote(view.private_metadata, body.user.id, view.state.values.notes.val.value)
 })
 
 app.view('confirm_app', async ({ ack, body, view }) => {
