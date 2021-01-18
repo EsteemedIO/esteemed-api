@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import { default as striptags } from 'striptags'
 
 import { jobs as dbJobs, locationFormat } from '../util/db.js'
 import jobsForm from '../blocks/jobsForm.js'
@@ -238,7 +239,7 @@ export async function addJobNoteForm(jobId) {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `*${note.commentingPerson.firstName} ${note.commentingPerson.lastName} [<!date^${note.dateAdded}^{date} at {time}|Timestamp>]*: ${note.comments.replace(/(([^\s]+\s\s*){20})(.*)/,"$1 …")}`
+          text: `*${note.commentingPerson.firstName} ${note.commentingPerson.lastName} [<!date^${note.dateAdded}^{date} at {time}|Timestamp>]*: ${striptags(note.comments).replace(/(([^\s]+\s\s*){20})(.*)/,"$1 …")}`
         }
       })))
       .then(notes => ([{
