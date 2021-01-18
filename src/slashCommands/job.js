@@ -238,7 +238,7 @@ export async function addJobNoteForm(jobId) {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `*${note.commentingPerson.firstName} ${note.commentingPerson.lastName} [<!date^${note.dateAdded}^{date} at {time}|Timestamp>]*: ${note.comments}`
+          text: `*${note.commentingPerson.firstName} ${note.commentingPerson.lastName} [<!date^${note.dateAdded}^{date} at {time}|Timestamp>]*: ${note.comments.replace(/(([^\s]+\s\s*){20})(.*)/,"$1 …")}`
         }
       })))
       .then(notes => ([{
