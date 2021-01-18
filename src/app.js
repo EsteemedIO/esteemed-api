@@ -206,7 +206,8 @@ app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
     trigger_id: body.trigger_id,
     view: jobNotesForm
   })
-  console.log(result)
+
+  console.log('Notes form opened for job ', action.value)
 })
 
 app.action('apply_btn', async ({ action, ack, context, client, body }) => {
