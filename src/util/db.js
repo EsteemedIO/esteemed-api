@@ -1,5 +1,7 @@
 import qs from 'qs'
 const { stringify } = qs
+import htmlentities from 'html-entities'
+const { decode } = htmlentities
 import { fetch as bhFetch } from './bullhorn.js'
 
 // Job Calls
@@ -43,7 +45,8 @@ const jobs = {
       .then(jobs => jobs.data.data.notes.data)
       .then(jobs => jobs.map(job => ({
         ...job,
-        dateAdded: Math.floor(job.dateAdded / 1000)
+        dateAdded: Math.floor(job.dateAdded / 1000),
+        comments: decode(job.comments)
       })))
       .catch(e => console.log(e))
   },
