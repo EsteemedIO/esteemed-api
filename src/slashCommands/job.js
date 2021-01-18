@@ -93,7 +93,7 @@ export async function listJobs(userId) {
               type: 'plain_text',
               text: 'Job Notes'
             },
-            value: 'job-' + job.id,
+            value: job.id.toString(),
             action_id: 'add_job_notes'
           })
         }
@@ -233,7 +233,6 @@ export async function editJobForm(jobId, userId) {
 
 export async function addJobNoteForm(jobId) {
   try {
-    jobId = jobId.split('-')[1]
     const blocks = await dbJobs.getNotes(jobId)
       .then(notes => notes.map(note => ({
         type: 'section',
