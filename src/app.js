@@ -199,15 +199,20 @@ app.action('locality', async ({ context, client, body, ack }) => {
 app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
   await ack()
 
-  const jobNotesForm = await jobs.addJobNoteForm(action.value)
+  // Check for user admin level.
+  const profile = await userProfiles.getUser(body.user.id)
 
-  const result = await client.views.open({
-    token: context.botToken,
-    trigger_id: body.trigger_id,
-    view: jobNotesForm
-  })
+  if (profile.is_admin) {
+    const jobNotesForm = await jobs.addJobNoteForm(action.value)
 
-  console.log('Notes form opened for job ', action.value)
+    const result = await client.views.open({
+      token: context.botToken,
+      trigger_id: body.trigger_id,
+      view: jobNotesForm
+    })
+
+    console.log('Notes form opened for job ', action.value)
+  }
 })
 
 app.action('apply_btn', async ({ action, ack, context, client, body }) => {
@@ -290,7 +295,12 @@ app.view('edit_job', async ({ ack, view }) => {
 app.view('add_job_notes', async ({ ack, body, view }) => {
   await ack()
 
-  await dbJobs.addNote(view.private_metadata, body.user.id, view.state.values.notes.val.value)
+  // Check for user admin level.
+  const profile = await userProfiles.getUser(body.user.id)
+
+  if (profile.is_admin) {
+    await dbJobs.addNote(view.private_metadata, body.user.id, view.state.values.notes.val.value)
+  }
 })
 
 app.view('confirm_app', async ({ ack, body, view }) => {
