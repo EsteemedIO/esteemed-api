@@ -241,13 +241,13 @@ export async function addJobNoteForm(jobId) {
           text: `*${note.commentingPerson.firstName} ${note.commentingPerson.lastName} [<!date^${note.dateAdded}^{date} at {time}|Timestamp>]*: ${striptags(note.comments).split(/[\s\n]+/).slice(0,60).join(' ')}…`
         }
       })))
-      .then(notes => ([{
+      .then(notes => notesForm.concat({
         type: 'section',
         text: {
           type: 'mrkdwn',
           text: '*Prior Notes*'
         }
-      }].concat(notes)))
+        }).concat(notes))
 
     return {
       title: {
