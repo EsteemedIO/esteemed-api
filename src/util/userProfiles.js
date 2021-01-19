@@ -1,6 +1,6 @@
 import slack from '@slack/web-api'
 const { WebClient } = slack
-import { profiles } from '../util/db.js'
+import { profiles } from '../models/profiles.js'
 import keyValue from '../util/keyValue.js'
 const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 

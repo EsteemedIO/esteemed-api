@@ -1,4 +1,4 @@
-import { profiles } from '../util/db.js'
+import { profiles } from '../models/profiles.js'
 import keyValue from '../util/keyValue.js'
 
 export const blocks = [

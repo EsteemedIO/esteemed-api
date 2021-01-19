@@ -1,10 +1,9 @@
 import crypto from 'crypto'
 import { default as striptags } from 'striptags'
 
-import { jobs as dbJobs, locationFormat } from '../util/db.js'
+import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import jobsForm from '../blocks/jobsForm.js'
 import notesForm from '../blocks/notesForm.js'
-import keyValue from '../util/keyValue.js'
 import { getUser } from '../util/userProfiles.js'
 import * as slackFormData from '../util/slackFormData.js'
 import * as userProfiles from '../util/userProfiles.js'

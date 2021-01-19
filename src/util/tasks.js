@@ -1,4 +1,4 @@
-import { profiles } from '../util/db.js'
+import { profiles } from '../models/profiles.js'
 
 export const getTasks = [
   {

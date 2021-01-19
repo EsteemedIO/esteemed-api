@@ -1,5 +1,5 @@
 import verifyData from '../util/verifyData.js'
-import { profiles } from '../util/db.js'
+import { profiles } from '../models/profiles.js'
 
 export const blocks = [
   {
