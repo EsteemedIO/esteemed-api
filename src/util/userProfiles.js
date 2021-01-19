@@ -91,9 +91,11 @@ export function format(profile, externalProfile) {
     const titles = externalProfile.titles ? externalProfile.titles.map(title => keyValue[title]).join(', ') : ''
     const languages = externalProfile.languages ? externalProfile.languages.map(language => keyValue[language]).join(', ') : ''
     const cms = externalProfile.cms ? externalProfile.cms.map(cms => keyValue[cms]).join(', ') : ''
+    const da = new Date(externalProfile.dateAdded)
+    const dateAdded = da.toLocaleDateString("en-US")
 
     text += `\n
-*Join Date:* ${externalProfile.join_date}
+*Join Date:* ${dateAdded}
 *Location:* ${location}
 *Abilities:* ${titles}
 *Languages:* ${languages}
