@@ -1,6 +1,7 @@
 import slack from '@slack/web-api'
 const { WebClient } = slack
 import { profiles } from '../models/profiles.js'
+import { locationFormat } from '../models/jobs.js'
 import keyValue from '../util/keyValue.js'
 const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 
@@ -96,7 +97,7 @@ export function format(profile, externalProfile) {
 
     text += `\n
 *Join Date:* ${dateAdded}
-*Location:* ${location}
+*Location:* ${locationFormat(externalProfile.location)}
 *Abilities:* ${titles}
 *Languages:* ${languages}
 *CMS Experience:* ${cms}`
