@@ -69,7 +69,7 @@ app.event('app_home_opened', async ({ event, client }) => {
 })
 
 app.event('team_join', async ({ event }) => {
-  let profile = await userProfiles.setUserJoinDate(event.user)
+  let profile = await userProfiles.setUserJoinDate(event.user, event.event_ts)
 
   console.log('User joined', event.user)
 })

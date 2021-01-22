@@ -69,12 +69,13 @@ export async function updateProfile(user, action) {
   await profiles.update(user, { [action.action_id]: values })
 }
 
-export async function setUserJoinDate(user) {
-  const date = new Date(user.updated * 1000)
+export async function setUserJoinDate(userId, joinDate) {
+  const date = new Date(Math.floor(joinDate) * 1000)
   const join_date = date.toISOString().split('T')[0]
+  const user = await getUser(userId)
 
   // Add join date.
-  return profiles.update(user.id, {
+  return profiles.update(userId, {
     firstName: user.profile.real_name.split(' ')[0],
     lastName: user.profile.real_name.split(' ').slice(1).join(' '),
     dateAdded: join_date
