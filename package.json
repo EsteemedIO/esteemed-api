@@ -14,8 +14,10 @@
   "dependencies": {
     "@slack/bolt": "^3.0.0",
     "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
+    "express-fileupload": "^1.2.1",
     "flat-cache": "^3.0.4",
     "html-entities": "^2.0.2",
     "qs": "^6.9.6",

@@ -1,7 +1,10 @@
 import './util/config.js'
 import bolt from '@slack/bolt'
+import slack from '@slack/web-api'
 const { App, ExpressReceiver } = bolt
 import flatCache from 'flat-cache'
+import bodyParser from'body-parser'
+import fileupload from 'express-fileupload'
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -13,6 +16,16 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   receiver
 })
+
+receiver.router.use(bodyParser.json());
+receiver.router.use(bodyParser.urlencoded({ extended: true }));
+receiver.router.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+receiver.router.use(fileupload())
 
 let cache = flatCache.load('esteemed-api')
 let cacheMiddleware = (req, res, next) => {
@@ -375,6 +388,47 @@ receiver.router.get('/jobs', cacheMiddleware, async (req, res, next) => dbJobs.g
   })))
   .then(jobs => res.send(jobs))
 )
+
+receiver.router.post('/upload-applicant', async ({ body } ,res, next) => {
+  const { applicant, jobId } = body
+
+  try {
+    await app.client.chat.postMessage({
+      blocks: [
+        {
+          "type": "divider"
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "plain_text",
+            "text": `Name: ${applicant.firstName} ${applicant.lastName} \nEmail: ${applicant.email} \n Phone: ${applicant.phone}`
+          }
+        },
+      ]
+    })
+    res.json('applicant sent')
+  } catch (err) {
+    return res.json(err.message)
+  }
+})
+
+receiver.router.post('/upload-resume', async ({ files }, res, next) => {
+  const { resume } = files
+  const filetype = resume.mimetype.split("/")[1]
+
+  try {
+    const response = await app.client.files.upload({
+      filetype: filetype,
+      initial_comment: "Download my resume here",
+      file: resume.data
+    })
+
+    res.json(response)
+  } catch (err) {
+    res.json(err.message)
+  }
+})
 
 ;(async () => {
   // Start your app
