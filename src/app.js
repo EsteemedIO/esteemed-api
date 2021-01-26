@@ -29,6 +29,7 @@ receiver.router.use(fileupload())
 
 import configuration from './configuration.js'
 import { jobs as dbJobs, locationFormat } from './models/jobs.js'
+import { leads } from './models/leads.js'
 import commandProfile from './slashCommands/profile.js'
 import commandLatestProfiles from './slashCommands/latestProfiles.js'
 import * as jobs from './slashCommands/job.js'
@@ -424,11 +425,13 @@ cron.schedule('0 * * * *', async () => {
   }
 })
 
-  dbJobs.getAll()
-    .then(jobs => {
-      cache.setKey(key, jobs)
-      cache.save()
-    })
+// Add new references as leads.
+cron.schedule('* * * * *', async () => {
+  if (process.env.NODE_ENV == 'production') {
+    leads.getNew()
+      .then(async newLeads => await Promise.all(newLeads.map(lead => leads.add(lead))))
+      .then(res => res.map(lead => console.log(`Reference ${lead.data.data.firstName} ${lead.data.data.lastName} added as a lead.`)))
+  }
 })
 
 ;(async () => {

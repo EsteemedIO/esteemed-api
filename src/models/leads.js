@@ -3,9 +3,7 @@ import { references } from './references.js'
 
 export const leads = {
   add: async lead => {
-    const params = {
-      fields: leadFields(lead)
-    }
+    const params = leadFields(lead)
 
     return bhFetch('entity/Lead', 'put', params)
       .catch(e => console.error(e))
