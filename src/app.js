@@ -412,8 +412,17 @@ receiver.router.post('/upload-resume', async ({ files }, res, next) => {
 
 // Update jobs cache.
 cron.schedule('0 * * * *', async () => {
-  const key =  '__express__/jobs'
-  cache.flush('/jobs')
+  if (process.env.NODE_ENV == 'production') {
+    const key =  '__express__/jobs'
+    cache.flush('/jobs')
+
+    dbJobs.getAll()
+      .then(jobs => {
+        cache.setKey(key, jobs)
+        cache.save()
+      })
+  }
+})
 
   dbJobs.getAll()
     .then(jobs => {
