@@ -4,6 +4,7 @@ import slack from '@slack/web-api'
 const { App, ExpressReceiver } = bolt
 import bodyParser from'body-parser'
 import fileupload from 'express-fileupload'
+import { default as cron } from 'node-cron'
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -36,7 +37,7 @@ import * as wp from './blocks/wp.js'
 import * as drupal from './blocks/drupal.js'
 import * as location from './blocks/location.js'
 import * as home from './blocks/home.js'
-import * as cache from './util/cache.js'
+import { default as cache } from './util/cache.js'
 import { countryOptions } from './util/countryCodes.js'
 import * as userProfiles from './util/userProfiles.js'
 import * as slackFormData from './util/slackFormData.js'
@@ -407,6 +408,18 @@ receiver.router.post('/upload-resume', async ({ files }, res, next) => {
   } catch (err) {
     res.json(err.message)
   }
+})
+
+// Update jobs cache.
+cron.schedule('0 * * * *', async () => {
+  const key =  '__express__/jobs'
+  cache.flush('/jobs')
+
+  dbJobs.getAll()
+    .then(jobs => {
+      cache.setKey(key, jobs)
+      cache.save()
+    })
 })
 
 ;(async () => {
