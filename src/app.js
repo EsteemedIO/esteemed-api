@@ -412,14 +412,18 @@ receiver.router.post('/upload-resume', async ({ files }, res, next) => {
 })
 
 // Update jobs cache.
-cron.schedule('0 * * * *', async () => {
+cron.schedule('* * * * *', async () => {
   if (process.env.NODE_ENV == 'production') {
     const key =  '__express__/jobs'
     cache.flush('/jobs')
 
     dbJobs.getAll()
+      .then(jobs => jobs.map(job => ({
+          ...job,
+          address: locationFormat(job.address)
+      })))
       .then(jobs => {
-        cache.setKey(key, jobs)
+        cache.setKey(key, JSON.stringify(jobs))
         cache.save()
       })
   }
