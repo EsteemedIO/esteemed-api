@@ -2,7 +2,7 @@ import flatCache from 'flat-cache'
 
 const cache = flatCache.load('esteemed-api')
 
-const middleware = (req, res, next) => {
+cache.middleware = (req, res, next) => {
   const key =  '__express__' + req.originalUrl || req.url
   const cacheContent = cache.getKey(key)
 
@@ -21,13 +21,9 @@ const middleware = (req, res, next) => {
   }
 }
 
-const flush = url => {
+cache.flush = url => {
   const key =  '__express__' + url
   cache.removeKey(key)
 }
 
-export {
-  cache,
-  middleware,
-  flush
-}
+export default cache
