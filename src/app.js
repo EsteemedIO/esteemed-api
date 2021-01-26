@@ -2,7 +2,6 @@ import './util/config.js'
 import bolt from '@slack/bolt'
 import slack from '@slack/web-api'
 const { App, ExpressReceiver } = bolt
-import flatCache from 'flat-cache'
 import bodyParser from'body-parser'
 import fileupload from 'express-fileupload'
 
@@ -27,26 +26,6 @@ receiver.router.use(function(req, res, next) {
 });
 receiver.router.use(fileupload())
 
-let cache = flatCache.load('esteemed-api')
-let cacheMiddleware = (req, res, next) => {
-  let key =  '__express__' + req.originalUrl || req.url
-  let cacheContent = cache.getKey(key)
-
-  if (cacheContent) {
-    res.send(JSON.parse(cacheContent))
-  }
-  else {
-    res.sendResponse = res.send
-    res.send = (body) => {
-      cache.setKey(key,body)
-      cache.save()
-      res.sendResponse(body)
-    }
-
-    next()
-  }
-}
-
 import configuration from './configuration.js'
 import commandProfile from './slashCommands/profile.js'
 import commandLatestProfiles from './slashCommands/latestProfiles.js'
@@ -58,6 +37,7 @@ import * as wp from './blocks/wp.js'
 import * as drupal from './blocks/drupal.js'
 import * as location from './blocks/location.js'
 import * as home from './blocks/home.js'
+import * as cache from './util/cache.js'
 import { countryOptions } from './util/countryCodes.js'
 import * as userProfiles from './util/userProfiles.js'
 import * as slackFormData from './util/slackFormData.js'
@@ -381,7 +361,7 @@ app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
 
 // Endpoints.
 receiver.router.get('/config', (req, res) => configuration(res))
-receiver.router.get('/jobs', cacheMiddleware, async (req, res, next) => dbJobs.getAll()
+receiver.router.get('/jobs', cache.middleware, async (req, res, next) => dbJobs.getAll()
   .then(jobs => jobs.map(job => ({
       ...job,
       address: locationFormat(job.address)
