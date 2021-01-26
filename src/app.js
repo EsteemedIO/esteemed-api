@@ -27,10 +27,9 @@ receiver.router.use(function(req, res, next) {
 receiver.router.use(fileupload())
 
 import configuration from './configuration.js'
+import { jobs as dbJobs, locationFormat } from './models/jobs.js'
 import commandProfile from './slashCommands/profile.js'
 import commandLatestProfiles from './slashCommands/latestProfiles.js'
-
-import { jobs as dbJobs, locationFormat } from './models/jobs.js'
 import * as jobs from './slashCommands/job.js'
 import defaultBlocks from './blocks/profile.js'
 import * as wp from './blocks/wp.js'
