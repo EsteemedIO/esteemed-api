@@ -73,3 +73,13 @@ export function set(blocks, record) {
     return accum
   }, [])
 }
+
+export function createSlackOptions(options) {
+  return options.map(option => ({
+      text: {
+        type: 'plain_text',
+        text: option.label
+      },
+    value: option.value.toString()
+  }))
+}

@@ -30,6 +30,7 @@ receiver.router.use(fileupload())
 import configuration from './configuration.js'
 import { jobs as dbJobs, locationFormat } from './models/jobs.js'
 import { leads } from './models/leads.js'
+import { options } from './models/options.js'
 import commandProfile from './slashCommands/profile.js'
 import commandLatestProfiles from './slashCommands/latestProfiles.js'
 import * as jobs from './slashCommands/job.js'
@@ -120,7 +121,7 @@ app.action('edit_profile', async ({ action, ack, context, client, body }) => {
   await ack()
 
   const profile = await userProfiles.getProfile(body.user.id)
-  const modal = slackFormData.set(defaultBlocks, profile)
+  const modal = slackFormData.set(await defaultBlocks(), profile)
 
   await client.views.open({
     token: context.botToken,
