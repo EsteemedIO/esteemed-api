@@ -57,6 +57,10 @@ export const profiles = {
     return bhFetch('search/Candidate?' + stringify(params))
       .then(res => res.data.data.map(({ _score, ...array }) => array)[0].id)
   },
+  add: async (values) => {
+    return bhFetch(`entity/Candidate`, 'put', reassignSlackValues(profileFields, values))
+      .catch(res => console.error(res))
+  },
 
   update: async (slackId, values) => {
     const bhId = await profiles.getBHId(slackId)
@@ -88,4 +92,5 @@ const profileFields = {
   'customText11': 'wp_experience',
   'customTextBlock3': 'wp_bio',
   'customTextBlock4': 'tasks',
+  'customText10': 'slackId',
 }
