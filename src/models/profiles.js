@@ -93,4 +93,7 @@ const profileFields = {
   'customTextBlock3': 'wp_bio',
   'customTextBlock4': 'tasks',
   'customText10': 'slackId',
+  'email': 'email',
+  'employeeType': 'employeeType',
+  'source': 'source'
 }
