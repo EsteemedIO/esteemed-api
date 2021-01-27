@@ -65,7 +65,7 @@ app.event('app_home_opened', async ({ event, client }) => {
 app.event('team_join', async ({ event }) => {
   let profile = await userProfiles.setUserJoinDate(event.user, event.event_ts)
 
-  console.log('User joined', event.user)
+  console.log('New user joined:', event.user.real_name)
 })
 
 app.command('/profile', async ({ command, ack, respond }) => {
