@@ -7,8 +7,7 @@ import fileupload from 'express-fileupload'
 import { default as cron } from 'node-cron'
 
 const receiver = new ExpressReceiver({
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-  processBeforeResponse: true
+  signingSecret: process.env.SLACK_SIGNING_SECRET
 })
 
 const app = new App({
