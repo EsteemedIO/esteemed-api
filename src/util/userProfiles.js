@@ -76,6 +76,7 @@ export async function setUserJoinDate(user, joinDate) {
   // Add join date.
   return profiles.add({
     email: user.profile.email,
+    name: user.profile.real_name,
     firstName: user.profile.real_name.split(' ')[0],
     lastName: user.profile.real_name.split(' ').slice(1).join(' '),
     dateAdded: join_date,
