@@ -375,6 +375,8 @@ receiver.router.post('/upload-applicant', async ({ body } ,res, next) => {
 
   try {
     await app.client.chat.postMessage({
+      token: process.env.SLACK_TOKEN_BOT,
+      channel: 'G01KCLV77C0',
       blocks: [
         {
           "type": "divider"
@@ -395,11 +397,13 @@ receiver.router.post('/upload-applicant', async ({ body } ,res, next) => {
 })
 
 receiver.router.post('/upload-resume', async ({ files }, res, next) => {
-  const { resume } = files
-  const filetype = resume.mimetype.split("/")[1]
+  const resume = files.file
 
   try {
+    const filetype = resume.mimetype.split("/")[1]
     const response = await app.client.files.upload({
+      token:  process.env.SLACK_TOKEN_BOT,
+      channel: 'G01KCLV77C0',
       filetype: filetype,
       initial_comment: "Download my resume here",
       file: resume.data
