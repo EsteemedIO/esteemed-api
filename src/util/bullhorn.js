@@ -12,12 +12,15 @@ const credentials = {
 async function getRestToken() {
   const authorizationCode = await axios.post(`${credentials.tokenHost}/oauth/authorize?response_type=code&client_id=${credentials.client_id}&action=Login&username=${credentials.username}&password=${credentials.password}`)
     .then(response => response.request.res.responseUrl.split('code=')[1].split('&')[0])
+    .catch(err => console.error('Bullhorn authCode error: ', err.response.data.errorMessage))
 
   const accessToken = await axios.post(`${credentials.tokenHost}/oauth/token?grant_type=authorization_code&code=${authorizationCode}&client_id=${credentials.client_id}&client_secret=${credentials.client_secret}`)
     .then(res => res.data.access_token)
+    .catch(err => console.error('Bullhorn accessToken error: ', err.response.data.errorMessage))
 
   return axios.get(`${credentials.restLoginUrl}?version=*&access_token=${accessToken}&ttl=999`)
     .then(res => res.data)
+    .catch(err => console.error('Bullhorn login error: ', err.response.data.errorMessage))
 }
 
 export async function fetch(resource, method = 'get', data = null) {
