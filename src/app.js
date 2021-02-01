@@ -408,6 +408,7 @@ receiver.router.post('/upload-resume', async ({ files }, res, next) => {
     const response = await app.client.files.upload({
       token:  process.env.SLACK_TOKEN_BOT,
       channels: 'G01KCLV77C0',
+      filename: resume.name,
       filetype: filetype,
       initial_comment: "Download my resume here",
       file: resume.data
