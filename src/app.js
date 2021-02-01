@@ -390,8 +390,12 @@ receiver.router.post('/upload-applicant', async ({ body } ,res, next) => {
         },
       ]
     })
-    res.json('applicant sent')
+
+    const message = `${applicant.firstName} applied for role`
+    console.log(message)
+    res.json(message)
   } catch (err) {
+    console.log('There was an issue submitting web-based applicant to Slack')
     return res.json(err.message)
   }
 })
@@ -409,8 +413,11 @@ receiver.router.post('/upload-resume', async ({ files }, res, next) => {
       file: resume.data
     })
 
-    res.json(response)
+    const message = `Resume uploaded to Slack`
+    console.log(message)
+    res.json(message)
   } catch (err) {
+    console.log('There was an issue uploading resume from web-based applicant to Slack')
     res.json(err.message)
   }
 })
