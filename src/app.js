@@ -380,8 +380,8 @@ receiver.router.post('/upload-applicant', async ({ body } ,res, next) => {
         {
           "type": "section",
           "text": {
-            "type": "plain_text",
-            "text": `Name: ${applicant.firstName} ${applicant.lastName} \nEmail: ${applicant.email} \n Phone: ${applicant.phone}`
+            type: 'mrkdwn',
+            text: `Name: *${applicant.firstName} ${applicant.lastName}* \nEmail: <mailto:${applicant.email}|${applicant.email}> \nPhone: <tel:+${applicant.phone}| ${applicant.phone}> `
           }
         },
       ]
