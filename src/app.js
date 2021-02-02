@@ -367,13 +367,20 @@ receiver.router.get('/jobs', cache.middleware, async (req, res, next) => dbJobs.
 )
 
 receiver.router.post('/upload-applicant', async ({ body } ,res, next) => {
-  const { applicant, jobId } = body
+  const { applicant, job } = body
 
   try {
     await app.client.chat.postMessage({
       token: process.env.SLACK_TOKEN_BOT,
       channel: 'G01KCLV77C0',
       blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `Job: <https://cls42.bullhornstaffing.com/BullhornSTAFFING/OpenWindow.cfm?Entity=JobOrder&id=${job.id}|${job.title}>`
+          }
+        },
         {
           type: 'divider'
         },
