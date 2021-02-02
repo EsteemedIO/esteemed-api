@@ -1,6 +1,5 @@
 import './util/config.js'
 import bolt from '@slack/bolt'
-import slack from '@slack/web-api'
 const { App, ExpressReceiver } = bolt
 import bodyParser from'body-parser'
 import fileupload from 'express-fileupload'
@@ -28,7 +27,6 @@ receiver.router.use(fileupload())
 
 import { jobs as dbJobs, locationFormat } from './models/jobs.js'
 import { leads } from './models/leads.js'
-import { options } from './models/options.js'
 import commandProfile from './slashCommands/profile.js'
 import commandLatestProfiles from './slashCommands/latestProfiles.js'
 import * as jobs from './slashCommands/job.js'
