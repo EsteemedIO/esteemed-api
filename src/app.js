@@ -26,7 +26,6 @@ receiver.router.use(function(req, res, next) {
 });
 receiver.router.use(fileupload())
 
-import configuration from './configuration.js'
 import { jobs as dbJobs, locationFormat } from './models/jobs.js'
 import { leads } from './models/leads.js'
 import { options } from './models/options.js'
@@ -361,7 +360,6 @@ app.options({ action_id: 'bh_country_codes' }, async ({ options, ack }) => {
 })
 
 // Endpoints.
-receiver.router.get('/config', (req, res) => configuration(res))
 receiver.router.get('/jobs', cache.middleware, async (req, res, next) => dbJobs.getAll()
   .then(jobs => jobs.map(job => ({
       ...job,
