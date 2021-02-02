@@ -366,7 +366,7 @@ receiver.router.get('/jobs', cache.middleware, async (req, res, next) => dbJobs.
   .then(jobs => res.send(jobs))
 )
 
-receiver.router.post('/upload-applicant', async ({ body } ,res, next) => {
+receiver.router.post('/upload-applicant', async ({ body }, res, next) => {
   const { applicant, job } = body
 
   try {
