@@ -375,11 +375,11 @@ receiver.router.post('/upload-applicant', async ({ body } ,res, next) => {
       channel: 'G01KCLV77C0',
       blocks: [
         {
-          "type": "divider"
+          type: 'divider'
         },
         {
-          "type": "section",
-          "text": {
+          type: 'section',
+          text: {
             type: 'mrkdwn',
             text: `Name: *${applicant.firstName} ${applicant.lastName}* \nEmail: <mailto:${applicant.email}|${applicant.email}> \nPhone: <tel:+${applicant.phone}| ${applicant.phone}> `
           }
