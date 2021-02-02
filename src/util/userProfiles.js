@@ -2,7 +2,6 @@ import slack from '@slack/web-api'
 const { WebClient } = slack
 import { profiles } from '../models/profiles.js'
 import { locationFormat } from '../models/jobs.js'
-import keyValue from '../util/keyValue.js'
 const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 
 export async function loadUser(userId) {
@@ -93,10 +92,9 @@ export function format(profile, externalProfile) {
 *Phone:* ${profile.phone}`
 
   if (externalProfile) {
-    const location = externalProfile.locality || ''
-    const titles = externalProfile.titles ? externalProfile.titles.map(title => keyValue[title]).join(', ') : ''
-    const languages = externalProfile.languages ? externalProfile.languages.map(language => keyValue[language]).join(', ') : ''
-    const cms = externalProfile.cms ? externalProfile.cms.map(cms => keyValue[cms]).join(', ') : ''
+    const titles = externalProfile.titles ? externalProfile.titles.join(', ') : ''
+    const languages = externalProfile.languages ? externalProfile.languages.join(', ') : ''
+    const cms = externalProfile.cms ? externalProfile.cms.join(', ') : ''
     const da = new Date(externalProfile.dateAdded)
     const dateAdded = da.toLocaleDateString("en-US")
 
