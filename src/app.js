@@ -184,7 +184,7 @@ app.action('locality', async ({ context, client, body, ack }) => {
     view: modal
   })
 
-  console.log('Location information updated by', body.user.id)
+  console.log('Location form opened by', body.user.id)
 })
 
 app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
