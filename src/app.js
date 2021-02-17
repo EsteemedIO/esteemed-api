@@ -394,7 +394,7 @@ receiver.router.post('/upload-applicant', async ({ body }, res, next) => {
       ]
     })
 
-    const message = `${applicant.firstName} applied for role`
+    const message = `${applicant.firstName} applied for role: ${job.title}`
     console.log(message)
     res.json(message)
   } catch (err) {

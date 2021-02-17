@@ -31,7 +31,7 @@ export const jobs = {
       .then(jobs => jobs.map(job => ({ ...job, ...{
           startDate: job.startDate ? new Date(job.startDate).toISOString().split('T')[0] : null,
         }})))
-      .catch(e => console.log(e))
+      .catch(e => console.log(e.response.data.errorMessage))
   },
 
   getNotes: async (item) => {
