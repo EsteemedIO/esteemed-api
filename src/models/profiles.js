@@ -7,14 +7,28 @@ export const profiles = {
   get: async slackId => {
     const params = {
       fields: Object.keys(profileFields).join(','),
+      meta: 'basic',
       query: `${slackIdField}:${slackId}`
     }
 
     // Fetch the BH data, then re-assign values to proper keys.
     return bhFetch('search/Candidate?' + stringify(params))
-      .then(res => reassignBHValues(profileFields, res.data.data[0]))
+      .then(res => Object.keys(res.data.data[0]).reduce((acc, fieldMeta) => {
+          const value = res.data.data[0][fieldMeta]
+          const meta = res.data.meta.fields.find(field => field.name == fieldMeta)
+
+          if (fieldMeta.includes('customText') && value && meta && meta.options && value instanceof Array) {
+            acc[fieldMeta] = value.map(v => meta.options.find(option => option.value == v)['label'])
+          }
+          else {
+            acc[fieldMeta] = value
+          }
+
+          return acc
+        }, {}))
+      .then(res => reassignBHValues(profileFields, res))
       .then(profile => ({ ...profile, ...{
-          skills: reduceSkills(profile.skills),
+          skills: profile.skills.data.map(value => value.name),
           date_available: profile.date_available ? new Date(profile.date_available).toISOString().split('T')[0] : null,
         }}))
       .catch(e => console.error(e))
@@ -69,8 +83,6 @@ export const profiles = {
       .catch(res => console.error(res))
   }
 }
-
-const reduceSkills = skills => skills.data.map(skill => skill.name)
 
 const slackIdField = 'customText10'
 
