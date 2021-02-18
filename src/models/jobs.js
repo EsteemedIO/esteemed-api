@@ -64,7 +64,7 @@ export const jobs = {
 
     return bhFetch(`entity/Note`, 'put', params)
       .then(res => res.data.changedEntityId)
-      .then(noteId => bhFetch(`entity/Notes/${noteId}/JobOrders/${jobId}`, 'put'))
+      .then(noteId => bhFetch(`entity/Note/${noteId}/jobOrders/${jobId}`, 'put'))
       .catch(res => console.error(res.response.data))
   },
 
