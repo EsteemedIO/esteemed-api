@@ -1,4 +1,5 @@
 import { fetch as bhFetch, reassignBHValues } from '../util/bullhorn.js'
+import { profiles } from './profiles.js'
 import htmlentities from 'html-entities'
 const { decode } = htmlentities
 import qs from 'qs'
