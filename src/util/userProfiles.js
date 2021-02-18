@@ -86,6 +86,7 @@ export function setUserJoinDate(user, joinDate) {
 }
 
 export function format(profile, externalProfile) {
+  console.log(externalProfile)
   let text = `*Name:* ${profile.real_name}
 *Title:* ${profile.title}
 *Email:* ${profile.email}
