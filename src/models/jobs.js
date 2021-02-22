@@ -56,7 +56,7 @@ export const jobs = {
 
     const params = {
       action: 'Slack Note',
-      commentingPerson: { id: 5962 },
+      commentingPerson: { id: 3 },
       personReference: { id: bhId },
       jobOrder: { id: jobId },
       comments: notes
