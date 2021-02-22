@@ -31,8 +31,8 @@ export async function loadChannelMembers(channel) {
   return members
 }
 
-export async function allProfiles() {
-  return profiles.getAll()
+export async function allProfiles(limit = null) {
+  return profiles.getAll(limit)
 }
 
 export async function getUser(userId) {

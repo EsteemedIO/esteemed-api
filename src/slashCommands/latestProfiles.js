@@ -2,7 +2,7 @@ import { loadUsers, allProfiles, getUser, format } from '../util/userProfiles.js
 
 export default async userId => {
   try {
-    return await Promise.all([loadUsers(), allProfiles()])
+    return await Promise.all([loadUsers(), allProfiles(10)])
       .then(([users, profiles]) => {
         const currentUser = users.find(user => user.id === userId)
 
@@ -30,11 +30,7 @@ export default async userId => {
           ]
         }
 
-        const latestProfilesSortedArray = profiles
-          .sort((a, b) => { return Number(b.join_date.split('-').join('')) - Number(a.join_date.split('-').join('')) })
-          .slice(0, 10)
-
-        return Promise.all(latestProfilesSortedArray.map(item => {
+        return Promise.all(profiles.map(item => {
           return getUser(item.id)
             .then(requestedUser => {
               const text = format(requestedUser.profile)
