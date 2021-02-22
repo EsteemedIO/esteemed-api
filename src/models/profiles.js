@@ -34,13 +34,15 @@ export const profiles = {
       .catch(e => console.error(e))
   },
 
-  getAll: async () => {
+  getAll: async (limit = null) => {
     let allRecords = []
     const params = {
       fields: Object.keys(profileFields).join(','),
       query: 'isDeleted:FALSE',
-      count: 200,
+      sort: '-dateAdded'
     }
+
+    params.count = limit ? limit : 200
 
     // Iterate queries to account for 500 record limit (200 record limit when
     // querying skills).
@@ -50,7 +52,7 @@ export const profiles = {
       return await bhFetch('search/Candidate?' + stringify(params))
         .then(res => {
           allRecords = allRecords.concat(res.data.data)
-          return (res.data.data.length >= params.count) ? doQuery(allRecords.length) : allRecords
+          return (!limit && res.data.data.length >= params.count) ? doQuery(allRecords.length) : allRecords
         })
         .catch(e => console.error(e))
     }
