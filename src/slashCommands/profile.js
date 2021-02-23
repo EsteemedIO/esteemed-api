@@ -1,8 +1,9 @@
-import { loadUser, getProfile, format } from './../util/userProfiles.js'
+import { loadUser, format } from './../util/userProfiles.js'
+import { profiles } from '../models/profiles.js'
 
 export default async handle => {
   try {
-    return Promise.all([loadUser(handle), getProfile(handle)])
+    return Promise.all([loadUser(handle), profiles.getDisplay(handle)])
       .then(([user, profile]) => {
         if (user) {
           const text = format(user.profile, profile)

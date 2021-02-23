@@ -86,11 +86,14 @@ export function setUserJoinDate(user, joinDate) {
 }
 
 export function format(profile, externalProfile) {
-  console.log(externalProfile)
-  let text = `*Name:* ${profile.real_name}
+  let main = ''
+  let details = ''
+  if (profile) {
+    main = `*Name:* ${profile.real_name}
 *Title:* ${profile.title}
 *Email:* ${profile.email}
 *Phone:* ${profile.phone}`
+  }
 
   if (externalProfile) {
     const titles = externalProfile.titles ? externalProfile.titles.join(', ') : ''
@@ -99,7 +102,10 @@ export function format(profile, externalProfile) {
     const da = new Date(externalProfile.dateAdded)
     const dateAdded = da.toLocaleDateString("en-US")
 
-    text += `\n
+    main = `*Name:* ${externalProfile.firstName} ${externalProfile.lastName}
+*Email:* ${externalProfile.email}`
+
+    details = `\n
 *Join Date:* ${dateAdded}
 *Location:* ${locationFormat(externalProfile.location)}
 *Abilities:* ${titles}
@@ -107,7 +113,7 @@ export function format(profile, externalProfile) {
 *CMS Experience:* ${cms}`
   }
 
-  return text
+  return main + details
 }
 
 export async function isAdmin(userId) { await getUser(userId).then(user => user.is_admin) }

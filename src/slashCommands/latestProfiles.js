@@ -30,32 +30,28 @@ export default async userId => {
           ]
         }
 
-        return Promise.all(profiles.map(item => {
-          return getUser(item.id)
-            .then(requestedUser => {
-              const text = format(requestedUser.profile)
+        return Promise.all(profiles.map(async item => {
+          let response = {
+            type: 'section',
+            text: {
+              type: 'mrkdwn'
+            }
+          }
 
-              if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'drupal_profile')) {
-                // text += "\n" + "<" + profiles[item].drupal_profile + "|" + profiles[item].drupal_bio + ">"
-              }
+          if (item.slackId) {
+            const requestedUser = await getUser(item.slackId)
+            response.text.text = format(requestedUser.profile, item)
+            response.accessory = {
+              type: 'image',
+              image_url: requestedUser.profile.image_192,
+              alt_text: requestedUser.profile.real_name
+            }
+          }
+          else {
+            response.text.text = format(null, item)
+          }
 
-              if (Object.prototype.hasOwnProperty.call(profiles.find(profile => profile.id === requestedUser.id), 'wp_profile')) {
-                // text += "\n" + "<" + profiles[item].wp_profile + "|" + profiles[item].wp_bio + ">"
-              }
-
-              return {
-                type: 'section',
-                text: {
-                  type: 'mrkdwn',
-                  text: text
-                },
-                accessory: {
-                  type: 'image',
-                  image_url: requestedUser.profile.image_192,
-                  alt_text: requestedUser.profile.real_name
-                }
-              }
-            })
+          return response
         }))
           .then(blocks => blocks.flatMap((v, i, a) => a.length - 1 !== i ? [v, { type: 'divider' }] : v))
           .then(blocks => ({ response_type: 'in_channel', blocks: blocks }))
