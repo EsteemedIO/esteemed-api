@@ -16,6 +16,7 @@ cron.schedule('* * * * *', async () => {
       .then(jobs => {
         cache.setKey(key, JSON.stringify(jobs))
         cache.save()
+        console.log('Jobs cache refreshed')
       })
   }
 })
