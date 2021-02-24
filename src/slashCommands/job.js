@@ -59,7 +59,7 @@ export async function listJobs(userId) {
                 type: 'plain_text',
                 text: `Apply for ${job.title}`
               },
-              url: `https://talent.esteemed.io/jobs/#/jobs/${job.id}`,
+              url: `https://talent.esteemed.io/jobs/${job.id}`,
               action_id: 'job_link'
             },
             /*
