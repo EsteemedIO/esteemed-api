@@ -13,7 +13,7 @@ export const profiles = {
 
     // Fetch the BH data, then re-assign values to proper keys.
     return bhFetch('search/Candidate?' + stringify(params))
-      .then(res => reassignBHValues(profileFields, res))
+      .then(res => reassignBHValues(profileFields, res.data.data[0]))
       .then(profile => ({ ...profile, ...{
           skills: profile.skills.data.map(value => value.name),
           date_available: profile.date_available ? new Date(profile.date_available).toISOString().split('T')[0] : null,
