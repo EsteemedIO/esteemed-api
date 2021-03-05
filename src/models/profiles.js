@@ -36,6 +36,9 @@ export const profiles = {
           if (fieldMeta.includes('customText') && value && meta && meta.options && value instanceof Array) {
             acc[fieldMeta] = value.map(v => meta.options.find(option => option.value == v)['label'])
           }
+          else if (fieldMeta.includes('customText') && value && meta && meta.options) {
+            acc[fieldMeta] = meta.options.find(option => option.value == value)['label']
+          }
           else {
             acc[fieldMeta] = value
           }
