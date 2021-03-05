@@ -19,6 +19,7 @@
     "dotenv": "^8.2.0",
     "express-fileupload": "^1.2.1",
     "flat-cache": "^3.0.4",
+    "googleapis": "^67.1.0",
     "html-entities": "^2.0.2",
     "node-cron": "^2.0.3",
     "qs": "^6.9.6",
