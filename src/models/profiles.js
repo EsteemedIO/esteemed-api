@@ -52,6 +52,30 @@ export const profiles = {
         }}))
       .catch(e => console.error(e))
   },
+  getEducation: async slackId => {
+    const bhId = await profiles.getBHId(slackId)
+
+    const params = {
+      fields: 'school,city,state,degree,major,startDate,endDate',
+      where: `candidate.id=${bhId}`
+    }
+
+    return bhFetch(`query/CandidateEducation?` + stringify(params))
+      .then(res => res.data.data)
+      .catch(res => console.error(res))
+  },
+  getWorkHistory: async slackId => {
+    const bhId = await profiles.getBHId(slackId)
+
+    const params = {
+      fields: 'title,companyName,startDate,endDate',
+      where: `candidate.id=${bhId}`
+    }
+
+    return bhFetch(`query/CandidateWorkHistory?` + stringify(params))
+      .then(res => res.data.data)
+      .catch(res => console.error(res))
+  },
 
   getAll: async (limit = null) => {
     let allRecords = []
