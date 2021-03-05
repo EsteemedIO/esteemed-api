@@ -68,9 +68,9 @@ app.command('/profile', async ({ command, ack, respond }) => {
 app.command('/profiles-latest', async ({ ack, command, respond }) => {
   await ack()
 
-  const profiles = await commandLatestProfiles(command.user_id)
+  const latestProfiles = await commandLatestProfiles(command.user_id)
 
-  await respond(profiles)
+  await respond(latestProfiles)
 
   console.log('Latest profiles queried by', command.user_id)
 })
