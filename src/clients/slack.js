@@ -13,6 +13,7 @@ const app = new App({
 })
 
 import { jobs as dbJobs } from '../models/jobs.js'
+import { profiles } from '../models/profiles.js'
 
 import commandProfile from '../slashCommands/profile.js'
 import commandLatestProfiles from '../slashCommands/latestProfiles.js'
@@ -27,6 +28,7 @@ import * as home from '../blocks/home.js'
 import { countryOptions } from '../util/countryCodes.js'
 import * as userProfiles from '../util/userProfiles.js'
 import * as slackFormData from '../util/slackFormData.js'
+import * as resume from '../util/resume.js'
 import * as tasks from '../util/tasks.js'
 
 // Events.
@@ -63,6 +65,24 @@ app.command('/profile', async ({ command, ack, respond }) => {
   await respond(profile)
 
   console.log('Profile', userId, 'queried by', command.user_id)
+})
+
+app.command('/resume', async ({ command, ack, respond }) => {
+  await ack()
+
+  const userId = command.text.substring(2).split('|')[0]
+
+  // Load user and see if file already exists.
+  const profile = await userProfiles.getProfile(userId)
+  const resumeId = profile.resume ? profile.resume.split('/')[5] : null
+
+  const details = await resume.getDetails(userId)
+  const resumeUrl = await resume.format(details, resumeId)
+
+  // Update profile with resume URL.
+  profiles.update(userId, { resume: resumeUrl })
+
+  respond(resumeUrl)
 })
 
 app.command('/profiles-latest', async ({ ack, command, respond }) => {
