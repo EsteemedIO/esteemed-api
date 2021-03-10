@@ -74,7 +74,8 @@ app.command('/resume', async ({ command, ack, respond }) => {
 
   // Load user and see if file already exists.
   const profile = await userProfiles.getProfile(userId)
-  const resumeId = profile.resume ? profile.resume.split('/')[5] : null
+
+  if (profile.resume) respond(profile.resume)
 
   const details = await resume.getDetails(userId)
   const resumeUrl = await resume.format(details, resumeId)

@@ -10,14 +10,8 @@ export async function getDetails(slackId) {
   }
 }
 
-export async function format(details, currentResumeId) {
+export async function format(details) {
   await authenticate()
-
-  // Delete existing file.
-  if (currentResumeId) {
-    const drive = googleapis.google.drive({ version: 'v2' })
-    drive.files.delete({ fileId: currentResumeId, supportsAllDrives: true })
-  }
 
   const filename = 'Esteemed | ' + details.profile.firstName + ' ' + details.profile.lastName[0]
   const resumeId = await getResumeTemplate(filename)
