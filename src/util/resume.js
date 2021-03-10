@@ -71,7 +71,8 @@ function getReplacements({ profile, education, experience }) {
   const imageUpdate = {
     replaceImage: {
       imageObjectId: 'i.0',
-      uri: profile.image
+      uri: profile.image,
+      imageReplaceMethod: 'CENTER_CROP'
     }
   }
 
