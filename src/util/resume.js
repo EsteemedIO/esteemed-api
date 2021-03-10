@@ -68,7 +68,14 @@ function getReplacements({ profile, education, experience }) {
     '{{NAME}}': profile.firstName + ' ' + profile.lastName[0] + '.',
   }
 
-  return Object.keys(updates).map(key => ({
+  const imageUpdate = {
+    replaceImage: {
+      imageObjectId: 'i.0',
+      uri: profile.image
+    }
+  }
+
+  const textUpdates = Object.keys(updates).map(key => ({
     replaceAllText: {
       containsText: {
         matchCase: true,
@@ -77,6 +84,8 @@ function getReplacements({ profile, education, experience }) {
       replaceText: updates[key]
     }
   }))
+
+  return [imageUpdate, ...textUpdates]
 }
 
 async function updateResume(resumeId, updates) {
