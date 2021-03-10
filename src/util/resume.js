@@ -2,6 +2,9 @@ import { default as googleapis } from 'googleapis'
 import { profiles } from '../models/profiles.js'
 import { authenticate } from './google.js'
 
+const docs = googleapis.google.docs({ version: "v1" })
+const drive = googleapis.google.drive({ version: "v2" })
+
 export async function getDetails(slackId) {
   return {
     profile: await profiles.getDisplay(slackId),
@@ -23,7 +26,6 @@ export async function format(details) {
 async function getResumeTemplate(filename) {
   const templateId = process.env.GOOGLE_RESUME_TEMPLATE
   const folderId = process.env.GOOGLE_RESUME_FOLDER
-  const drive = googleapis.google.drive({ version: "v2" })
 
   let file = {
     fileId: templateId,
@@ -78,8 +80,6 @@ function getReplacements({ profile, education, experience }) {
 }
 
 async function updateResume(resumeId, updates) {
-  const docs = googleapis.google.docs({ version: "v1" })
-
   return docs.documents.batchUpdate({
     documentId: resumeId,
     requestBody: {
