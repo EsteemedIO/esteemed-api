@@ -82,7 +82,7 @@ app.command('/resume', async ({ command, ack, respond }) => {
 
   details.profile.image = slackProfile.profile.image_512
 
-  const resumeUrl = await resume.format(details, resumeId)
+  const resumeUrl = await resume.format(details)
 
   // Update profile with resume URL.
   profiles.update(userId, { resume: resumeUrl })
