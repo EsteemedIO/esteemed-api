@@ -49,6 +49,9 @@ export const profiles = {
       .then(profile => ({ ...profile, ...{
           skills: profile.skills.data.map(value => value.name),
           date_available: profile.date_available ? new Date(profile.date_available).toISOString().split('T')[0] : null,
+          titles: profile.titles !== null ? profile.titles : [],
+          languages: profile.languages !== null ? profile.languages : [],
+          cms: profile.cms !== null ? profile.cms : []
         }}))
       .catch(e => console.error(e))
   },
