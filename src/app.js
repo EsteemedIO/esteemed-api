@@ -1,5 +1,6 @@
 import { app, receiver } from './clients/slack.js'
 import { default as cache } from './util/cache.js'
+import { default as cron } from './clients/cron.js'
 import bodyParser from 'body-parser'
 import fileupload from 'express-fileupload'
 
@@ -90,3 +91,6 @@ receiver.router.post('/upload-resume', async ({ files }, res, next) => {
 
   console.log('⚡️ Bolt app is running!');
 })()
+
+// Schedule cron tasks.
+cron()
