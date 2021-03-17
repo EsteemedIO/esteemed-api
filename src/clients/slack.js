@@ -87,6 +87,8 @@ app.command('/resume', async ({ command, ack, respond }) => {
   // Update profile with resume URL.
   profiles.update(userId, { resume: resumeUrl })
 
+  console.log('Resume created for', userId)
+
   respond(resumeUrl)
 })
 
