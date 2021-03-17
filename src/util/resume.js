@@ -50,7 +50,6 @@ async function getResumeTemplate(filename) {
 function getReplacements({ profile, education, experience }) {
   const updates = {
     '{{NAME}}': profile.firstName + ' ' + profile.lastName[0] + '.',
-//    '{{IMAGE}}': profile.image_512,
     '{{TITLE}}': profile.titles.join(', '),
     '{{LOCATION}}': profile.location.city + ', ' + profile.location.state,
     '{{SKILLS}}': profile.skills.join(', '),
