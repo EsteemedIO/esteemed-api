@@ -5,7 +5,7 @@ import { default as cache } from '../util/cache.js'
 
 export default function() {
   // Update jobs cache.
-  cron.schedule('* * * * *', async () => {
+  cron.schedule('*/30 * * * *', async () => {
     if (process.env.NODE_ENV == 'production') {
       const key =  '__express__/jobs'
       cache.flush('/jobs')
@@ -24,7 +24,7 @@ export default function() {
   })
 
   // Add new references as leads.
-  cron.schedule('* * * * *', async () => {
+  cron.schedule('*/30 * * * *', async () => {
     if (process.env.NODE_ENV == 'production') {
       leads.getNew()
         .then(async newLeads => await Promise.all(newLeads.map(lead => leads.add(lead))))
