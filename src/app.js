@@ -22,14 +22,15 @@ receiver.router.get('/resume-image', async (req, res, next) => {
   if (!req.query.image) {
     res.send('Missing image parameter')
   }
-
-  jimp.read(req.query.image)
-    .then(image => image.color([{ apply: 'greyscale', params: [100] }])
-      .getBufferAsync('image/jpeg'))
-    .then(img => {
-      res.setHeader('Content-Type', 'image/jpeg')
-      res.send(img)
-    })
+  else {
+    jimp.read(req.query.image)
+      .then(image => image.color([{ apply: 'greyscale', params: [100] }])
+        .getBufferAsync('image/jpeg'))
+      .then(img => {
+        res.setHeader('Content-Type', 'image/jpeg')
+        res.send(img)
+      })
+  }
 })
 
 receiver.router.get('/jobs', cache.middleware, async (req, res, next) => dbJobs.getAll()

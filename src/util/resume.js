@@ -67,10 +67,12 @@ function getReplacements({ profile, education, experience }) {
     '{{NAME}}': profile.firstName + ' ' + profile.lastName[0] + '.',
   }
 
+  const image = 'https://esteemed-api-97dnt.ondigitalocean.app/resume-image?image=' + profile.image
+
   const imageUpdate = {
     replaceImage: {
       imageObjectId: 'i.0',
-      uri: profile.image,
+      uri: image,
       imageReplaceMethod: 'CENTER_CROP'
     }
   }
@@ -85,7 +87,10 @@ function getReplacements({ profile, education, experience }) {
     }
   }))
 
-  return [imageUpdate, ...textUpdates]
+  const returnval = [imageUpdate, ...textUpdates]
+  console.dir(returnval, { depth: null })
+
+  return returnval
 }
 
 async function updateResume(resumeId, updates) {
