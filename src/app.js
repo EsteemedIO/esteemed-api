@@ -3,6 +3,7 @@ import { default as cache } from './util/cache.js'
 import { default as cron } from './clients/cron.js'
 import bodyParser from 'body-parser'
 import fileupload from 'express-fileupload'
+import { default as jimp } from 'jimp'
 
 import { jobs as dbJobs, locationFormat } from './models/jobs.js'
 
@@ -17,6 +18,20 @@ receiver.router.use(function(req, res, next) {
 receiver.router.use(fileupload())
 
 // Endpoints.
+receiver.router.get('/resume-image', async (req, res, next) => {
+  if (!req.query.image) {
+    res.send('Missing image parameter')
+  }
+
+  jimp.read(req.query.image)
+    .then(image => image.color([{ apply: 'greyscale', params: [100] }])
+      .getBufferAsync('image/jpeg'))
+    .then(img => {
+      res.setHeader('Content-Type', 'image/jpeg')
+      res.send(img)
+    })
+})
+
 receiver.router.get('/jobs', cache.middleware, async (req, res, next) => dbJobs.getAll()
   .then(jobs => jobs.map(job => ({
       ...job,
