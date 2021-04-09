@@ -152,7 +152,7 @@ receiver.router.post('/register-deal', async ({ body }, res, next) => {
 
     const message = `${first_name} registered a deal from ${prospect_name}`
     console.log(message)
-    res.json()
+    res.status(200).json()
   } catch (err) {
     console.log('There was an issue registering a deal')
     return res.json(err.message)
