@@ -101,6 +101,64 @@ receiver.router.post('/upload-resume', async ({ files }, res, next) => {
   }
 })
 
+receiver.router.post('/register-deal', async ({ body }, res, next) => {
+  const {
+    first_name,
+    last_name,
+    email,
+    phone,
+    prospect_name,
+    prospect_first_name,
+    prospect_last_name,
+    prospect_phone,
+    prospect_email,
+    prospect_details
+  } = body
+
+  try {
+    await app.client.chat.postMessage({
+      token: process.env.SLACK_TOKEN_BOT,
+      channel: 'C01TVJTHM9R',
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `Deal registered!`
+          }
+        },
+        {
+          type: 'divider'
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Referer*\nName: *${first_name} ${last_name}* \nEmail: <mailto:${email}|${email}> \nPhone: <tel:+${phone}| ${phone}> `
+          }
+        },
+        {
+          type: 'divider'
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Prospect*\nCompany: ${prospect_name} \nName: *${prospect_first_name} ${prospect_last_name}* \nEmail: <mailto:${prospect_email}|${prospect_email}> \nPhone: <tel:+${prospect_phone}| ${prospect_phone}> \n Details: ${prospect_details}`
+          }
+        },
+      ]
+    })
+
+    const message = `${first_name} registered a deal from ${prospect_name}`
+    console.log(message)
+    res.json()
+  } catch (err) {
+    console.log('There was an issue registering a deal')
+    return res.json(err.message)
+  }
+})
+
 ;(async () => {
   // Start your app
   await app.start(process.env.PORT || 3000);
