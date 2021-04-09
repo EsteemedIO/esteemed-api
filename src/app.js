@@ -124,7 +124,7 @@ receiver.router.post('/register-deal', async ({ body }, res, next) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `Deal registered!`
+            text: `*Deal registered!*`
           }
         },
         {
