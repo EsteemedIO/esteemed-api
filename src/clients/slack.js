@@ -24,6 +24,7 @@ import * as wp from '../blocks/wp.js'
 import * as drupal from '../blocks/drupal.js'
 import * as location from '../blocks/location.js'
 import * as home from '../blocks/home.js'
+import { getForm as referralForm } from '../blocks/referrals.js'
 
 import { countryOptions } from '../util/countryCodes.js'
 import * as userProfiles from '../util/userProfiles.js'
@@ -90,6 +91,42 @@ app.command('/resume', async ({ command, ack, respond }) => {
   console.log('Resume created for', userId)
 
   respond(resumeUrl)
+})
+
+app.command('/referral-html', async ({ command, ack, body, client, context }) => {
+  await ack()
+
+  await client.views.open({
+    token: context.botToken,
+    trigger_id: body.trigger_id,
+    view: {
+      callback_id: 'edit_profile',
+      type: "modal",
+      title: {
+        "type": "plain_text",
+        "text": "Edit Profile",
+      },
+      submit: {
+        type: 'plain_text',
+        "text": "Close",
+      },
+      blocks: [
+        {
+          type: 'input',
+          element: {
+            type: 'plain_text_input',
+            multiline: true,
+            action_id: 'val',
+            initial_value: referralForm(command.user_id)
+          },
+          label: {
+            "type": "plain_text",
+            "text": "HTML"
+          }
+        }
+      ]
+    }
+  })
 })
 
 app.command('/profiles-latest', async ({ ack, command, respond }) => {
