@@ -172,6 +172,7 @@ receiver.router.post('/candidate-referral', async ({ body }, res, next) => {
     skills,
     referer
   } = body
+  console.log(Object.keys(skills).map(key => skills[key]).join(', '))
 
   try {
     await app.client.chat.postMessage({
@@ -192,7 +193,7 @@ receiver.router.post('/candidate-referral', async ({ body }, res, next) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*Candidate*\nName: *${first_name} ${last_name}*\nEmail: <mailto:${email}|${email}>\nLocation: ${city}, ${country}\nAcquia Exams: ${acquia_exams.join(', ')}\nSkills: ${skills.join(', ')}`
+            text: `*Candidate*\nName: *${first_name} ${last_name}*\nEmail: <mailto:${email}|${email}>\nLocation: ${city}, ${country}\nAcquia Exams: ${Object.keys(acquia_exams).map(key => acquia_exams[key]).join(', ')}\nSkills: ${Object.keys(skills).map(key => skills[key]).join(', ')}`
           }
         },
       ]
