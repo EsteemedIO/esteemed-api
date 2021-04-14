@@ -93,39 +93,18 @@ app.command('/resume', async ({ command, ack, respond }) => {
   respond(resumeUrl)
 })
 
-app.command('/referral-html', async ({ command, ack, body, client, context }) => {
+app.command('/referral-html', async ({ command, ack, respond }) => {
   await ack()
 
-  await client.views.open({
-    token: context.botToken,
-    trigger_id: body.trigger_id,
-    view: {
-      callback_id: 'edit_profile',
-      type: "modal",
-      title: {
-        "type": "plain_text",
-        "text": "Edit Profile",
-      },
-      submit: {
-        type: 'plain_text',
-        "text": "Close",
-      },
-      blocks: [
-        {
-          type: 'input',
-          element: {
-            type: 'plain_text_input',
-            multiline: true,
-            action_id: 'val',
-            initial_value: referralForm(command.user_id)
-          },
-          label: {
-            "type": "plain_text",
-            "text": "HTML"
-          }
-        }
-      ]
-    }
+  respond({
+    response_type: 'in_channel',
+    blocks: [{
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: referralForm(command.user_id)
+      }
+    }]
   })
 })
 
