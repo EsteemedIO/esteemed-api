@@ -8,12 +8,12 @@ export function getForm(userId) {
       type: 'email'
     },
     {
-      id: 'first',
+      id: 'first_name',
       label: 'First Name',
       type: 'text'
     },
     {
-      id: 'last',
+      id: 'last_name',
       label: 'Last Name',
       type: 'text'
     },

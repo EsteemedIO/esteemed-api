@@ -192,7 +192,7 @@ receiver.router.post('/candidate-referral', async ({ body }, res, next) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*Candidate*\nName: *${first_name} ${last_name}*\nEmail: <mailto:${email}|${email}>\nLocation: ${city}, ${country}\nAcquia Exams: ${acquia_exams}\nSkills: ${skills}`
+            text: `*Candidate*\nName: *${first_name} ${last_name}*\nEmail: <mailto:${email}|${email}>\nLocation: ${city}, ${country}\nAcquia Exams: ${acquia_exams.join(', ')}\nSkills: ${skills.join(', ')}`
           }
         },
       ]
