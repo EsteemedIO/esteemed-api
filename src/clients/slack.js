@@ -97,7 +97,7 @@ app.command('/referral-html', async ({ command, ack, respond }) => {
   await ack()
 
   respond({
-    response_type: 'in_channel',
+    response_type: 'ephemeral',
     blocks: [{
       type: "section",
       text: {
