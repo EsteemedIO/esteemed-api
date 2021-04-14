@@ -161,6 +161,54 @@ receiver.router.post('/register-deal', async ({ body }, res, next) => {
   }
 })
 
+receiver.router.post('/candidate-referral', async ({ body }, res, next) => {
+  const {
+    email,
+    first_name,
+    last_name,
+    city,
+    country,
+    acquia_exams,
+    skills,
+    referer
+  } = body
+
+  try {
+    await app.client.chat.postMessage({
+      token: process.env.SLACK_TOKEN_BOT,
+      channel: 'C01TVJTHM9R',
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `Candidate referred by *@${referer}*`
+          }
+        },
+        {
+          type: 'divider'
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Candidate*\nName: *${first_name} ${last_name}*\nEmail: <mailto:${email}|${email}>\nLocation: ${city}, ${country}\nAcquia Exams: ${acquia_exams}\nSkills: ${skills}`
+          }
+        },
+      ]
+    })
+
+    const message = `${referer} referred candidate: ${first_name} ${last_name}`
+    console.log(message)
+    res.json({
+      message: 'Success'
+    })
+  } catch (err) {
+    console.log('There was an issue adding a candidate referral')
+    return res.json(err.message)
+  }
+})
+
 ;(async () => {
   // Start your app
   await app.start(process.env.PORT || 3000);

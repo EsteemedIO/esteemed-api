@@ -1,5 +1,5 @@
 export function getForm(userId) {
-  const action = `https://esteemed-api-97dnt.ondigitalocean.app/submit-referral`
+  const action = `https://esteemed-api-97dnt.ondigitalocean.app/candidate-referral`
 
   const fields = [
     {
@@ -79,7 +79,7 @@ export function getForm(userId) {
     }
   ]
 
-  const referer_field = `<input type="hidden" value="${userId}">`
+  const referer_field = `<input type="hidden" name="referer" value="${userId}">`
 
   const form_fields = fields.reduce((acc, field) => {
     let output = `\t<label for="${field.id}">${field.label}</label>\n`
