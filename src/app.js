@@ -182,7 +182,7 @@ receiver.router.post('/candidate-referral', async ({ body }, res, next) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `Candidate referred by *@${referer}*`
+            text: `Candidate referred by *<@${referer}>*`
           }
         },
         {
