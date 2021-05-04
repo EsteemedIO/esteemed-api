@@ -1,7 +1,8 @@
 import { default as cron } from 'node-cron'
 import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { leads } from '../models/leads.js'
-import { default as cache } from '../util/cache.js'
+import { getHours } from '../util/clockify.js'
+import { createInvoice, getCompanies, convertClockifyToQB } from '../util/quickbooks.js'
 
 export default function() {
   // Update jobs cache.
@@ -29,6 +30,17 @@ export default function() {
       leads.getNew()
         .then(async newLeads => await Promise.all(newLeads.map(lead => leads.add(lead))))
         .then(res => res.map(lead => console.log(`Reference ${lead.data.data.firstName} ${lead.data.data.lastName} added as a lead.`)))
+    }
+  })
+
+  // Every 2 weeks (on the 1st and 15th).
+  cron.schedule('30 1 1,15 * *', async () => {
+    if (process.env.NODE_ENV == 'production') {
+      const companies = await getCompanies()
+      const hours = await getHours()
+      const invoices = convertClockifyToQB(companies, hours)
+
+      invoices.map(companyHours => createInvoice(companyHours))
     }
   })
 }
