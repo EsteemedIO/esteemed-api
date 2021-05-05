@@ -23,7 +23,7 @@ export async function createInvoice(hours) {
     .catch(data => console.log(data.response.data.Fault.Error))
 }
 
-export async function getCompanies() {
+export async function getProjects() {
   const accessToken = await getToken()
   const params = {
     headers: {
@@ -34,8 +34,8 @@ export async function getCompanies() {
   const selectStatement = "select * from Customer"
 
   return axios.get(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/query?query=${selectStatement}`, params)
-    .then(({ data }) => data.QueryResponse.Customer)
-    .then(customers => customers.map(customer => ({ id: customer.Id, name: customer.CompanyName })))
+    .then(({ data }) => data.QueryResponse.Customer.filter(customer => customer.Job))
+    .then(customers => customers.map(customer => ({ id: customer.Id, name: customer.DisplayName })))
     .catch(data => console.log(data))
 }
 

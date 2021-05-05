@@ -36,7 +36,7 @@ export async function getHours() {
     .then(({ data }) => data.timeentries.reduce(
       (objectsByKeyValue, obj) => ({
         ...objectsByKeyValue,
-        [obj['clientName']]: (objectsByKeyValue[obj['clientName']] || []).concat(obj)
+        [obj['projectName']]: (objectsByKeyValue[obj['projectName']] || []).concat(obj)
       }), {}))
     .catch(e => console.error(e))
 }
