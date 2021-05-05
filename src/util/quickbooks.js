@@ -61,7 +61,7 @@ export function convertClockifyToQB(companies, entries) {
     const Line = entries[company].map(entry => {
       const hours = entry.timeInterval.duration / 60 / 60
       // TODO: Get actual billing rate.
-      const price = 100
+      const price = 0
       return {
         Description: `[${entry.userName}] ${entry.description}`,
         DetailType: 'SalesItemLineDetail',
