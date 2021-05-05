@@ -34,8 +34,20 @@ export async function getProjects() {
   const selectStatement = "select * from Customer"
 
   return axios.get(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/query?query=${selectStatement}`, params)
-    .then(({ data }) => data.QueryResponse.Customer.filter(customer => customer.Job))
-    .then(customers => customers.map(customer => ({ id: customer.Id, name: customer.DisplayName })))
+    .then(({ data }) => {
+      const customers = data.QueryResponse.Customer
+      const jobs = customers.filter(customer => customer.Job)
+
+      return jobs.map(job => {
+        const parent = customers.find(customer => customer.Id == job.ParentRef.value)
+        const email = parent.PrimaryEmailAddr ? parent.PrimaryEmailAddr.Address : ''
+        return {
+          id: job.Id,
+          name: job.DisplayName,
+          email: email
+        }
+      })
+    })
     .catch(data => console.log(data))
 }
 
@@ -44,6 +56,7 @@ export function convertClockifyToQB(companies, entries) {
     const companyId = companies.find(i => i.name == company).id
     const CustomerRef = { value: companyId }
     const SalesTermRef = { value: 3, name: 'Net 30' }
+    const BillEmail = { Address: company.email }
 
     const Line = entries[company].map(entry => {
       const hours = entry.timeInterval.duration / 60 / 60
@@ -66,6 +79,7 @@ export function convertClockifyToQB(companies, entries) {
     })
 
     return {
+      BillEmail: BillEmail,
       SalesTermRef: SalesTermRef,
       CustomerRef: CustomerRef,
       Line: Line
