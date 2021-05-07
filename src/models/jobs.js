@@ -16,7 +16,17 @@ export const jobs = {
       .then(res => reassignBHValues(jobFields, res.data.data))
       .catch(e => console.log(e))
   },
+  getJobUpdate: async (subscriptionId = null) => {
+    let params = { maxEvents: 200 }
 
+    if (subscriptionId) {
+      params.requestId = subscriptionId
+    }
+
+    return bhFetch('event/subscription/jobUpdate?' + stringify(params))
+      .then(({ data }) => (data !== ''))
+      .catch(e => console.error(e))
+  },
   getAll: async () => {
     const params = {
       fields: Object.keys(jobFields).join(','),
