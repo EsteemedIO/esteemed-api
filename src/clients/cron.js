@@ -37,8 +37,8 @@ export default function() {
   cron.schedule('30 1 1,15 * *', async () => {
     if (process.env.NODE_ENV == 'production') {
       const companies = await getProjects()
-      const hours = await getHours()
-      const invoices = convertClockifyToQB(companies, hours)
+      const projectHours = await getHours('projectName')
+      const invoices = convertClockifyToQB(companies, projectHours)
 
       invoices.map(companyHours => createInvoice(companyHours))
     }

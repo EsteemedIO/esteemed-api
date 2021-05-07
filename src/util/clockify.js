@@ -15,7 +15,7 @@ const dateEnd = date.toISOString()
 date.setDate(date.getDate() - period)
 const dateStart = date.toISOString()
 
-export async function getHours() {
+export async function getHours(filter) {
   const request = {
     "dateRangeStart": dateStart,
     "dateRangeEnd": dateEnd,
@@ -36,7 +36,7 @@ export async function getHours() {
     .then(({ data }) => data.timeentries.reduce(
       (objectsByKeyValue, obj) => ({
         ...objectsByKeyValue,
-        [obj['projectName']]: (objectsByKeyValue[obj['projectName']] || []).concat(obj)
+        [obj[filter]]: (objectsByKeyValue[obj[filter]] || []).concat(obj)
       }), {}))
     .catch(e => console.error(e))
 }
