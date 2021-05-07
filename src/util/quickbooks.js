@@ -1,6 +1,8 @@
 import axios from 'axios'
 import btoa from 'btoa'
 
+import { profiles } from '../models/profiles.js'
+
 // Development
 //const baseUrl = 'https://sandbox-quickbooks.api.intuit.com'
 
@@ -127,14 +129,16 @@ export async function convertClockifyToQBBill(entries) {
 
   return Promise.all(Object.keys(entries).map(async (email) => {
     const vendorId = await getVendor(email)
+    const bhId = await profiles.getBHIdByEmail(email)
+    const rates = await profiles.getRates(bhId)
+
     const VendorRef = { value: vendorId }
     const SalesTermRef = { value: 3, name: 'Net 30' }
 
     const Line = entries[email].map(entry => {
       const company = companies.find(i => i.name == entry.clientName)
       const hours = entry.timeInterval.duration / 60 / 60
-      // TODO: Get actual billing rate.
-      const price = 0
+      const price = rates.hourlyRate
       return {
         Description: `[${entry.userName}] ${entry.description}`,
         DetailType: 'AccountBasedExpenseLineDetail',
