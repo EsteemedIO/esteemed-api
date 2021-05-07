@@ -23,7 +23,7 @@ export async function createInvoice(hours) {
     .catch(data => console.log(data.response.data.Fault.Error))
 }
 
-export async function getProjects() {
+async function getProjects() {
   const accessToken = await getToken()
   const params = {
     headers: {
@@ -51,14 +51,16 @@ export async function getProjects() {
     .catch(data => console.log(data))
 }
 
-export function convertClockifyToQB(companies, entries) {
-  return Object.keys(entries).map(company => {
-    const companyId = companies.find(i => i.name == company).id
+export async function convertClockifyToQBInvoice(entries) {
+  const projects = await getProjects()
+
+  return Object.keys(entries).map(project => {
+    const companyId = projects.find(i => i.name == company).id
     const CustomerRef = { value: companyId }
     const SalesTermRef = { value: 3, name: 'Net 30' }
-    const BillEmail = { Address: company.email }
+    const BillEmail = { Address: project.email }
 
-    const Line = entries[company].map(entry => {
+    const Line = entries[project].map(entry => {
       const hours = entry.timeInterval.duration / 60 / 60
       // TODO: Get actual billing rate.
       const price = 0
