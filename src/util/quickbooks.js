@@ -23,6 +23,20 @@ export async function createInvoice(hours) {
     .catch(data => console.log(data.response.data.Fault.Error))
 }
 
+export async function createBill(hours) {
+  const accessToken = await getToken()
+  const params = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Accept': 'application/json'
+    }
+  }
+
+  axios.post(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/bill`, hours, params)
+    .then(data => console.log(data))
+    .catch(data => console.log(data.response.data.Fault.Error))
+}
+
 async function getProjects() {
   const accessToken = await getToken()
   const params = {
@@ -48,6 +62,25 @@ async function getProjects() {
         }
       })
     })
+    .catch(data => console.log(data))
+}
+
+async function getCompanies() {
+  const accessToken = await getToken()
+  const params = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Accept': 'application/json'
+    }
+  }
+  const selectStatement = "select * from Customer"
+
+  return axios.get(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/query?query=${selectStatement}`, params)
+    .then(({ data }) => data.QueryResponse.Customer)
+    .then(customers => customers.map(customer => ({
+      id: customer.Id,
+      name: customer.CompanyName,
+    })))
     .catch(data => console.log(data))
 }
 
@@ -87,6 +120,63 @@ export async function convertClockifyToQBInvoice(entries) {
       Line: Line
     }
   })
+}
+
+export async function convertClockifyToQBBill(entries) {
+  const companies = await getCompanies()
+
+  return Promise.all(Object.keys(entries).map(async (email) => {
+    const vendorId = await getVendor(email)
+    const VendorRef = { value: vendorId }
+    const SalesTermRef = { value: 3, name: 'Net 30' }
+
+    const Line = entries[email].map(entry => {
+      const company = companies.find(i => i.name == entry.clientName)
+      const hours = entry.timeInterval.duration / 60 / 60
+      // TODO: Get actual billing rate.
+      const price = 0
+      return {
+        Description: `[${entry.userName}] ${entry.description}`,
+        DetailType: 'AccountBasedExpenseLineDetail',
+        AccountBasedExpenseLineDetail: {
+          AccountRef: {
+            name: 'Contractors',
+            value: 7
+          },
+          BillableStatus: 'Billable',
+          CustomerRef: {
+            name: company.name,
+            value: company.id
+          }
+        },
+        Amount: hours * price,
+      }
+    })
+
+    return {
+      SalesTermRef: SalesTermRef,
+      VendorRef: VendorRef,
+      Line: Line
+    }
+  }))
+}
+
+async function getVendor(email) {
+  const accessToken = await getToken()
+  const params = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Accept': 'application/json'
+    }
+  }
+  const selectStatement = "select * from Vendor"
+
+  return axios.get(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/query?query=${selectStatement}`, params)
+    .then(({ data }) => data.QueryResponse.Vendor)
+    .then(data => {
+      const vendor = data.find(vendor => vendor.PrimaryEmailAddr ? vendor.PrimaryEmailAddr.Address == email : false)
+      return vendor ? vendor.Id : false
+    })
 }
 
 async function getToken() {
