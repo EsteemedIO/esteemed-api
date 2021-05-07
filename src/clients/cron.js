@@ -2,7 +2,7 @@ import { default as cron } from 'node-cron'
 import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { leads } from '../models/leads.js'
 import { getHours } from '../util/clockify.js'
-import { createInvoice, convertClockifyToQBInvoice } from '../util/quickbooks.js'
+import { createInvoice, createBill, convertClockifyToQBInvoice, convertClockifyToQBBill } from '../util/quickbooks.js'
 
 export default function() {
   // Update jobs cache.
@@ -36,10 +36,17 @@ export default function() {
   // Every 2 weeks (on the 1st and 15th).
   cron.schedule('30 1 1,15 * *', async () => {
     if (process.env.NODE_ENV == 'production') {
+      // Create invoices.
       const projectHours = await getHours('projectName')
       const invoices = await convertClockifyToQBInvoice(projectHours)
 
       invoices.map(companyHours => createInvoice(companyHours))
+
+      // Create bills.
+      const userHours = await getHours('userEmail')
+      const bills = await convertClockifyToQBBill(userHours)
+
+      bills.map(userHours => createBill(userHours))
     }
   })
 }
