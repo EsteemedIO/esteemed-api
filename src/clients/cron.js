@@ -6,6 +6,10 @@ import { getHours, reduceEmails } from '../util/clockify.js'
 import { createInvoice, createBill, convertClockifyToQBInvoice, convertClockifyToQBBill } from '../util/quickbooks.js'
 
 export default function() {
+  if (process.env.NODE_ENV !== 'production') {
+    return
+  }
+
   // Update jobs cache.
   cron.schedule('*/30 * * * *', async () => {
     if (process.env.NODE_ENV == 'production') {
@@ -36,20 +40,18 @@ export default function() {
 
   // Every 2 weeks (on the 1st and 15th).
   cron.schedule('30 1 1,15 * *', async () => {
-    if (process.env.NODE_ENV == 'production') {
-      // Create invoices.
-      const projectHours = await getHours('projectName')
-      const projectPlacements = await Promise.all(reduceEmails(projectHours).map(async email => placements.get(email)))
-      const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements)
+    // Create invoices.
+    const projectHours = await getHours('projectName')
+    const projectPlacements = await Promise.all(reduceEmails(projectHours).map(async email => placements.get(email)))
+    const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements)
 
-      invoices.map(companyHours => createInvoice(companyHours))
+    invoices.map(companyHours => createInvoice(companyHours))
 
-      // Create bills.
-      const userHours = await getHours('userEmail')
-      const userPlacements = await Promise.all(reduceEmails(userHours).map(async email => placements.get(email)))
-      const bills = await convertClockifyToQBBill(userHours, userPlacements)
+    // Create bills.
+    const userHours = await getHours('userEmail')
+    const userPlacements = await Promise.all(reduceEmails(userHours).map(async email => placements.get(email)))
+    const bills = await convertClockifyToQBBill(userHours, userPlacements)
 
-      bills.map(userHours => createBill(userHours))
-    }
+    bills.map(userHours => createBill(userHours))
   })
 }
