@@ -40,3 +40,7 @@ export async function getHours(filter) {
       }), {}))
     .catch(e => console.error(e))
 }
+
+export function reduceEmails(hours) {
+  return Object.keys(hours).flatMap(group => hours[group].flatMap(entry => entry.userEmail))
+}
