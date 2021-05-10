@@ -1,9 +1,10 @@
 import { default as cron } from 'node-cron'
+
+import { getHours, reduceEmails } from '../util/clockify.js'
 import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { leads } from '../models/leads.js'
 import placements from '../models/placements.js'
-import { getHours, reduceEmails } from '../util/clockify.js'
-import { createInvoice, createBill, convertClockifyToQBInvoice, convertClockifyToQBBill } from '../util/quickbooks.js'
+import { createInvoice, createBill, convertClockifyToQBInvoice, convertClockifyToQBBill } from '../models/invoice.js'
 
 export default function() {
   if (process.env.NODE_ENV !== 'production') {
