@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { promises as fs } from 'fs'
 
 const config = {
   headers: {
@@ -6,14 +7,15 @@ const config = {
   }
 }
 
-// Set billing interval.
-const period = 14
+const clockifyLastRunPath = '/tmp/clockify-lastrun'
 
+// Set billing interval.
 const date = new Date()
 const dateEnd = date.toISOString()
 
-date.setDate(date.getDate() - period)
-const dateStart = date.toISOString()
+const dateStart = await fs.readFile(clockifyLastRun, 'utf-8')
+  .then(ts => new Date(ts).toISOString())
+  .catch(() => false)
 
 export async function getHours(filter) {
   const request = {
@@ -33,11 +35,16 @@ export async function getHours(filter) {
 
   // Get hour report for the last 2 weeks.
   return axios.post(`https://reports.api.clockify.me/v1/workspaces/${process.env.CLOCKIFY_WORKSPACE}/reports/detailed`, request, config)
-    .then(({ data }) => data.timeentries.reduce(
-      (objectsByKeyValue, obj) => ({
-        ...objectsByKeyValue,
-        [obj[filter]]: (objectsByKeyValue[obj[filter]] || []).concat(obj)
-      }), {}))
+    .then(({ data }) => {
+      // Store current timestamp.
+      fs.writeFile(clockifyLastRunPath, Math.floor(Date.now() / 1000))
+
+      return data.timeentries.reduce(
+        (objectsByKeyValue, obj) => ({
+          ...objectsByKeyValue,
+          [obj[filter]]: (objectsByKeyValue[obj[filter]] || []).concat(obj)
+        }), {})
+    })
     .catch(e => console.error(e))
 }
 
