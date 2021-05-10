@@ -9,15 +9,15 @@ const config = {
 
 const clockifyLastRunPath = '/tmp/clockify-lastrun'
 
-// Set billing interval.
-const date = new Date()
-const dateEnd = date.toISOString()
-
-const dateStart = await fs.readFile(clockifyLastRun, 'utf-8')
-  .then(ts => new Date(ts).toISOString())
-  .catch(() => false)
-
 export async function getHours(filter) {
+  // Set billing interval.
+  const date = new Date()
+  const dateEnd = date.toISOString()
+
+  const dateStart = await fs.readFile(clockifyLastRun, 'utf-8')
+    .then(ts => new Date(ts).toISOString())
+    .catch(() => false)
+
   const request = {
     "dateRangeStart": dateStart,
     "dateRangeEnd": dateEnd,
