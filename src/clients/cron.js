@@ -1,7 +1,8 @@
 import { default as cron } from 'node-cron'
 import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { leads } from '../models/leads.js'
-import { getHours } from '../util/clockify.js'
+import placements from '../models/placements.js'
+import { getHours, reduceEmails } from '../util/clockify.js'
 import { createInvoice, createBill, convertClockifyToQBInvoice, convertClockifyToQBBill } from '../util/quickbooks.js'
 
 export default function() {
@@ -38,13 +39,15 @@ export default function() {
     if (process.env.NODE_ENV == 'production') {
       // Create invoices.
       const projectHours = await getHours('projectName')
-      const invoices = await convertClockifyToQBInvoice(projectHours)
+      const projectPlacements = await Promise.all(reduceEmails(projectHours).map(async email => placements.get(email)))
+      const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements)
 
       invoices.map(companyHours => createInvoice(companyHours))
 
       // Create bills.
       const userHours = await getHours('userEmail')
-      const bills = await convertClockifyToQBBill(userHours)
+      const userPlacements = await Promise.all(reduceEmails(userHours).map(async email => placements.get(email)))
+      const bills = await convertClockifyToQBBill(userHours, userPlacements)
 
       bills.map(userHours => createBill(userHours))
     }

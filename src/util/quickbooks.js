@@ -86,7 +86,7 @@ async function getCompanies() {
     .catch(data => console.log(data))
 }
 
-export async function convertClockifyToQBInvoice(entries) {
+export async function convertClockifyToQBInvoice(entries, placements) {
   const projects = await getProjects()
 
   return Object.keys(entries).map(project => {
@@ -97,21 +97,25 @@ export async function convertClockifyToQBInvoice(entries) {
 
     const Line = entries[project].map(entry => {
       const hours = entry.timeInterval.duration / 60 / 60
-      // TODO: Get actual billing rate.
-      const price = 0
+
+      // Get placement details.
+      const placementDetails = placements.find(placement => placement.candidate.email == entry.userEmail)
+
+      // Todo: Verify that placement aligns (beyond just email matching).
+
       return {
         Description: `[${entry.userName}] ${entry.description}`,
         DetailType: 'SalesItemLineDetail',
         SalesItemLineDetail: {
           ServiceDate: entry.timeInterval.start,
           Qty: hours,
-          UnitPrice: price,
+          UnitPrice: placementDetails.billRate,
           ItemRef: {
             name: 'Hours',
             value: 2
           },
         },
-        Amount: hours * price,
+        Amount: hours * placementDetails.billRate,
       }
     })
 
@@ -124,21 +128,26 @@ export async function convertClockifyToQBInvoice(entries) {
   })
 }
 
-export async function convertClockifyToQBBill(entries) {
+export async function convertClockifyToQBBill(entries, placements) {
   const companies = await getCompanies()
 
   return Promise.all(Object.keys(entries).map(async (email) => {
     const vendorId = await getVendor(email)
     const bhId = await profiles.getBHIdByEmail(email)
-    const rates = await profiles.getRates(bhId)
 
     const VendorRef = { value: vendorId }
     const SalesTermRef = { value: 3, name: 'Net 30' }
 
+    // Get placement details.
+    const placementDetails = placements.filter(placement => placement.candidate.email == entry.userEmail)
+
     const Line = entries[email].map(entry => {
       const company = companies.find(i => i.name == entry.clientName)
       const hours = entry.timeInterval.duration / 60 / 60
-      const price = rates.hourlyRate
+
+      // Filter entries to list rates pertinent to this line item.
+      const placement = placementDetails.find(detail => detail.jobOrder.clientCorporation.name == entry.clientCorporation)
+
       return {
         Description: `[${entry.userName}] ${entry.description}`,
         DetailType: 'AccountBasedExpenseLineDetail',
@@ -153,7 +162,7 @@ export async function convertClockifyToQBBill(entries) {
             value: company.id
           }
         },
-        Amount: hours * price,
+        Amount: hours * placement.payRate
       }
     })
 
