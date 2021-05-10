@@ -41,10 +41,6 @@ receiver.router.get('/jobs', cache.middleware, async (req, res, next) => dbJobs.
   .then(jobs => res.send(jobs))
 )
 
-receiver.router.get('/jobs-updated', async (req, res, next) => dbJobs.getJobUpdate()
-  .then(updated => res.send(updated))
-)
-
 receiver.router.post('/upload-applicant', async ({ body }, res, next) => {
   const { applicant, job } = body
 
