@@ -49,9 +49,9 @@ export async function convertClockifyToQBInvoice(entries, placements) {
       const hours = entry.timeInterval.duration / 60 / 60
 
       // Get placement details.
-      const placementDetails = placements.find(placement => placement.candidate.email == entry.userEmail)
-
-      // Todo: Verify that placement aligns (beyond just email matching).
+      const placementDetails = placements.find(placement => {
+        return placement.candidate.email == entry.userEmail && placement.jobOrder.clientCorporation == entry.clientName
+      })
 
       return {
         Description: `[${entry.userName}] ${entry.description}`,
@@ -96,7 +96,9 @@ export async function convertClockifyToQBBill(entries, placements) {
       const hours = entry.timeInterval.duration / 60 / 60
 
       // Filter entries to list rates pertinent to this line item.
-      const placement = placementDetails.find(detail => detail.jobOrder.clientCorporation.name == entry.clientCorporation)
+      const placement = placementDetails.find(detail => {
+        return detail.jobOrder.clientCorporation.name == entry.clientCorporation && detail.jobOrder.clientCorporation == entry.clientName
+      })
 
       return {
         Description: `[${entry.userName}] ${entry.description}`,
