@@ -39,7 +39,7 @@ export default function() {
     const jobUpdateAvailable = jobs.getJobUpdate()
 
     if (jobUpdateAvailable) {
-      axios.post(`https://webhooks.amplify.us-east-1.amazonaws.com/prod/webhooks?id=bd8fedcd-d6a6-4eb1-ae2f-ac27dfb32c37&token=${process.env.AMPLIFY_TOKEN}`)
+      axios.post(`https://webhooks.amplify.us-east-1.amazonaws.com/prod/webhooks?id=bd8fedcd-d6a6-4eb1-ae2f-ac27dfb32c37&token=${process.env.AMPLIFY_TOKEN}`, {}, { headers: { 'Content-Type': 'application/json' }})
         .then(() => console.log('Amplify rebuild request successfully initiated'))
         .catch(err => console.error('Amplify rebuild request error: ', err.response.data))
     }
