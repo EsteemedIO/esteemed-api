@@ -1,30 +1,39 @@
 import axios from 'axios'
+import { promises as fs } from 'fs'
 
-const credentials = {
-  client_id: process.env.BH_CLIENT_ID,
-  client_secret: process.env.BH_CLIENT_SECRET,
-  username: process.env.BH_CLIENT_USERNAME,
-  password: process.env.BH_CLIENT_PASSWORD,
-  restLoginUrl: 'https://rest.bullhornstaffing.com/rest-services/login',
-  tokenHost: 'https://auth.bullhornstaffing.com',
-}
+const bhTokenPath = '/tmp/bhtoken'
 
-async function getRestToken() {
-  const authorizationCode = await axios.post(`${credentials.tokenHost}/oauth/authorize?response_type=code&client_id=${credentials.client_id}&action=Login&username=${credentials.username}&password=${credentials.password}`)
-    .then(response => response.request.res.responseUrl.split('code=')[1].split('&')[0])
-    .catch(err => console.error('Bullhorn authCode error: ', err.response.data))
+function getRestToken() {
+  let cache = false;
 
-  const accessToken = await axios.post(`${credentials.tokenHost}/oauth/token?grant_type=authorization_code&code=${authorizationCode}&client_id=${credentials.client_id}&client_secret=${credentials.client_secret}`)
-    .then(res => res.data.access_token)
-    .catch(err => console.error('Bullhorn accessToken error: ', err.response.data))
+  return async () => {
+    if (!cache) {
+      const refreshToken = await fs.readFile(bhTokenPath, 'utf-8')
+        .then(token => token.trim())
+        .catch(() => false)
 
-  return axios.get(`${credentials.restLoginUrl}?version=*&access_token=${accessToken}&ttl=999`)
-    .then(res => res.data)
-    .catch(err => console.error('Bullhorn login error: ', err.response.data))
+      // Get access/refresh token.
+      const token = await axios.post(`https://auth.bullhornstaffing.com/oauth/token?grant_type=refresh_token&refresh_token=${refreshToken}&client_id=${process.env.BH_CLIENT_ID}&client_secret=${process.env.BH_CLIENT_SECRET}`)
+        .then(({ data }) => data)
+        .catch(err => console.error('Bullhorn accessToken error: ', err.response.data))
+
+      // Store token.
+      fs.writeFile(bhTokenPath, token.refresh_token)
+
+      // Get rest token.
+      cache = axios.get(`https://rest.bullhornstaffing.com/rest-services/login?version=*&access_token=${token.access_token}&ttl=999`)
+        .then(({ data })=> data)
+        .catch(err => console.error('Bullhorn login error: ', err.response.data))
+    }
+
+    return cache
+  }
 }
 
 export async function fetch(resource, method = 'get', data = null) {
-  const creds = await getRestToken()
+  const tokenClient = getRestToken()
+
+  const creds = await tokenClient()
 
   return axios({
     headers: { BhRestToken: creds.BhRestToken },
