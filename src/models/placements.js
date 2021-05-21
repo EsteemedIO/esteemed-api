@@ -4,7 +4,6 @@ const { stringify } = qs
 
 export default {
   get: async email => {
-    console.log(email)
     const params = {
       fields: 'candidate(email),dateBegin,dateEnd,payRate,clientBillRate,jobOrder(clientCorporation)',
       query: `status:Approved`
