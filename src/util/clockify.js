@@ -14,8 +14,8 @@ export async function getHours(filter) {
   const date = new Date()
   const dateEnd = date.toISOString()
 
-  const dateStart = await fs.readFile(clockifyLastRun, 'utf-8')
-    .then(ts => new Date(ts).toISOString())
+  const dateStart = await fs.readFile(clockifyLastRunPath, 'utf-8')
+    .then(ts => new Date(ts * 1000).toISOString())
     .catch(() => false)
 
   const request = {
