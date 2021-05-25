@@ -110,6 +110,32 @@ export const profiles = {
           date_available: profile.date_available ? new Date(profile.date_available).toISOString().split('T')[0] : null,
         }})))
   },
+  getAllSms: async (limit = null) => {
+    let allRecords = []
+    const params = {
+      fields: 'firstName,lastName,phone',
+      query: 'isDeleted:FALSE',
+      sort: '-dateAdded'
+    }
+
+    params.count = limit ? limit : 200
+
+    // Iterate queries to account for 500 record limit (200 record limit when
+    // querying skills).
+    async function doQuery(start) {
+      if (start) params.start = start
+
+      return await bhFetch('search/Candidate?' + stringify(params))
+        .then(res => {
+          allRecords = allRecords.concat(res.data.data)
+          return (!limit && res.data.data.length >= params.count) ? doQuery(allRecords.length) : allRecords
+        })
+        .catch(e => console.error(e))
+    }
+
+    return doQuery()
+      .then(res => res.filter(i => i.phone != null))
+  },
   getBHId: async slackId => {
     const params = {
       fields: 'id',
