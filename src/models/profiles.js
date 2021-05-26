@@ -110,10 +110,10 @@ export const profiles = {
           date_available: profile.date_available ? new Date(profile.date_available).toISOString().split('T')[0] : null,
         }})))
   },
-  getAllSms: async (limit = null) => {
+  getPinpoint: async (limit = null) => {
     let allRecords = []
     const params = {
-      fields: 'firstName,lastName,phone',
+      fields: 'phone,firstName,lastName,companyName,address,id',
       query: 'isDeleted:FALSE',
       sort: '-dateAdded'
     }
@@ -134,7 +134,74 @@ export const profiles = {
     }
 
     return doQuery()
-      .then(res => res.filter(i => i.phone != null))
+      .then(res => res.filter(i => i.phone !== null && i.phone !== '' ))
+      .then(profiles => profiles.map(profile => {
+        const cityLookup = profile.address.city ? timezones.lookupViaCity(profile.address.city)[0] : null
+        const tz = cityLookup ? cityLookup.timezone : ''
+        const country = cityLookup ? cityLookup.iso3 : ''
+
+        return [
+          'SMS',
+          profile.phone.replace(/[^0-9\+]/gi, ''),
+          profile.phone.replace(/[^0-9\+]/gi, ''),
+          country,
+          profile.firstName,
+          profile.lastName,
+          profile.companyName,
+          profile.address.address1,
+          profile.address.address2,
+          profile.address.city,
+          profile.address.state,
+          profile.address.countryName,
+          profile.address.zip,
+          'NONE',
+          tz,
+          'en_US',
+          profile.id,
+        ]
+
+        return {
+          channelType: 'SMS',
+          Address: profile.phone,
+          'Attributes.Address': profile.phone,
+          'Location.Country': country,
+          'User.UserAttributes.FirstName': profile.firstName,
+          'User.UserAttributes.LastName': profile.lastName,
+          'User.UserAttributes.Company': profile.companyName,
+          'User.UserAttributes.MailingStreet1': profile.address.address1,
+          'User.UserAttributes.MailingStreet2': profile.address.address2,
+          'User.UserAttributes.MailingCity': profile.address.city,
+          'User.UserAttributes.MailingRegion': profile.address.state,
+          'User.UserAttributes.MailingCountry': profile.address.countryName,
+          'User.UserAttributes.PostalCode': profile.address.zip,
+          'OptOut': 'NONE',
+          'Demographic.Timezone': tz,
+          'Demographic.Locale': 'en_US',
+          'User.UserAttributes.RefNumber': profile.id,
+        }
+      }))
+      .then(data => ([
+        [
+          'channelType',
+          'Address',
+          'Attributes.Address',
+          'Location.Country',
+          'User.UserAttributes.FirstName',
+          'User.UserAttributes.LastName',
+          'User.UserAttributes.Company',
+          'User.UserAttributes.MailingStreet1',
+          'User.UserAttributes.MailingStreet2',
+          'User.UserAttributes.MailingCity',
+          'User.UserAttributes.MailingRegion',
+          'User.UserAttributes.MailingCountry',
+          'User.UserAttributes.PostalCode',
+          'OptOut',
+          'Demographic.Timezone',
+          'Demographic.Locale',
+          'User.UserAttributes.RefNumber',
+        ],
+        ...data
+      ]))
   },
   getBHId: async slackId => {
     const params = {
