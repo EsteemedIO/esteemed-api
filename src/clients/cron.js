@@ -4,7 +4,7 @@ import { getHours, reduceEmails } from '../util/clockify.js'
 import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { leads } from '../models/leads.js'
 import placements from '../models/placements.js'
-import { createInvoice, createBill, convertClockifyToQBInvoice, convertClockifyToQBBill } from '../models/invoice.js'
+import { createInvoice, convertClockifyToQBInvoice } from '../models/invoice.js'
 
 export default function() {
   if (process.env.NODE_ENV !== 'production') {
@@ -49,12 +49,5 @@ export default function() {
     const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements)
 
     invoices.map(companyHours => createInvoice(companyHours))
-
-    // Create bills.
-    const userHours = await getHours('userEmail')
-    const userPlacements = await Promise.all(reduceEmails(userHours).map(async email => placements.get(email)))
-    const bills = await convertClockifyToQBBill(userHours, userPlacements)
-
-    bills.map(userHours => createBill(userHours))
   })
 }
