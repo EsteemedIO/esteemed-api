@@ -39,18 +39,20 @@ export async function createBill(hours) {
 export async function convertClockifyToQBInvoice(entries, placements) {
   const projects = await getProjects()
 
+  // Iterate over each project array.
   return Object.keys(entries).map(project => {
-    const companyId = projects.find(i => i.name == company).id
+    const companyId = projects.find(i => i.name == project).id
     const CustomerRef = { value: companyId }
     const SalesTermRef = { value: 3, name: 'Net 30' }
     const BillEmail = { Address: project.email }
 
+    // Iterate over each entry in a project.
     const Line = entries[project].map(entry => {
       const hours = entry.timeInterval.duration / 60 / 60
 
-      // Get placement details.
+      // Get candidate details for this line item.
       const placementDetails = placements.find(placement => {
-        return placement.candidate.email == entry.userEmail && placement.jobOrder.clientCorporation == entry.clientName
+        return placement.candidate.email == entry.userEmail && placement.jobOrder.clientCorporation.name == entry.clientName
       })
 
       return {
@@ -59,13 +61,13 @@ export async function convertClockifyToQBInvoice(entries, placements) {
         SalesItemLineDetail: {
           ServiceDate: entry.timeInterval.start,
           Qty: hours,
-          UnitPrice: placementDetails.billRate,
+          UnitPrice: placementDetails.clientBillRate,
           ItemRef: {
             name: 'Hours',
             value: 2
           },
         },
-        Amount: hours * placementDetails.billRate,
+        Amount: hours * placementDetails.clientBillRate,
       }
     })
 
@@ -144,6 +146,7 @@ async function getProjects() {
       return jobs.map(job => {
         const parent = customers.find(customer => customer.Id == job.ParentRef.value)
         const email = parent.PrimaryEmailAddr ? parent.PrimaryEmailAddr.Address : ''
+
         return {
           id: job.Id,
           name: job.DisplayName,
@@ -151,7 +154,7 @@ async function getProjects() {
         }
       })
     })
-    .catch(data => console.log(data))
+    .catch(({ response })=> console.log(response.data.fault))
 }
 
 async function getCompanies() {
