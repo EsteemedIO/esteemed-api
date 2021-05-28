@@ -43,7 +43,9 @@ export default function() {
   cron.schedule('30 1 1,15 * *', async () => {
     // Create invoices.
     const projectHours = await getHours('projectName')
-    const projectPlacements = await Promise.all(reduceEmails(projectHours).map(async email => placements.get(email)))
+      .then(placements => placements.flat())
+    const emails = reduceEmails(projectHours)
+    const projectPlacements = await Promise.all(emails.map(async email => await placements.get(email)))
     const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements)
 
     invoices.map(companyHours => createInvoice(companyHours))
