@@ -170,7 +170,7 @@ async function getProjects() {
         }
       })
     })
-    .catch(({ response })=> console.log(response.data.fault))
+    .catch(response => console.log(response))
 }
 
 async function getCompanies() {
