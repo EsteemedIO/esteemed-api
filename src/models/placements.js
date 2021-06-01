@@ -26,7 +26,13 @@ export default {
     }
 
     return doQuery()
-      .then(res => res.filter(placement => placement.candidate.email == email))
+      .then(placements => placements.map(placement => ({
+          ...placement,
+          candidate: {
+            ...placement.candidate,
+            email: placement.candidate.email.toLowerCase()
+          }
+      })))
       .catch(err => console.log(err))
   },
 }

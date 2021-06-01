@@ -49,7 +49,7 @@ export async function getHours(filter) {
 }
 
 export function reduceEmails(hours) {
-  const emails = Object.keys(hours).flatMap(group => hours[group].flatMap(entry => entry.userEmail))
+  const emails = Object.keys(hours).flatMap(group => hours[group].flatMap(entry => entry.userEmail.toLowerCase()))
 
   return emails.filter((x, i) => i === emails.indexOf(x))
 }
