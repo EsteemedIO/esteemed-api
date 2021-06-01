@@ -37,7 +37,7 @@ export async function getHours(filter) {
   return axios.post(`https://reports.api.clockify.me/v1/workspaces/${process.env.CLOCKIFY_WORKSPACE}/reports/detailed`, request, config)
     .then(({ data }) => {
       // Store current timestamp.
-      fs.writeFile(clockifyLastRunPath, Math.floor(Date.now() / 1000))
+      fs.writeFile(clockifyLastRun, Math.floor(Date.now() / 1000))
 
       return data.timeentries.reduce(
         (objectsByKeyValue, obj) => ({
