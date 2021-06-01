@@ -150,7 +150,7 @@ async function getProjects() {
       'Accept': 'application/json'
     }
   }
-  const selectStatement = "select * from Customer"
+  const selectStatement = "select * from Customer MAXRESULTS 1000"
 
   return axios.get(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/query?query=${selectStatement}`, params)
     .then(({ data }) => {
