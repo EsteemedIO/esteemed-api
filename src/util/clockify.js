@@ -35,11 +35,12 @@ export async function getHours(filter) {
 
   // Get hour report for the last 2 weeks.
   return axios.post(`https://reports.api.clockify.me/v1/workspaces/${process.env.CLOCKIFY_WORKSPACE}/reports/detailed`, request, config)
-    .then(({ data }) => {
+    .then(({ data }) => data.timeentries.filter(entry => entry.clientName != 'Internal (Esteemed Talent Inc.)'))
+    .then(data => {
       // Store current timestamp.
       fs.writeFile(clockifyLastRun, Math.floor(Date.now() / 1000))
 
-      return data.timeentries.reduce(
+      return data.reduce(
         (objectsByKeyValue, obj) => ({
           ...objectsByKeyValue,
           [obj[filter]]: (objectsByKeyValue[obj[filter]] || []).concat(obj)
