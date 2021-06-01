@@ -4,6 +4,10 @@ const { stringify } = qs
 
 export default {
   get: async email => {
+    return getAll()
+      .then(res => res.filter(placement => placement.candidate.email == email))
+  },
+  getAll: async () => {
     let allRecords = []
     const params = {
       fields: 'candidate(email),dateBegin,dateEnd,payRate,clientBillRate,jobOrder(clientCorporation)',

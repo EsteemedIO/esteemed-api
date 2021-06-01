@@ -46,28 +46,42 @@ export async function convertClockifyToQBInvoice(entries, placements) {
     const SalesTermRef = { value: 3, name: 'Net 30' }
     const BillEmail = { Address: project.email }
 
-    // Iterate over each entry in a project.
-    const Line = entries[project].map(entry => {
-      const hours = entry.timeInterval.duration / 60 / 60
+    // Separate project entries by candidate.
+    const candidateEntries = entries[project].reduce((acc, entry) => {
+      (acc[entry.userEmail] = acc[entry.userEmail] || []).push(entry)
 
+      return acc
+    }, {})
+
+    // Sum hours for each candidate.
+    const hours = Object.keys(candidateEntries).reduce((acc, candidate) => {
+      acc[candidate] = candidateEntries[candidate].reduce((acc, entry) => {
+        acc += parseInt(entry.timeInterval.duration)
+        return acc
+      }, 0) / 60 / 60
+
+      return acc
+    }, {})
+
+    // Iterate over each entry in a project.
+    const Line = Object.keys(hours).map(email => {
       // Get candidate details for this line item.
       const placementDetails = placements.find(placement => {
-        return placement.candidate.email == entry.userEmail && placement.jobOrder.clientCorporation.name == entry.clientName
+        return placement.candidate.email == email && placement.jobOrder.clientCorporation.name == company.company
       })
 
       return {
-        Description: `[${entry.userName}] ${entry.description}`,
+        Description: `${placementDetails.candidate.firstName} ${placementDetails.candidate.lastName}`,
         DetailType: 'SalesItemLineDetail',
         SalesItemLineDetail: {
-          ServiceDate: entry.timeInterval.start,
-          Qty: hours,
+          Qty: hours[email],
           UnitPrice: placementDetails.clientBillRate,
           ItemRef: {
             name: 'Hours',
             value: 2
           },
         },
-        Amount: hours * placementDetails.clientBillRate,
+        Amount: hours[email] * placementDetails.clientBillRate,
       }
     })
 
@@ -146,10 +160,12 @@ async function getProjects() {
       return jobs.map(job => {
         const parent = customers.find(customer => customer.Id == job.ParentRef.value)
         const email = parent.PrimaryEmailAddr ? parent.PrimaryEmailAddr.Address : ''
+        const company = parent.DisplayName ? parent.DisplayName : job.DisplayName
 
         return {
           id: job.Id,
-          name: job.DisplayName,
+          project: job.DisplayName,
+          company: company,
           email: email
         }
       })
