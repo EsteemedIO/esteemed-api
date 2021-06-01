@@ -41,8 +41,8 @@ export async function convertClockifyToQBInvoice(entries, placements) {
 
   // Iterate over each project array.
   return Object.keys(entries).map(project => {
-    const companyId = projects.find(i => i.name == project).id
-    const CustomerRef = { value: companyId }
+    const company = projects.find(i => i.project == project)
+    const CustomerRef = { value: company.id }
     const SalesTermRef = { value: 3, name: 'Net 30' }
     const BillEmail = { Address: project.email }
 
