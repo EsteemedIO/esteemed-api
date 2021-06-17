@@ -10,6 +10,8 @@ const config = {
 const clockifyLastRun = '/tmp/clockify-lastrun'
 
 export async function getHours(filter) {
+  let allRecords = []
+
   // Set billing interval.
   const date = new Date()
   const dateEnd = date.toISOString()
@@ -31,11 +33,24 @@ export async function getHours(filter) {
     "amountShown": "EARNED",
     "timeZone": "America/New_York",
     "billable": true,
+    "detailedFilter": {
+      "page": 1,
+      "pageSize": 200,
+    }
+  }
+  async function doQuery(page) {
+    request.detailedFilter.page = page
+
+    return axios.post(`https://reports.api.clockify.me/v1/workspaces/${process.env.CLOCKIFY_WORKSPACE}/reports/detailed`, request, config)
+      .then(({ data }) => data.timeentries.filter(entry => entry.clientName != 'Internal (Esteemed Talent Inc.)'))
+      .then(res => {
+        allRecords = allRecords.concat(res)
+        return res.length > 0 ? doQuery(++page) : allRecords
+      })
+      .catch(e => console.error(e))
   }
 
-  // Get hour report for the last 2 weeks.
-  return axios.post(`https://reports.api.clockify.me/v1/workspaces/${process.env.CLOCKIFY_WORKSPACE}/reports/detailed`, request, config)
-    .then(({ data }) => data.timeentries.filter(entry => entry.clientName != 'Internal (Esteemed Talent Inc.)'))
+  return doQuery(1)
     .then(data => {
       // Store current timestamp.
       fs.writeFile(clockifyLastRun, Math.floor(Date.now() / 1000))
