@@ -11,7 +11,7 @@ export default {
     let allRecords = []
     const params = {
       fields: 'candidate(email),dateBegin,dateEnd,payRate,clientBillRate,jobOrder(clientCorporation)',
-      query: `status:Approved`,
+      query: `status:(Approved OR Completed OR Terminated)`,
       count: 200
     }
 
