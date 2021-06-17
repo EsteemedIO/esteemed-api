@@ -1,6 +1,7 @@
 import { fetch as bhFetch, reassignBHValues, reassignSlackValues } from '../util/bullhorn.js'
 import qs from 'qs'
 const { stringify } = qs
+import { default as timezones } from 'city-timezones'
 
 // Profile Calls
 export const profiles = {
