@@ -1,12 +1,48 @@
 import axios from 'axios'
 import { getToken } from '../util/quickbooks.js'
+import { getHours, reduceEmails } from '../util/clockify.js'
 import { profiles } from './profiles.js'
+import placements from './placements.js'
 
 // Development
 //const baseUrl = 'https://sandbox-quickbooks.api.intuit.com'
 
 // Production
 const baseUrl = 'https://quickbooks.api.intuit.com'
+
+export async function createInvoices() {
+  // Create invoices.
+  const projectHours = await getHours('projectName')
+  const emails = reduceEmails(projectHours)
+  const projectPlacements = await placements.getAll()
+    .then(p => p.filter(i => emails.includes(i.candidate.email)))
+  const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements)
+
+  // Create invoices.
+  batchInvoices(invoices)
+
+  // Show invoices generated.
+  createInvoiceReport(projectHours, invoices.length)
+}
+
+export function createInvoiceReport(projectHours, invoiceCount) {
+  const clientHours = Object.keys(projectHours).reduce((acc, project) => {
+    acc[project] = projectHours[project].reduce((acc, entry) => {
+      acc += parseInt(entry.timeInterval.duration)
+      return acc
+    }, 0) / 60 / 60
+
+    return acc
+  }, {})
+
+  const report = {
+    'Number of Invoices: ': invoiceCount,
+    'Client Hours: ': Object.keys(clientHours)
+      .sort()
+      .map(project => `${project}: ${clientHours[project].toFixed(2)}`)
+  }
+  console.log(report)
+}
 
 export async function createInvoice(hours) {
   const accessToken = await getToken()
