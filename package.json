@@ -6,6 +6,7 @@
   "main": "src/app.js",
   "scripts": {
     "develop": "NODE_ENV=development nodemon --exec 'node src/app.js'",
+    "invoicing": "NODE_ENV=development node src/app.js invoicing",
     "host": "NODE_ENV=production nodemon --exec 'node src/app.js'"
   },
   "author": "",

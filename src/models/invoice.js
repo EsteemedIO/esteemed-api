@@ -10,9 +10,9 @@ import placements from './placements.js'
 // Production
 const baseUrl = 'https://quickbooks.api.intuit.com'
 
-export async function createInvoices() {
+export async function createInvoices(dates) {
   // Create invoices.
-  const projectHours = await getHours('projectName')
+  const projectHours = await getHours('projectName', dates)
   const emails = reduceEmails(projectHours)
   const projectPlacements = await placements.getAll()
     .then(p => p.filter(i => emails.includes(i.candidate.email)))

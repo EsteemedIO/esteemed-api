@@ -7,18 +7,12 @@ const config = {
   }
 }
 
-const clockifyLastRun = '/tmp/clockify-lastrun'
-
-export async function getHours(filter) {
+export async function getHours(filter, dates) {
   let allRecords = []
 
   // Set billing interval.
-  const date = new Date()
-  const dateEnd = date.toISOString()
-
-  const dateStart = await fs.readFile(clockifyLastRun, 'utf-8')
-    .then(ts => new Date(ts * 1000).toISOString())
-    .catch(() => false)
+  const dateStart = `${dates[0]}T00:00:00.000Z`
+  const dateEnd = `${dates[1]}T23:59:59.999Z`
 
   const request = {
     "dateRangeStart": dateStart,
@@ -33,10 +27,6 @@ export async function getHours(filter) {
     "amountShown": "EARNED",
     "timeZone": "America/New_York",
     "billable": true,
-    "detailedFilter": {
-      "page": 1,
-      "pageSize": 200,
-    }
   }
   async function doQuery(page) {
     request.detailedFilter.page = page
@@ -52,9 +42,6 @@ export async function getHours(filter) {
 
   return doQuery(1)
     .then(data => {
-      // Store current timestamp.
-      fs.writeFile(clockifyLastRun, Math.floor(Date.now() / 1000))
-
       return data.reduce(
         (objectsByKeyValue, obj) => ({
           ...objectsByKeyValue,
