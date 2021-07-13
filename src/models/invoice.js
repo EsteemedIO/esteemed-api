@@ -22,6 +22,32 @@ export async function createInvoice(hours) {
     .catch(data => console.log(data.response.data.Fault.Error))
 }
 
+export async function batchInvoices(hours) {
+  // QBO limits batch functions to 30 transactions.
+  const batchCount = 30
+  const accessToken = await getToken()
+  const params = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Accept': 'application/json'
+    }
+  }
+
+  for (let i = 0; i < hours.length; i += batchCount) {
+    let batch = {
+      BatchItemRequest: hours.slice(i, i + batchCount).map((invoice, index) => ({
+        bId: `invoice${index}`,
+        operation: 'create',
+        Invoice: invoice
+      }))
+    }
+
+    axios.post(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/batch`, batch, params)
+      .then(({ data }) => console.log(data))
+      .catch(data => console.log(data.response.data.Fault.Error))
+  }
+}
+
 export async function createBill(hours) {
   const accessToken = await getToken()
   const params = {
