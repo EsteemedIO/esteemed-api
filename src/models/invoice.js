@@ -154,7 +154,7 @@ export async function convertClockifyToQBInvoice(entries, placements, invoiceDat
       CustomerRef: CustomerRef,
       Line: Line,
       CustomerMemo: {
-        value: "Please include reference of invoice numbers paid with your payment.\n\nFor Proper Credit Remit Payment To:\nAP fbo Esteemed Inc\nPO Box 31001-2434\nPasadena, CA 91110-2434\n\nThis account receivable has been assigned to and is owned by or subject to security interest of Paychex Advance LLC, doing business as Advance Partners, and is payable only in United States Dollars. All payments shall be made to AP fbo Esteemed Inc and sent to PO Box 31001-2434 Pasadena, CA 91110-2434"
+        value: "Please include reference of invoice numbers paid with your payment.\n\nFor proper credit, please remit payment via ACH to:\nPNC Bank, NA, Checking account\nPaychex Advance LLC fbo Esteemed Inc\nAccount: 1029148695\nRouting: 043000096\n\nThis account receivable has been assigned to and is owned by or subject to security interest of Paychex Advance LLC, doing business as Advance Partners, and is payable only in United States Dollars"
       },
     }
   })
