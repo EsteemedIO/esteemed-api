@@ -16,7 +16,7 @@ export async function createInvoices(dates) {
   const emails = reduceEmails(projectHours)
   const projectPlacements = await placements.getAll()
     .then(p => p.filter(i => emails.includes(i.candidate.email)))
-  const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements)
+  const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements, dates[1])
 
   // Create invoices.
   batchInvoices(invoices)
@@ -98,7 +98,7 @@ export async function createBill(hours) {
     .catch(data => console.log(data.response.data.Fault.Error))
 }
 
-export async function convertClockifyToQBInvoice(entries, placements) {
+export async function convertClockifyToQBInvoice(entries, placements, invoiceDate) {
   const projects = await getProjects()
 
   // Iterate over each project array.
@@ -148,6 +148,7 @@ export async function convertClockifyToQBInvoice(entries, placements) {
     })
 
     return {
+      TxnDate: invoiceDate,
       BillEmail: BillEmail,
       SalesTermRef: SalesTermRef,
       CustomerRef: CustomerRef,
