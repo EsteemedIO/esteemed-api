@@ -23,7 +23,6 @@
     "flat-cache": "^3.0.4",
     "googleapis": "^83.0.0",
     "html-entities": "^2.3.2",
-    "intuit-oauth": "^3.0.2",
     "jimp": "^0.16.1",
     "node-cron": "^3.0.0",
     "qs": "^6.10.1",
