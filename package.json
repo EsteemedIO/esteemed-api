@@ -18,7 +18,7 @@
     "body-parser": "^1.19.0",
     "btoa": "^1.2.1",
     "crypto": "^1.0.1",
-    "dotenv": "^8.6.0",
+    "dotenv": "^10.0.0",
     "express-fileupload": "^1.2.1",
     "flat-cache": "^3.0.4",
     "googleapis": "^83.0.0",
