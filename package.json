@@ -13,24 +13,24 @@
   "license": "ISC",
   "private": true,
   "dependencies": {
-    "@slack/bolt": "^3.0.0",
+    "@slack/bolt": "^3.5.0",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "btoa": "^1.2.1",
     "crypto": "^1.0.1",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "express-fileupload": "^1.2.1",
     "flat-cache": "^3.0.4",
-    "googleapis": "^67.1.0",
-    "html-entities": "^2.0.2",
+    "googleapis": "^83.0.0",
+    "html-entities": "^2.3.2",
     "intuit-oauth": "^3.0.2",
     "jimp": "^0.16.1",
-    "node-cron": "^2.0.3",
-    "qs": "^6.9.6",
-    "striptags": "^3.1.1"
+    "node-cron": "^3.0.0",
+    "qs": "^6.10.1",
+    "striptags": "^3.2.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7",
+    "nodemon": "^2.0.12",
     "standard": "^16.0.2"
   }
 }
