@@ -6,6 +6,10 @@ import { jobs } from '../models/jobs.js'
 import { leads } from '../models/leads.js'
 
 export default function() {
+  if (process.env.NODE_ENV !== 'production') {
+    return
+  }
+
   // Update jobs cache.
   cron.schedule('*/30 * * * *', async () => {
     if (process.env.NODE_ENV == 'production') {
