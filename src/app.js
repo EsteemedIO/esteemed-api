@@ -214,9 +214,10 @@ receiver.router.post('/candidate-referral', async ({ body }, res, next) => {
 // Handle invoicing.
 const cliArgs = process.argv.slice(2)
 if (cliArgs.length > 0 && cliArgs[0] == 'invoicing') {
-  const dates = cliArgs.slice(1)
+  const create = cliArgs.includes('--go')
+  const dates = cliArgs.slice(1).filter(i => i !== '--go')
 
-  createInvoices(dates)
+  createInvoices(dates, create)
 }
 
 ;(async () => {

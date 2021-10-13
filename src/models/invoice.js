@@ -10,7 +10,7 @@ import placements from './placements.js'
 // Production
 const baseUrl = 'https://quickbooks.api.intuit.com'
 
-export async function createInvoices(dates) {
+export async function createInvoices(dates, create = false) {
   // Create invoices.
   const projectHours = await getHours('projectName', dates)
   const emails = reduceEmails(projectHours)
@@ -19,7 +19,9 @@ export async function createInvoices(dates) {
   const invoices = await convertClockifyToQBInvoice(projectHours, projectPlacements, dates[1])
 
   // Create invoices.
-  batchInvoices(invoices)
+  if (create) {
+    batchInvoices(invoices)
+  }
 
   // Show invoices generated.
   createInvoiceReport(projectHours, invoices.length)
