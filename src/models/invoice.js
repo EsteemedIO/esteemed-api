@@ -104,6 +104,11 @@ export async function convertClockifyToQBInvoice(entries, placements, invoiceDat
   // Iterate over each project array.
   return Object.keys(entries).map(project => {
     const company = projects.find(i => i.project == project)
+
+    if (company === undefined) {
+      console.dir(`Project missing from QBO: ${project}`)
+    }
+
     const CustomerRef = { value: company.id }
     const SalesTermRef = { value: 3, name: 'Net 30' }
     const BillEmail = { Address: project.email }
@@ -131,6 +136,12 @@ export async function convertClockifyToQBInvoice(entries, placements, invoiceDat
       const placementDetails = placements.find(placement => {
         return placement.candidate.email == email && placement.jobOrder.clientCorporation.name == company.company
       })
+
+      // Log placements not found.
+      if (placementDetails == undefined) {
+        console.dir(`Placement not found: ${email} at ${company.company}`)
+        return
+      }
 
       return {
         Description: `${placementDetails.candidate.firstName} ${placementDetails.candidate.lastName}`,
