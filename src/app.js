@@ -4,6 +4,7 @@ import { default as cron } from './clients/cron.js'
 import bodyParser from 'body-parser'
 import fileupload from 'express-fileupload'
 import { default as jimp } from 'jimp'
+import { createInvoices } from './models/invoice.js'
 
 import { jobs as dbJobs, locationFormat } from './models/jobs.js'
 
@@ -209,6 +210,15 @@ receiver.router.post('/candidate-referral', async ({ body }, res, next) => {
     return res.json(err.message)
   }
 })
+
+// Handle invoicing.
+const cliArgs = process.argv.slice(2)
+if (cliArgs.length > 0 && cliArgs[0] == 'invoicing') {
+  const create = cliArgs.includes('--go')
+  const dates = cliArgs.slice(1).filter(i => i !== '--go')
+
+  createInvoices(dates, create)
+}
 
 ;(async () => {
   // Start your app

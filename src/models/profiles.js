@@ -119,6 +119,24 @@ export const profiles = {
     return bhFetch('search/Candidate?' + stringify(params))
       .then(res => res.data.data.map(({ _score, ...array }) => array)[0].id)
   },
+  getBHIdByEmail: async email => {
+    const params = {
+      fields: 'id',
+      query: `email:${email}`
+    }
+
+    return bhFetch('search/Candidate?' + stringify(params))
+      .then(res => res.data.data.map(({ _score, ...array }) => array)[0].id)
+  },
+  getRates: async bhId => {
+    const params = {
+      fields: 'hourlyRate'
+    }
+
+    return bhFetch(`entity/Candidate/${bhId}?` + stringify(params))
+      .then(res => res.data.data)
+      .catch(res => console.error(res))
+  },
   add: async (values) => {
     return bhFetch(`entity/Candidate`, 'put', reassignSlackValues(profileFields, values))
       .catch(res => console.error(res))

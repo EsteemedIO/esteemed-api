@@ -6,30 +6,30 @@
   "main": "src/app.js",
   "scripts": {
     "develop": "NODE_ENV=development nodemon --exec 'node src/app.js'",
+    "invoicing": "NODE_ENV=development node src/app.js invoicing",
     "host": "NODE_ENV=production nodemon --exec 'node src/app.js'"
   },
   "author": "",
   "license": "ISC",
   "private": true,
   "dependencies": {
-    "@slack/bolt": "^3.0.0",
-    "axios": "^0.21.1",
+    "@slack/bolt": "^3.5.0",
+    "axios": "^0.26.0",
     "body-parser": "^1.19.0",
     "btoa": "^1.2.1",
     "crypto": "^1.0.1",
-    "dotenv": "^8.2.0",
+    "dotenv": "^16.0.0",
     "express-fileupload": "^1.2.1",
     "flat-cache": "^3.0.4",
-    "googleapis": "^67.1.0",
-    "html-entities": "^2.0.2",
-    "intuit-oauth": "^3.0.2",
+    "googleapis": "^95.0.0",
+    "html-entities": "^2.3.2",
     "jimp": "^0.16.1",
-    "node-cron": "^2.0.3",
-    "qs": "^6.9.6",
-    "striptags": "^3.1.1"
+    "node-cron": "^3.0.0",
+    "qs": "^6.10.1",
+    "striptags": "^3.2.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7",
+    "nodemon": "^2.0.12",
     "standard": "^16.0.2"
   }
 }
