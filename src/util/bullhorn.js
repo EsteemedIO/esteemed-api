@@ -51,6 +51,7 @@ async function getAccessToken() {
 }
 
 async function getRestToken(accessToken) {
+  // Todo: This is a long-lived session token, so we can should store this (as well as the refresh token).
   // Get rest token.
   return axios.get(`https://rest.bullhornstaffing.com/rest-services/login?version=*&access_token=${accessToken}&ttl=999`)
     .then(({ data }) => data)
