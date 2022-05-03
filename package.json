@@ -17,6 +17,7 @@
     "axios": "^0.26.0",
     "body-parser": "^1.19.0",
     "btoa": "^1.2.1",
+    "croner": "^4.3.9",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.0",
     "express-fileupload": "^1.2.1",
@@ -24,7 +25,6 @@
     "googleapis": "^95.0.0",
     "html-entities": "^2.3.2",
     "jimp": "^0.16.1",
-    "node-cron": "^3.0.0",
     "qs": "^6.10.1",
     "striptags": "^3.2.0"
   },

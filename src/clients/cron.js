@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { default as cron } from 'node-cron'
+import { Cron as cron } from 'croner'
 import { default as cache } from '../util/cache.js'
 import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { jobs } from '../models/jobs.js'
@@ -11,7 +11,7 @@ export default function() {
   }
 
   // Update jobs cache.
-  cron.schedule('*/30 * * * *', async () => {
+  cron('*/30 * * * *', async () => {
     const key =  '__express__/jobs'
     cache.flush('/jobs')
 
@@ -28,13 +28,13 @@ export default function() {
   })
 
   // Add new references as leads.
-  cron.schedule('*/30 * * * *', async () => {
+  cron('*/30 * * * *', async () => {
     leads.getNew()
       .then(async newLeads => await Promise.all(newLeads.map(lead => leads.add(lead))))
       .then(res => res.map(lead => console.log(`Reference ${lead.data.data.firstName} ${lead.data.data.lastName} added as a lead.`)))
   })
 
-  cron.schedule('0 * * * *', async () => {
+  cron('0 * * * *', async () => {
     const jobUpdateAvailable = jobs.getJobUpdate()
 
     if (jobUpdateAvailable) {
