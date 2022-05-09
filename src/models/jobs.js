@@ -44,6 +44,27 @@ export const jobs = {
         }})))
       .catch(e => console.log(e.response.data.errorMessage))
   },
+  getPriorityJobs: async (temp) => {
+    let params = {
+      fields: Object.keys(priorityFields).join(','),
+      where: [
+        'isOpen=true',
+        'isPublic=1',
+      ],
+      count: 200,
+    }
+
+    if (temp) {
+      params.where.push(`type=${temp}`)
+    }
+
+    params.where = params.where.join(' AND ')
+
+    return await bhFetch('query/JobOrder?' + stringify(params))
+      .then(jobs => jobs.data.data.map(job => reassignBHValues(priorityFields, job)))
+      .then(jobs => jobs.map(job => ({ ...job, company: job.company.name })))
+      .catch(e => console.log(e.response.data.errorMessage))
+  },
 
   getNotes: async (item) => {
     const params = {
@@ -111,4 +132,12 @@ const jobFields = {
   'address': 'address',
   'employmentType': 'employmentType',
   'publicDescription': 'description',
+}
+
+const priorityFields = {
+  'id': 'id',
+  'title': 'title',
+  'clientCorporation': 'company',
+  'employmentType': 'type',
+  'payRate': 'pay',
 }
