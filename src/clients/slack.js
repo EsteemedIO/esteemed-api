@@ -14,6 +14,7 @@ const app = new App({
 
 import { jobs as dbJobs } from '../models/jobs.js'
 import { profiles } from '../models/profiles.js'
+import { createInvoices, getPayPeriods } from '../models/invoice.js'
 
 import commandProfile from '../slashCommands/profile.js'
 import commandLatestProfiles from '../slashCommands/latestProfiles.js'
@@ -25,6 +26,7 @@ import * as drupal from '../blocks/drupal.js'
 import * as location from '../blocks/location.js'
 import * as home from '../blocks/home.js'
 import { getForm as referralForm } from '../blocks/referrals.js'
+import { invoicePeriods } from '../blocks/invoice.js'
 
 import { countryOptions } from '../util/countryCodes.js'
 import * as userProfiles from '../util/userProfiles.js'
@@ -54,6 +56,52 @@ app.event('team_join', async ({ event }) => {
   userProfiles.setUserJoinDate(event.user, event.event_ts)
 
   console.log('New user joined:', event.user.real_name)
+})
+
+app.command('/invoice', async ({ command, ack, respond }) => {
+  await ack()
+
+  const profile = await userProfiles.getUser(command.user_id)
+
+  if (profile.is_admin) {
+    await respond({
+      "blocks": [
+        {
+          "type": "input",
+          "block_id": "invoice",
+          "element": {
+            "type": "static_select",
+            "action_id": "period",
+            "placeholder": {
+              "type": "plain_text",
+              "text": "Pick a pay period"
+            },
+            options: invoicePeriods(),
+          },
+          "label": {
+            "type": "plain_text",
+            "text": "Pay period",
+            "emoji": true
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "Preview invoicing"
+          },
+          "accessory": {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "Preview",
+            },
+            "action_id": "preview_invoicing"
+          }
+        }
+      ]
+    })
+  }
 })
 
 app.command('/profile', async ({ command, ack, respond }) => {
@@ -144,6 +192,61 @@ app.command('/add-job', async ({ ack, command, context, client }) => {
 })
 
 // Actions.
+
+app.action('preview_invoicing', async ({ action, ack, context, client, body }) => {
+  await ack()
+
+  const value = body.state.values.invoice.period.selected_option.value.split('-')[1];
+  const selectedPeriod = getPayPeriods().find(period => period.id == value)
+
+  const invoices = await createInvoices([
+    selectedPeriod.startDate.toISOString().split('T')[0],
+    selectedPeriod.endDate.toISOString().split('T')[0]
+  ])
+
+  app.client.chat.postMessage({
+    token: process.env.SLACK_TOKEN_BOT,
+    channel: 'C03EVBP5ZCK',
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*Number of Invoices:* ${invoices.count}\n\n*Client Hours:*\n\n${invoices.hours.join("\n")}`
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "Generate invoices?"
+        },
+        "accessory": {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Generate",
+          },
+          "action_id": "generate_invoices",
+          "value": value
+        }
+      }
+    ]
+  })
+})
+
+app.action('generate_invoices', async ({ action, ack, context, client, body }) => {
+  await ack()
+
+  const value = body.actions[0].value
+  const selectedPeriod = getPayPeriods().find(period => period.id == value)
+
+  await createInvoices([
+    selectedPeriod.startDate.toISOString().split('T')[0],
+    selectedPeriod.endDate.toISOString().split('T')[0]
+  ], true)
+})
+
 app.action('edit_profile', async ({ action, ack, context, client, body }) => {
   await ack()
 
