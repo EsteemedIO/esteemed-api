@@ -24,7 +24,7 @@ export async function createInvoices(dates, create = false) {
   }
 
   // Show invoices generated.
-  createInvoiceReport(projectHours, invoices.length)
+  return createInvoiceReport(projectHours, invoices.length)
 }
 
 export function createInvoiceReport(projectHours, invoiceCount) {
@@ -37,13 +37,12 @@ export function createInvoiceReport(projectHours, invoiceCount) {
     return acc
   }, {})
 
-  const report = {
-    'Number of Invoices: ': invoiceCount,
-    'Client Hours: ': Object.keys(clientHours)
+  return {
+    'count': invoiceCount,
+    'hours': Object.keys(clientHours)
       .sort()
       .map(project => `${project}: ${clientHours[project].toFixed(2)}`)
   }
-  console.log(report)
 }
 
 export async function createInvoice(hours) {
