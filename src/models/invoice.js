@@ -287,3 +287,33 @@ async function getVendor(email) {
       return vendor ? vendor.Id : false
     })
 }
+
+export function getPayPeriods() {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const priorMonthCount = currentDate.getMonth();
+  const currentDay = currentDate.getDate();
+
+  let dates = [...Array(priorMonthCount)].flatMap((_, i) => ([
+      {
+        id: i + (i * 2),
+        startDate: new Date(currentYear, i, 1),
+        endDate: new Date(currentYear, i, 15),
+      },
+      {
+        id: i + (i * 2) + 1,
+        startDate: new Date(currentYear, i, 16),
+        endDate: new Date(currentYear, i + 1, 0),
+      }
+  ]));
+
+  if (currentDay > 11) {
+    dates = [...dates, {
+        id: ((priorMonthCount + 1) * 2) + 1,
+        startDate: new Date(currentYear, priorMonthCount, 1),
+        endDate: new Date(currentYear, priorMonthCount, 15),
+    }];
+  }
+
+  return dates.sort((a, b) => b.id - a.id);
+}
