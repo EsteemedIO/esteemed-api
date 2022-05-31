@@ -65,7 +65,8 @@ export async function updateProfile(user, action) {
   }
 
   // Update profile data.
-  await profiles.update(user, { [action.action_id]: values })
+  const bhId = await profiles.getBHId(user)
+  await profiles.update(bhId, { [action.action_id]: values })
 }
 
 export function setUserJoinDate(user, joinDate) {

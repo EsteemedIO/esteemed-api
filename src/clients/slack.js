@@ -138,7 +138,8 @@ app.command('/resume', async ({ command, ack, respond }) => {
   const resumeUrl = await resume.format(details)
 
   // Update profile with resume URL.
-  profiles.update(userId, { resume: resumeUrl })
+  const bhId = await profiles.getBHId(userId)
+  profiles.update(bhId, { resume: resumeUrl })
 
   console.log('Resume created for', userId)
 

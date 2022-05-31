@@ -95,7 +95,8 @@ export async function updateUserTasks(userId, task) {
       return item
     }))
 
-  await profiles.update(userId, { tasks: JSON.stringify(tasks) })
+  const bhId = await profiles.getBHId(userId)
+  await profiles.update(bhId, { tasks: JSON.stringify(tasks) })
 }
 
 export async function userTaskBlocks(userId) {

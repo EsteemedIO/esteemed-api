@@ -142,9 +142,7 @@ export const profiles = {
       .catch(res => console.error(res))
   },
 
-  update: async (slackId, values) => {
-    const bhId = await profiles.getBHId(slackId)
-
+  update: async (bhId, values) => {
     return bhFetch(`entity/Candidate/${bhId}`, 'post', reassignSlackValues(profileFields, values))
       .catch(res => console.error(res))
   }

@@ -129,5 +129,6 @@ export function modal(location) {
 
 export async function update(user, locality) {
   // Update profile data.
-  return profiles.update(user, { location: getSlackData(locality) })
+  const bhId = await profiles.getBHId(user)
+  return profiles.update(bhId, { location: getSlackData(locality) })
 }

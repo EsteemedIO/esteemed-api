@@ -114,7 +114,8 @@ export async function modal(user) {
 
 export async function updateProfile(user, values) {
   // Update profile data.
-  await profiles.update(user,
+  const bhId = await profiles.getBHId(user)
+  await profiles.update(bhId,
     {
       wp_experience: values.wp_experience.val.selected_option.value,
       wp_bio: values.wp_bio.val.value

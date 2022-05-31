@@ -87,8 +87,9 @@ export async function updateProfile(user, values) {
     const drupalProfile = 'https://drupal.org' + new URL(values.drupal_profile.val.value).pathname
 
     // Update profile data.
+    const bhId = await profiles.getBHId(user)
     await profiles.update(
-      user,
+      bhId,
       {
         drupal_profile: drupalProfile,
         drupal_bio: values.drupal_bio.val.value
