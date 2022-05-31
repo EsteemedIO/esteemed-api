@@ -58,6 +58,9 @@ app.event('team_join', async ({ event }) => {
   if (!bhId) {
     userProfiles.setUserJoinDate(event.user, event.event_ts)
   }
+  else {
+    profiles.update(bhId, { slackId: event.user.id })
+  }
 
   console.log('New user joined:', event.user.real_name)
 })
