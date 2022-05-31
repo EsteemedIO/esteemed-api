@@ -7,7 +7,7 @@
   "scripts": {
     "develop": "NODE_ENV=development nodemon --exec 'node src/app.js'",
     "invoicing": "NODE_ENV=development node src/app.js invoicing",
-    "host": "NODE_ENV=production nodemon --exec 'node src/app.js'"
+    "host": "NODE_ENV=production nodemon --exec 'node src/app.js || exit 1'"
   },
   "author": "",
   "license": "ISC",
