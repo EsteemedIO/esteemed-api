@@ -53,6 +53,7 @@ app.event('app_home_opened', async ({ event, client }) => {
 })
 
 app.event('team_join', async ({ event }) => {
+  console.log('Email lookup: ', event.user.profile.email)
   const bhId = await profiles.getBHIdByEmail(event.user.profile.email)
 
   if (!bhId) {
