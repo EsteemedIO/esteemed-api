@@ -218,6 +218,7 @@ if (cliArgs.length > 0 && cliArgs[0] == 'invoicing') {
   const dates = cliArgs.slice(1).filter(i => i !== '--go')
 
   createInvoices(dates, create)
+    .then(invoices => console.log(invoices))
 }
 
 ;(async () => {
