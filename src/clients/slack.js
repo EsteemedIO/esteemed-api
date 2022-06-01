@@ -72,7 +72,7 @@ app.command('/invoice', async ({ command, ack, respond }) => {
   const profile = await userProfiles.getUser(command.user_id)
 
   if (profile.is_admin) {
-    await respond({
+    const blocks = {
       "blocks": [
         {
           "type": "input",
@@ -108,7 +108,10 @@ app.command('/invoice', async ({ command, ack, respond }) => {
           }
         }
       ]
-    })
+    }
+
+    await respond(blocks)
+      .catch(() => console.error('Invalid blocks'))
   }
 })
 
