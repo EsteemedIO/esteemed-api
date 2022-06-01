@@ -126,7 +126,15 @@ export const profiles = {
     }
 
     return bhFetch('search/Candidate?' + stringify(params))
-      .then(res => res.data.data.map(({ _score, ...array }) => array)[0].id)
+      .then(res => {
+        const results = res.data.data.map(({ _score, ...array }) => array)
+        if (results.length > 0) {
+          return results[0].id
+        }
+        else {
+          return false
+        }
+      })
   },
   getRates: async bhId => {
     const params = {
