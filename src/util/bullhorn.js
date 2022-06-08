@@ -5,7 +5,6 @@ const bhTokenPath = './bhtoken'
 
 export async function fetch(resource, method = 'get', data = null) {
   const creds = await getToken()
-  console.log(creds)
 
   return axios({
     headers: { BhRestToken: creds.BhRestToken },
