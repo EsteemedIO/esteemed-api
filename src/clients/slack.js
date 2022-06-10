@@ -70,8 +70,7 @@ app.event('team_join', async ({ event }) => {
 
   app.client.chat.postMessage({
     token: process.env.SLACK_TOKEN_BOT,
-    //channel: 'CKP7Y4Q8M',
-    channel: 'C03EVBP5ZCK',
+    channel: 'CKP7Y4Q8M',
     text: message,
   })
 })
