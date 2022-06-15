@@ -10,3 +10,4 @@ jspm_packages
 secrets.yml
 serviceAccountKey.json
 db
+google-api-credentials.json

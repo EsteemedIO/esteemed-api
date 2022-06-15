@@ -1,9 +1,5 @@
-import { default as googleapis } from 'googleapis'
 import { profiles } from '../models/profiles.js'
-import { authenticate } from './google.js'
-
-const docs = googleapis.google.docs({ version: "v1" })
-const drive = googleapis.google.drive({ version: "v2" })
+import { drive, docs } from './google.js'
 
 export async function getDetails(slackId) {
   return {
@@ -14,8 +10,6 @@ export async function getDetails(slackId) {
 }
 
 export async function format(details) {
-  await authenticate()
-
   const filename = 'Esteemed | ' + details.profile.firstName + ' ' + details.profile.lastName[0]
   const resumeId = await getResumeTemplate(filename)
   const updates = getReplacements(details)
@@ -42,9 +36,12 @@ async function getResumeTemplate(filename) {
     }]
   }
 
-  return drive.files.copy(file)
-    .then(resume => resume.data.id)
-    .catch(error => console.log(error))
+  return drive()
+    .then(drive =>
+      drive.files.copy(file)
+        .then(resume => resume.data.id)
+        .catch(error => console.log(error))
+    )
 }
 
 function getReplacements({ profile, education, experience }) {
@@ -94,12 +91,15 @@ function getReplacements({ profile, education, experience }) {
 }
 
 async function updateResume(resumeId, updates) {
-  return docs.documents.batchUpdate({
-    documentId: resumeId,
-    requestBody: {
-      requests: updates
-    }
-  })
-  .then(({ data })=> `https://docs.google.com/document/d/${data.documentId}`)
-  .catch(error => console.log(error))
+  return docs()
+    .then(docs =>
+      docs.documents.batchUpdate({
+        documentId: resumeId,
+        requestBody: {
+          requests: updates
+        }
+      })
+      .then(({ data })=> `https://docs.google.com/document/d/${data.documentId}`)
+      .catch(error => console.log(error))
+    )
 }
