@@ -22,7 +22,7 @@
     "dotenv": "^16.0.0",
     "express-fileupload": "^1.2.1",
     "flat-cache": "^3.0.4",
-    "googleapis": "^95.0.0",
+    "googleapis": "^101.0.0",
     "html-entities": "^2.3.2",
     "jimp": "^0.16.1",
     "qs": "^6.10.1",
