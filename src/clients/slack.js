@@ -73,6 +73,26 @@ app.event('team_join', async ({ event }) => {
     channel: 'CKP7Y4Q8M',
     text: message,
   })
+
+  // Send direct welcome message 5 minutes after joining.
+  const message_dm = `Hi <@${event.user.id}>! I'm <@UKBRBK1R9>, Founder and CEO of Esteemed. I thought I would use our Slack App to help get you started by clarifying a few things:\n
+1. Slack is where everything happens here. If you are new to using it here is a link on <https://slack.com/help/articles/218080037-Getting-started-for-new-members|Getting Started>.
+2. We are a company that operates as a community of people collaborating and helping one another reach our career goals. <https://www.beautiful.ai/player/-MWzS2GHu6tok07Ewigv|Learn more about us with this quick overview>, or take a look at <https://www.beautiful.ai/player/-N3uA5Olf7G15RmImPLC|our sales deck>.
+3. As a Member of Colleagues you have the option of becoming a Talent Associate, if you're seeking work.
+  • To do so, <https://youtu.be/0tH_R_MzDKs|please watch this video>, and make sure you have completed your Slack profile: Full Name, Email, and Phone Number.
+  • After completing your profile, feel free to apply to any of our <https://esteemed.io/jobs|open jobs>.
+  • Resource Managers and Screeners will be in touch to review your background, and provide advice for next steps.
+4. We are a remote community. It really helps if you can include an image with your face so we can all get to know you. **We do not allow any company logos as profile picture, or using a company name as your handle**.
+5. If you have any further questions, please feel free to reach out to <@U03JSTCSUFP> or <@U01L7SKKM6E>. They can help with almost anything.
+We really appreciate you being here, and look forward to working with you!`
+
+  await new Promise(r => setTimeout(r, 300000));
+
+  app.client.chat.postMessage({
+    token: process.env.SLACK_TOKEN_BOT,
+    channel: event.user.id,
+    text: message_dm,
+  })
 })
 
 app.command('/invoice', async ({ command, ack, respond }) => {
