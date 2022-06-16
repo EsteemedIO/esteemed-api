@@ -248,7 +248,7 @@ async function getProjects() {
         }
       })
     })
-    .catch(response => console.log(response))
+    .catch(({ response }) => console.log(response.data.Fault.Error))
 }
 
 async function getCompanies() {

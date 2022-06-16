@@ -19,5 +19,5 @@ export async function docs() {
 
 export async function drive() {
   await authenticate()
-  return google.drive({ version: "v3" })
+  return google.drive({ version: "v2" })
 }
