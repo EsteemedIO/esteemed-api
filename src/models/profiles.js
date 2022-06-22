@@ -178,6 +178,9 @@ const profileFields = {
   'customTextBlock4': 'tasks',
   'customText10': 'slackId',
   'customText12': 'resume',
+  'customTextBlock10': 'coc_policy',
+  'occupation': 'occupation',
+  'mobile': 'phone',
   'email': 'email',
   'employeeType': 'employeeType',
   'source': 'source'

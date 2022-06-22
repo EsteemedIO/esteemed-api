@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import fileupload from 'express-fileupload'
 import { default as jimp } from 'jimp'
 import { createInvoices } from './models/invoice.js'
+import { profiles } from './models/profiles.js'
 
 import { jobs as dbJobs, locationFormat } from './models/jobs.js'
 
@@ -208,6 +209,47 @@ receiver.router.post('/candidate-referral', async ({ body }, res, next) => {
   } catch (err) {
     console.log('There was an issue adding a candidate referral')
     return res.json(err.message)
+  }
+})
+
+receiver.router.post('/join', async ({ body }, res, next) => {
+  const {
+    first_name,
+    last_name,
+    email,
+    phone,
+    occupation,
+    coc_policy
+  } = body
+
+  // Add user to Bullhorn.
+  const bhId = await profiles.getBHIdByEmail(email)
+
+  if (!bhId) {
+    try {
+      const join_date = new Date().toISOString().split('T')[0]
+      profiles.add({
+        name: `${first_name} ${last_name}`,
+        firstName: first_name,
+        lastName: last_name,
+        email: email,
+        phone: phone,
+        occupation: occupation,
+        coc_policy: coc_policy,
+        dateAdded: join_date,
+        employeeType: '1099',
+        source: 'Other'
+      })
+
+      const message = `${first_name} ${last_name} joined Esteemed via website`
+      console.log(message)
+      res.json({
+        message: 'Success'
+      })
+    } catch (err) {
+      console.log(`There was an issue adding ${first_name} ${last_name} to Bullhorn`)
+      return res.json(err.message)
+    }
   }
 })
 
