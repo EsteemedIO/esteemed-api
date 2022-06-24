@@ -1,12 +1,10 @@
-import { loadUsers, allProfiles, getUser, format } from '../util/userProfiles.js'
+import { loadUser, allProfiles, getUser, format } from '../util/userProfiles.js'
 
 export default async userId => {
   try {
-    return await Promise.all([loadUsers(), allProfiles(10)])
-      .then(([users, profiles]) => {
-        const currentUser = users.find(user => user.id === userId)
-
-        if (!(currentUser.is_admin || currentUser.is_owner)) {
+    return await Promise.all([loadUser(userId), allProfiles(10)])
+      .then(([currentUser, profiles]) => {
+        if (!(currentUser.user.is_admin || currentUser.user.is_owner)) {
           return [
             {
               type: 'section',
