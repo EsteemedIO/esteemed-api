@@ -218,6 +218,12 @@ receiver.router.post('/join', async ({ body }, res, next) => {
     last_name,
     email,
     phone,
+    city,
+    state,
+    interested_in,
+    resources_excited,
+    discuss_opps,
+    work_preference,
     occupation,
     coc_policy
   } = body
@@ -228,12 +234,22 @@ receiver.router.post('/join', async ({ body }, res, next) => {
   if (!bhId) {
     try {
       const join_date = new Date().toISOString().split('T')[0]
+      console.log({ address: { city: city, state: state } })
       profiles.add({
         name: `${first_name} ${last_name}`,
         firstName: first_name,
         lastName: last_name,
         email: email,
         phone: phone,
+        address: {
+          city: city,
+          state: state,
+          countryID: 1
+        },
+        interested_in: interested_in,
+        resources_excited: resources_excited,
+        discuss_opps: discuss_opps,
+        work_preference: work_preference,
         occupation: occupation,
         coc_policy: coc_policy,
         dateAdded: join_date,
