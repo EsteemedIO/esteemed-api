@@ -5,6 +5,10 @@ import { locationFormat } from '../models/jobs.js'
 const slackClient = new WebClient(process.env.SLACK_TOKEN_BOT)
 
 export async function loadUser(userId) {
+  return slackClient.users.info({ user: userId })
+}
+
+export async function loadUserProfile(userId) {
   return slackClient.users.profile.get({ user: userId })
 }
 

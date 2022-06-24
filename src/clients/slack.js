@@ -168,7 +168,7 @@ app.command('/resume', async ({ command, ack, respond }) => {
     respond(profile.resume)
   }
   else {
-    const slackProfile = await userProfiles.loadUser(userId)
+    const slackProfile = await userProfiles.loadUserProfile(userId)
     let details = await resume.getDetails(userId)
 
     details.profile.image = slackProfile.profile.image_512
