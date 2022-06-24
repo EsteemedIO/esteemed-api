@@ -16,7 +16,7 @@ export default async userId => {
           ]
         }
 
-        if (users.length === 0) {
+        if (profiles.length === 0) {
           return [
             {
               type: 'section',
