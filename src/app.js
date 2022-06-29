@@ -260,7 +260,8 @@ receiver.router.post('/join', async ({ body }, res, next) => {
       const message = `${first_name} ${last_name} joined Esteemed via website`
       console.log(message)
       res.json({
-        message: 'Success'
+        message: 'Success',
+        url: 'https://join.slack.com/t/esteemed/shared_invite/zt-aejwraa8-mFs6ZUEs6voPD5RCV3vwvg'
       })
     } catch (err) {
       console.log(`There was an issue adding ${first_name} ${last_name} to Bullhorn`)
