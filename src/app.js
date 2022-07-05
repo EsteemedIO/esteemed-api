@@ -229,6 +229,10 @@ receiver.router.post('/join', async ({ body }, res, next) => {
   } = body
 
   // Add user to Bullhorn.
+  if (email == '') {
+    return res.json('Email required')
+  }
+
   const bhId = await profiles.getBHIdByEmail(email)
 
   if (!bhId) {
