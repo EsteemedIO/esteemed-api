@@ -25,7 +25,7 @@ export const jobs = {
 
     return bhFetch('event/subscription/jobUpdate?' + stringify(params))
       .then(({ data }) => (data !== ''))
-      .catch(e => console.error(e))
+      .catch(e => console.error(e.response.data))
   },
   getAll: async () => {
     const params = {
