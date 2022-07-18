@@ -13,11 +13,20 @@ export async function loadUserProfile(userId) {
 }
 
 export async function loadUsers() {
-  return slackClient.users.list()
-    .then(({ members }) => members.filter(member => !member.is_bot))
-    // .then(data => data.filter(member => !member.is_admin))
-    .then(data => data.filter(member => !member.deleted))
-    .then(data => data.filter(member => member.id !== 'USLACKBOT'))
+  let allRecords = []
+
+  async function doQuery(cursor) {
+    return await slackClient.users.list({ cursor: cursor })
+      .then(res => {
+        allRecords = allRecords.concat(res.members)
+        return res.response_metadata.next_cursor !== '' ? doQuery(res.response_metadata.next_cursor) : allRecords
+      })
+      .catch(e => console.error(e))
+  }
+
+  return doQuery()
+    .then(data => data.filter(member => !member.is_bot))
+    .catch(err => console.log(err))
 }
 
 export async function loadChannelMembers(channel) {
