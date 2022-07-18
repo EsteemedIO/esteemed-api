@@ -241,6 +241,8 @@ receiver.router.post('/join', async ({ body }, res, next) => {
       console.log({ address: { city: city, state: state } })
       profiles.add({
         name: `${first_name} ${last_name}`,
+        firstName: first_name,
+        lastName: last_name,
         email: email,
         phone: phone,
         address: {
