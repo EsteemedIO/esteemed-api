@@ -1,7 +1,6 @@
 import axios from 'axios'
-import { promises as fs } from 'fs'
-
-const bhTokenPath = './bhtoken'
+import { default as NodeCache } from 'node-cache'
+const cache = new NodeCache({ stdTTL: 600 })
 
 export async function fetch(resource, method = 'get', data = null) {
   const creds = await getToken()
@@ -22,15 +21,13 @@ async function getToken() {
 }
 
 async function getAccessTokenFromRefreshToken() {
-  const refreshToken = await fs.readFile(bhTokenPath, 'utf-8')
-    .then(token => token.trim())
-    .catch(() => false)
+  const refreshToken = cache.get('BHRefreshToken')
 
   // Get access/refresh token.
   return axios.post(`https://auth.bullhornstaffing.com/oauth/token?grant_type=refresh_token&refresh_token=${refreshToken}&client_id=${process.env.BH_CLIENT_ID}&client_secret=${process.env.BH_CLIENT_SECRET}`)
     .then(({ data }) => {
       // Store token.
-      fs.writeFile(bhTokenPath, data.refresh_token)
+      cache.set('BHRefreshToken', data.refresh_token)
 
       return data.access_token
     })
@@ -44,7 +41,7 @@ async function getAccessToken() {
   return axios.post(`https://auth.bullhornstaffing.com/oauth/token?grant_type=authorization_code&code=${authorizationCode}&client_id=${process.env.BH_CLIENT_ID}&client_secret=${process.env.BH_CLIENT_SECRET}`)
     .then(({ data }) => {
       // Store token.
-      fs.writeFile(bhTokenPath, data.refresh_token)
+      cache.set('BHRefreshToken', data.refresh_token)
 
       return data.access_token
     })

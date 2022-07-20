@@ -25,6 +25,7 @@
     "googleapis": "^101.0.0",
     "html-entities": "^2.3.2",
     "jimp": "^0.16.1",
+    "node-cache": "^5.1.2",
     "qs": "^6.10.1",
     "striptags": "^3.2.0"
   },
