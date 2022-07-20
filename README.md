@@ -1,7 +1,30 @@
-### Esteemed API
+# Esteemed API
 
-This repository provides the API layer for Esteemed's services. To begin local
-development, please follow these steps.
+This repository provides the API layer for Esteemed's services.
+
+## Functionality
+- Provide list of open jobs for talent.esteemed.io
+- Allow users to apply for open positions
+- Allow users to register deals via esteemed.io
+- Allow users to sign up for Slack
+- Generate client invoices
+- Generate sales reports
+- Look for new Bullhorn references and convert them to leads
+- Rebuild jobs board hourly
+
+### Slackbot
+- View open jobs
+- Allow admins to add jobs
+- Add notes to jobs
+- View profiles
+- Edit own profile
+- View 10 most recent joins
+- Add users to Bullhorn upon joining Slack
+- Generate invoices
+- Create resumes
+
+## Local development
+To begin local development, please follow these steps.
 
 1. Run `npm i` to install the required Node packages.
 2. Create test instances for each of the following:
