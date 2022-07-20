@@ -19,6 +19,25 @@ export async function fetch(resource, method = 'get', data = null) {
   })
 }
 
+// Iterate queries to account for 500 record limit (200 record limit when
+// querying skills).
+export function depaginate(endpoint, params) {
+  let allRecords = []
+
+  async function doQuery(start) {
+    if (start) params.start = start
+
+    return await fetch(`${endpoint}?${stringify(params)}`)
+      .then(res => {
+        allRecords = allRecords.concat(res.data.data)
+        return (allRecords.length < res.data.total) ? doQuery(allRecords.length) : allRecords
+      })
+      .catch(e => console.error(e))
+  }
+
+  return doQuery()
+}
+
 async function getToken() {
   if (cache.has('BHRestToken')) return cache.get('BHRestToken')
 
@@ -64,23 +83,4 @@ async function getRestToken(accessToken) {
       return data
     })
     .catch(err => console.error('Bullhorn login error: ', err.response.data))
-}
-
-// Iterate queries to account for 500 record limit (200 record limit when
-// querying skills).
-export function depaginate(endpoint, params) {
-  let allRecords = []
-
-  async function doQuery(start) {
-    if (start) params.start = start
-
-    return await fetch(`${endpoint}?${stringify(params)}`)
-      .then(res => {
-        allRecords = allRecords.concat(res.data.data)
-        return (allRecords.length < res.data.total) ? doQuery(allRecords.length) : allRecords
-      })
-      .catch(e => console.error(e))
-  }
-
-  return doQuery()
 }
