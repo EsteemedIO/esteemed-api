@@ -1,4 +1,5 @@
-import { fetch as bhFetch, reassignBHValues, reassignSlackValues, depaginate } from '../util/bullhorn.js'
+import { fetch as bhFetch, depaginate } from '../util/bullhorn.js'
+import { reassignBHValues, reassignSlackValues } from '../util/slackUtils.js'
 import qs from 'qs'
 const { stringify } = qs
 

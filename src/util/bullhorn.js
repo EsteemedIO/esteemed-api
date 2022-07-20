@@ -66,31 +66,6 @@ async function getRestToken(accessToken) {
     .catch(err => console.error('Bullhorn login error: ', err.response.data))
 }
 
-export function reassignBHValues(fields, values) {
-  return Object.keys(values).reduce((acc, key) => {
-    if (fields[key] != null) {
-      acc[fields[key]] = values[key]
-    }
-
-    return acc
-  }, {})
-}
-
-export function reassignSlackValues(fields, values) {
-  return Object.keys(values).reduce((acc, key) => {
-      const mappedKey = Object.keys(fields).find(field => fields[field] == key)
-      if (key == 'date_available') {
-        const [year, month, day] = values[key].split('-')
-        acc[mappedKey] = new Date(year, month - 1, day).getTime()
-      }
-      else {
-        acc[mappedKey] = values[key]
-      }
-
-      return acc
-    }, {})
-}
-
 // Iterate queries to account for 500 record limit (200 record limit when
 // querying skills).
 export function depaginate(endpoint, params) {

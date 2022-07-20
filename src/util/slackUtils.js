@@ -83,3 +83,28 @@ export function createSlackOptions(options) {
     value: option.value.toString()
   }))
 }
+
+export function reassignBHValues(fields, values) {
+  return Object.keys(values).reduce((acc, key) => {
+    if (fields[key] != null) {
+      acc[fields[key]] = values[key]
+    }
+
+    return acc
+  }, {})
+}
+
+export function reassignSlackValues(fields, values) {
+  return Object.keys(values).reduce((acc, key) => {
+      const mappedKey = Object.keys(fields).find(field => fields[field] == key)
+      if (key == 'date_available') {
+        const [year, month, day] = values[key].split('-')
+        acc[mappedKey] = new Date(year, month - 1, day).getTime()
+      }
+      else {
+        acc[mappedKey] = values[key]
+      }
+
+      return acc
+    }, {})
+}

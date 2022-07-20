@@ -1,4 +1,5 @@
-import { fetch as bhFetch, reassignBHValues, depaginate } from '../util/bullhorn.js'
+import { fetch as bhFetch, depaginate } from '../util/bullhorn.js'
+import { reassignBHValues } from '../util/slackUtils.js'
 import { profiles } from './profiles.js'
 import htmlentities from 'html-entities'
 const { decode } = htmlentities
