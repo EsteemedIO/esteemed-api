@@ -1,4 +1,4 @@
-import { fetch as bhFetch, reassignBHValues } from '../util/bullhorn.js'
+import { fetch as bhFetch, reassignBHValues, depaginate } from '../util/bullhorn.js'
 import { profiles } from './profiles.js'
 import htmlentities from 'html-entities'
 const { decode } = htmlentities
@@ -27,18 +27,17 @@ export const jobs = {
       .then(({ data }) => (data !== ''))
       .catch(e => console.error(e.response.data))
   },
-  getAll: async () => {
-    const params = {
+  getAll: async (filters) => {
+    const defaults = {
       fields: Object.keys(jobFields).join(','),
-      where: [
-        'isOpen=true',
-        'isPublic=1',
-      ].join(' AND '),
-      count: 200,
+      where: 'isOpen=TRUE AND isPublic=1',
+      count: 200
     }
 
-    return await bhFetch('query/JobBoardPost?' + stringify(params))
-      .then(jobs => jobs.data.data.map(job => reassignBHValues(jobFields, job)))
+    const params = {...defaults, ...filters}
+
+    return depaginate('query/JobBoardPost', params)
+      .then(jobs => jobs.map(job => reassignBHValues(jobFields, job)))
       .then(jobs => jobs.map(job => ({ ...job, ...{
           startDate: job.startDate ? new Date(job.startDate).toISOString().split('T')[0] : null,
         }})))

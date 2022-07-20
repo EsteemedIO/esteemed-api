@@ -1,4 +1,6 @@
 import axios from 'axios'
+import qs from 'qs'
+const { stringify } = qs
 import { default as NodeCache } from 'node-cache'
 const cache = new NodeCache({ stdTTL: 600 })
 
@@ -87,4 +89,23 @@ export function reassignSlackValues(fields, values) {
 
       return acc
     }, {})
+}
+
+// Iterate queries to account for 500 record limit (200 record limit when
+// querying skills).
+export function depaginate(endpoint, params) {
+  let allRecords = []
+
+  async function doQuery(start) {
+    if (start) params.start = start
+
+    return await fetch(`${endpoint}?${stringify(params)}`)
+      .then(res => {
+        allRecords = allRecords.concat(res.data.data)
+        return (allRecords.length < res.data.total) ? doQuery(allRecords.length) : allRecords
+      })
+      .catch(e => console.error(e))
+  }
+
+  return doQuery()
 }

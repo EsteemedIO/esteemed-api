@@ -1,4 +1,4 @@
-import { fetch as bhFetch, reassignBHValues, reassignSlackValues } from '../util/bullhorn.js'
+import { fetch as bhFetch, reassignBHValues, reassignSlackValues, depaginate } from '../util/bullhorn.js'
 import qs from 'qs'
 const { stringify } = qs
 
@@ -81,7 +81,6 @@ export const profiles = {
   },
 
   getAll: async (filters) => {
-    let allRecords = []
     const defaults = {
       fields: Object.keys(profileFields).join(','),
       query: 'isDeleted:FALSE',
@@ -91,20 +90,7 @@ export const profiles = {
 
     const params = {...defaults, ...filters}
 
-    // Iterate queries to account for 500 record limit (200 record limit when
-    // querying skills).
-    async function doQuery(start) {
-      if (start) params.start = start
-
-      return await bhFetch('search/Candidate?' + stringify(params))
-        .then(res => {
-          allRecords = allRecords.concat(res.data.data)
-          return (allRecords.length < res.data.total) ? doQuery(allRecords.length) : allRecords
-        })
-        .catch(e => console.error(e))
-    }
-
-    return doQuery()
+    return depaginate('search/Candidate', params)
       .then(res => res.map(item => reassignBHValues(profileFields, item)))
       .then(profiles => profiles.map(profile => ({ ...profile, ...{
           skills: profile.skills.data.map(value => value.name),
