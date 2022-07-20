@@ -1,4 +1,4 @@
-import { fetch as bhFetch } from '../util/bullhorn.js'
+import { fetch as bhFetch } from 'bullhorn-auth'
 import { references } from './references.js'
 
 export const leads = {

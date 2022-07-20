@@ -17,6 +17,7 @@
     "axios": "^0.26.0",
     "body-parser": "^1.19.0",
     "btoa": "^1.2.1",
+    "bullhorn-auth": "git+https://github.com/EsteemedIO/bullhorn-auth.git",
     "croner": "^4.3.9",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.0",

@@ -1,6 +1,6 @@
 import qs from 'qs'
 const { stringify } = qs
-import { fetch as bhFetch } from '../util/bullhorn.js'
+import { fetch as bhFetch } from 'bullhorn-auth'
 
 export const options = {
   getTitles: async () => getOptions({ fields: 'customText3' }),

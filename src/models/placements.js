@@ -1,4 +1,4 @@
-import { fetch as bhFetch } from '../util/bullhorn.js'
+import { fetch as bhFetch } from 'bullhorn-auth'
 import qs from 'qs'
 const { stringify } = qs
 
