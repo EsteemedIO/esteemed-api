@@ -4,6 +4,10 @@ const cache = new NodeCache({ stdTTL: 600 })
 
 export async function fetch(resource, method = 'get', data = null) {
   const creds = await getToken()
+    .catch(() => {
+      cache.del('BHRestToken')
+      return getToken()
+    })
 
   return axios({
     headers: { BhRestToken: creds.BhRestToken },
@@ -14,6 +18,8 @@ export async function fetch(resource, method = 'get', data = null) {
 }
 
 async function getToken() {
+  if (cache.has('BHRestToken')) return cache.get('BHRestToken')
+
   const accessToken = await getAccessTokenFromRefreshToken()
     .catch(() => getAccessToken())
 
@@ -51,7 +57,10 @@ async function getRestToken(accessToken) {
   // Todo: This is a long-lived session token, so we can should store this (as well as the refresh token).
   // Get rest token.
   return axios.get(`https://rest.bullhornstaffing.com/rest-services/login?version=*&access_token=${accessToken}&ttl=999`)
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      cache.set('BHRestToken', data)
+      return data
+    })
     .catch(err => console.error('Bullhorn login error: ', err.response.data))
 }
 
