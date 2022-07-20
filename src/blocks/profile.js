@@ -1,5 +1,5 @@
 import { options } from '../models/options.js'
-import { createSlackOptions } from '../util/slackFormData.js'
+import { createSlackOptions } from '../util/slackUtils.js'
 import { default as cache } from '../util/cache.js'
 
 export default async function() {

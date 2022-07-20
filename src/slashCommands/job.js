@@ -5,7 +5,7 @@ import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import jobsForm from '../blocks/jobsForm.js'
 import notesForm from '../blocks/notesForm.js'
 import { getUser } from '../util/userProfiles.js'
-import * as slackFormData from '../util/slackFormData.js'
+import * as slackFormData from '../util/slackUtils.js'
 import * as userProfiles from '../util/userProfiles.js'
 
 export async function listJobs(userId) {

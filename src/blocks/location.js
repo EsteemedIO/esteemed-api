@@ -1,5 +1,5 @@
 import { profiles } from '../models/profiles.js'
-import { get as getSlackData } from '../util/slackFormData.js'
+import { get as getSlackData } from '../util/slackUtils.js'
 import { countryOption } from '../util/countryCodes.js'
 
 export function modal(location) {

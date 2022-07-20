@@ -30,7 +30,7 @@ import { invoicePeriods } from '../blocks/invoice.js'
 
 import { countryOptions } from '../util/countryCodes.js'
 import * as userProfiles from '../util/userProfiles.js'
-import * as slackFormData from '../util/slackFormData.js'
+import * as slackFormData from '../util/slackUtils.js'
 import * as resume from '../util/resume.js'
 import * as tasks from '../util/tasks.js'
 
