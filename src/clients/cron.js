@@ -5,6 +5,7 @@ import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { jobs } from '../models/jobs.js'
 import { leads } from '../models/leads.js'
 import report from '../util/report.js'
+import { app } from '../clients/slack.js'
 
 export default function() {
   if (process.env.NODE_ENV !== 'production') {
@@ -46,11 +47,43 @@ export default function() {
   })
 
   if (process.env.HOSTNAME.startsWith('esteemed-api-internal')) {
-    cron('*/5 * * * *', async () => {
-      const end = new Date()
-      const start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 7)
+    cron('0 8 * * *', async () => {
+      const now = new Date().setHours(0, 0, 0, 0)
+      const start = new Date(now)
+      start.setDate(start.getDate() - start.getDay() - 7)
+      const end = new Date(now)
+      end.setDate(end.getDate() - end.getDay());
+
       report(start, end)
-        .then(data => console.log(data))
+        .then(data => {
+          const dataFormatted = Object.keys(data).map(function(key, index) {
+            return `*${key}*: ${data[key]}`
+          })
+
+          app.client.chat.postMessage({
+            token: process.env.SLACK_TOKEN_BOT,
+            channel: 'C01TEMBSY6A',
+            blocks: [
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Last week's sales numbers!* (${start.toLocaleString('en-US').split(',')[0]} - ${end.toLocaleString('en-US').split(',')[0]})`
+                }
+              },
+              {
+                type: 'divider'
+              },
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: dataFormatted.join("\n\n")
+                }
+              },
+            ]
+          })
+        })
     })
   }
 }

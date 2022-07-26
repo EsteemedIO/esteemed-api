@@ -14,7 +14,7 @@ export default async function (start, end) {
   const endQuery = end.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
   const endSearch = end.getTime()
 
-  Promise.all([
+  return Promise.all([
     // Find new candidate count from the last week.
     contactsAdded(startQuery, endQuery),
     // Get all client submittals from the last week.
@@ -39,13 +39,13 @@ export default async function (start, end) {
       newStarts,
       opportunitiesAdded
     ]) => ({
-      'Contacts Added': contactsAdded.length,
-      'Client Submittals': clientSubmittals.length,
-      'Jobs Added': jobsAdded.length,
-      'Client Interviews': clientInterviews.length,
-      'New Hires': newHires.length,
-      'New Starts': newStarts.length,
-      'New Opportunities': opportunitiesAdded.length,
+      '🙋 Contacts Added': contactsAdded.length,
+      '👌 Client Submittals': clientSubmittals.length,
+      '👨‍💻 Jobs Added': jobsAdded.length,
+      '💼 Client Interviews': clientInterviews.length,
+      '🤝 New Hires': newHires.length,
+      '🎬 New Starts': newStarts.length,
+      '🤝 New Opportunities': opportunitiesAdded.length,
     }))
 }
 
