@@ -150,6 +150,7 @@ const profileFields = {
   'address': 'location',
   'customText2': 'availability',
   'dateAvailable': 'date_available',
+  'name': 'name',
   'firstName': 'firstName',
   'lastName': 'lastName',
   'dateAdded': 'dateAdded',
