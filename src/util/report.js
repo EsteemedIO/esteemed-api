@@ -16,6 +16,7 @@ export default async function () {
   const currentQuery = now.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
   const currentSearch = now.getTime()
 
+  console.log('Starting report...')
   Promise.all([
     // Find new candidate count from the last week.
     contactsAdded(lastweekQuery, currentQuery),
@@ -49,6 +50,7 @@ export default async function () {
       'New Starts': newStarts.length,
       'New Opportunities': opportunitiesAdded.length,
     }))
+    .then(() => console.log('Report complete.'))
 }
 
 function contactsAdded(lastweek, current) {
