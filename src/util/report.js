@@ -8,30 +8,27 @@ import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { profiles } from '../models/profiles.js'
 import opportunities from '../models/opportunities.js'
 
-export default async function () {
-  const now = new Date()
-  const lastweek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7)
-  const lastweekQuery = lastweek.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
-  const lastweekSearch = lastweek.getTime()
-  const currentQuery = now.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
-  const currentSearch = now.getTime()
+export default async function (start, end) {
+  const startQuery = start.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
+  const startSearch = start.getTime()
+  const endQuery = end.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
+  const endSearch = end.getTime()
 
-  console.log('Starting report...')
   Promise.all([
     // Find new candidate count from the last week.
-    contactsAdded(lastweekQuery, currentQuery),
+    contactsAdded(startQuery, endQuery),
     // Get all client submittals from the last week.
-    clientSubmittals(lastweekQuery, currentQuery),
+    clientSubmittals(startQuery, endQuery),
     // Find jobs added in the last week.
-    jobsAdded(lastweekSearch, currentSearch),
+    jobsAdded(startSearch, endSearch),
     // Find interviews conducted in the last week.
-    clientInterviews(lastweekSearch, currentSearch),
+    clientInterviews(startSearch, endSearch),
     // Find new hires from the last week.
-    newHires(lastweekQuery, currentQuery),
+    newHires(startQuery, endQuery),
     // Find new starts from the last week.
-    newStarts(lastweekQuery, currentQuery),
+    newStarts(startQuery, endQuery),
     // Find opportunities added from the last week.
-    opportunitiesAdded(lastweekSearch, currentSearch)
+    opportunitiesAdded(startSearch, endSearch)
   ])
     .then(([
       contactsAdded,
@@ -41,7 +38,7 @@ export default async function () {
       newHires,
       newStarts,
       opportunitiesAdded
-    ]) => console.log({
+    ]) => ({
       'Contacts Added': contactsAdded.length,
       'Client Submittals': clientSubmittals.length,
       'Jobs Added': jobsAdded.length,
@@ -50,49 +47,47 @@ export default async function () {
       'New Starts': newStarts.length,
       'New Opportunities': opportunitiesAdded.length,
     }))
-    .then(() => console.log('Report complete.'))
 }
 
-function contactsAdded(lastweek, current) {
+function contactsAdded(start, end) {
   return profiles.getAll({
-      query: `isDeleted:FALSE AND dateAdded:[${lastweek} TO ${current}] AND customText10:[* TO *]`
+      query: `isDeleted:FALSE AND dateAdded:[${start} TO ${end}] AND customText10:[* TO *]`
     })
 }
 
-function clientSubmittals(lastweek, current) {
+function clientSubmittals(start, end) {
   return submissions.getAll({
-      query: `isDeleted:FALSE AND dateAdded:[${lastweek} TO ${current}]`
+      query: `isDeleted:FALSE AND dateAdded:[${start} TO ${end}]`
     })
 }
 
-function jobsAdded(lastweek, current) {
+function jobsAdded(start, end) {
   return dbJobs.getAll({
-      where: `isOpen=TRUE AND isPublic=1 AND dateAdded > ${lastweek} AND dateAdded < ${current}`
+      where: `isOpen=TRUE AND isPublic=1 AND dateAdded > ${start} AND dateAdded < ${end}`
     })
 }
 
-function clientInterviews(lastweek, current) {
+function clientInterviews(start, end) {
   return appointments.getAll({
-      where: `isDeleted=FALSE AND type='Interview' AND dateAdded > ${lastweek} AND dateAdded < ${current}`
+      where: `isDeleted=FALSE AND type='Interview' AND dateAdded > ${start} AND dateAdded < ${end}`
     })
 }
 
-function newHires(lastweek, current) {
+function newHires(start, end) {
   return placements.getAll({
-      query: `status:(Approved OR Completed OR Terminated) AND dateAdded:[${lastweek} TO ${current}]`
+      query: `status:(Approved OR Completed OR Terminated) AND dateAdded:[${start} TO ${end}]`
     })
 }
 
-function newStarts(lastweek, current) {
+function newStarts(start, end) {
   return placements.getAll({
-      query: `status:(Approved OR Completed OR Terminated) AND dateBegin:[${lastweek} TO ${current}]`
+      query: `status:(Approved OR Completed OR Terminated) AND dateBegin:[${start} TO ${end}]`
     })
 }
 
-function opportunitiesAdded(lastweek, current) {
-  console.log(lastweek)
+function opportunitiesAdded(start, end) {
   return opportunities.getAll({
-    where: `dateAdded > ${lastweek} AND dateAdded < ${current}`
+    where: `dateAdded > ${start} AND dateAdded < ${end}`
   })
 }
 

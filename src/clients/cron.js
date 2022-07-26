@@ -46,10 +46,11 @@ export default function() {
   })
 
   if (process.env.HOSTNAME.startsWith('esteemed-api-internal')) {
-    console.log('Internal')
     cron('*/5 * * * *', async () => {
-      console.log('5 Minutes')
-      report()
+      const end = new Date()
+      const start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 7)
+      report(start, end)
+        .then(data => console.log(data))
     })
   }
 }
