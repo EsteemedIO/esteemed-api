@@ -4,6 +4,7 @@ import { default as cache } from '../util/cache.js'
 import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
 import { jobs } from '../models/jobs.js'
 import { leads } from '../models/leads.js'
+import report from '../util/report.js'
 
 export default function() {
   if (process.env.NODE_ENV !== 'production') {
@@ -43,4 +44,10 @@ export default function() {
         .catch(err => console.error('Amplify rebuild request error: ', err.response.data))
     }
   })
+
+  if (process.env.HOSTNAME == 'esteemed-api-internal-85c9b5d4c7-mv9lc') {
+    cron('*/5 * * * *', async () => {
+      report()
+    })
+  }
 }
