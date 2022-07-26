@@ -128,6 +128,7 @@ export function locationFormat(address) {
 const jobFields = {
   'id': 'id',
   'title': 'title',
+  'dateAdded': 'dateAdded',
   'startDate': 'startDate',
   'address': 'address',
   'employmentType': 'employmentType',
