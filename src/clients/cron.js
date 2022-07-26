@@ -45,8 +45,10 @@ export default function() {
     }
   })
 
-  if (process.env.HOSTNAME == 'esteemed-api-internal-85c9b5d4c7-mv9lc') {
+  if (process.env.HOSTNAME.startsWith('esteemed-api-internal')) {
+    console.log('Internal')
     cron('*/5 * * * *', async () => {
+      console.log('5 Minutes')
       report()
     })
   }
