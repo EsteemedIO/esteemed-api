@@ -47,12 +47,13 @@ export default function() {
   })
 
   if (process.env.HOSTNAME.startsWith('esteemed-api-internal')) {
-    cron('0 8 * * *', async () => {
+    // Weekly update of sales numbers.
+    cron('0 8 * * MON', async () => {
       const now = new Date().setHours(0, 0, 0, 0)
       const start = new Date(now)
       start.setDate(start.getDate() - start.getDay() - 7)
       const end = new Date(now)
-      end.setDate(end.getDate() - end.getDay());
+      end.setDate(end.getDate() - end.getDay())
 
       report(start, end)
         .then(data => {
@@ -69,6 +70,45 @@ export default function() {
                 text: {
                   type: 'mrkdwn',
                   text: `*Last week's sales numbers!* (${start.toLocaleString('en-US').split(',')[0]} - ${end.toLocaleString('en-US').split(',')[0]})`
+                }
+              },
+              {
+                type: 'divider'
+              },
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: dataFormatted.join("\n\n")
+                }
+              },
+            ]
+          })
+        })
+    })
+
+    // Daily update of sales numbers.
+    cron('0 8 * * *', async () => {
+      const now = new Date().setHours(0, 0, 0, 0)
+      const start = new Date(now)
+      start.setDate(start.getDate() - 1)
+      const end = new Date(now)
+
+      report(start, end)
+        .then(data => {
+          const dataFormatted = Object.keys(data).map(function(key, index) {
+            return `*${key}*: ${data[key]}`
+          })
+
+          app.client.chat.postMessage({
+            token: process.env.SLACK_TOKEN_BOT,
+            channel: 'C01TEMBSY6A',
+            blocks: [
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Yesterday's sales numbers!* (${start.toLocaleString('en-US').split(',')[0]} - ${end.toLocaleString('en-US').split(',')[0]})`
                 }
               },
               {
