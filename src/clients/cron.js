@@ -108,7 +108,7 @@ export default function() {
                 type: 'section',
                 text: {
                   type: 'mrkdwn',
-                  text: `*Yesterday's sales numbers!* (${start.toLocaleString('en-US').split(',')[0]} - ${end.toLocaleString('en-US').split(',')[0]})`
+                  text: `*Yesterday's sales numbers!* (${start.toLocaleString('en-US').split(',')[0]})`
                 }
               },
               {
