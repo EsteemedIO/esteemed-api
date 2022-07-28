@@ -1,8 +1,8 @@
-import * as drupal from '../blocks/drupal.js'
-import * as wp from '../blocks/wp.js'
-import * as jobs from '../slashCommands/job.js'
+import { blocks as drupalBlocks } from '../blocks/drupal.js'
+import { blocks as wpBlocks } from '../blocks/wp.js'
+import { listJobs } from '../slashCommands/job.js'
 import { getProfile } from '../util/userProfiles.js'
-import * as tasks from '../util/tasks.js'
+import { userTaskBlocks } from '../util/tasks.js'
 
 export const blocks = [
   {
@@ -57,11 +57,11 @@ export async function view(userId) {
     const profile = await getProfile(userId)
 
     // Add buttons for each property.
-    if (profile && profile.cms && profile.cms.includes('drupal')) homeBlocks = [...homeBlocks, ...drupal.blocks]
-    if (profile && profile.cms && profile.cms.includes('wordpress')) homeBlocks = [...homeBlocks, ...wp.blocks]
+    if (profile && profile.cms && profile.cms.includes('drupal')) homeBlocks = [...homeBlocks, ...drupalBlocks]
+    if (profile && profile.cms && profile.cms.includes('wordpress')) homeBlocks = [...homeBlocks, ...wpBlocks]
 
     // Add job board.
-    const allJobs = await jobs.listJobs(userId)
+    const allJobs = await listJobs(userId)
     homeBlocks = [
       ...homeBlocks,
       {
@@ -90,7 +90,7 @@ export async function view(userId) {
           "text": "\n\n *To Do*"
         }
       },
-      ...await tasks.userTaskBlocks(userId)
+      ...await userTaskBlocks(userId)
     ]
 
     return homeBlocks

@@ -21,23 +21,23 @@ import commandLatestProfiles from '../slashCommands/latestProfiles.js'
 import * as jobs from '../slashCommands/job.js'
 
 import defaultBlocks from '../blocks/profile.js'
-import * as wp from '../blocks/wp.js'
-import * as drupal from '../blocks/drupal.js'
-import * as location from '../blocks/location.js'
-import * as home from '../blocks/home.js'
+import { modal as wpModal, updateProfile as updateWPProfile } from '../blocks/wp.js'
+import { modal as drupalModal, updateProfile as updateDrupalProfile } from '../blocks/drupal.js'
+import { modal as locationModal, update as updateLocation } from '../blocks/location.js'
+import { view as viewHome } from '../blocks/home.js'
 import { getForm as referralForm } from '../blocks/referrals.js'
 import { invoicePeriods } from '../blocks/invoice.js'
 
 import { countryOptions } from '../util/countryCodes.js'
 import { setUserJoinDate, getUser, getProfile, loadUserProfile, updateProfile } from '../util/userProfiles.js'
-import * as slackFormData from '../util/slackUtils.js'
-import * as resume from '../util/resume.js'
-import * as tasks from '../util/tasks.js'
+import { set as setSlackFormData } from '../util/slackUtils.js'
+import { getDetails as getResumeDetails, format as formatResume } from '../util/resume.js'
+import { updateUserTasks } from '../util/tasks.js'
 
 // Events.
 app.event('app_home_opened', async ({ event, client }) => {
   try {
-    const blocks = await home.view(event.user)
+    const blocks = await viewHome(event.user)
     const view = {
       user_id: event.user,
       view: {
@@ -169,11 +169,11 @@ app.command('/resume', async ({ command, ack, respond }) => {
   }
   else {
     const slackProfile = await loadUserProfile(userId)
-    let details = await resume.getDetails(userId)
+    let details = await getResumeDetails(userId)
 
     details.profile.image = slackProfile.profile.image_512
 
-    const resumeUrl = await resume.format(details)
+    const resumeUrl = await formatResume(details)
 
     // Update profile with resume URL.
     const bhId = await profiles.getBHId(userId)
@@ -295,7 +295,7 @@ app.action('edit_profile', async ({ action, ack, context, client, body }) => {
   await ack()
 
   const profile = await getProfile(body.user.id)
-  const modal = slackFormData.set(await defaultBlocks(), profile)
+  const modal = setSlackFormData(await defaultBlocks(), profile)
 
   await client.views.open({
     token: context.botToken,
@@ -325,7 +325,7 @@ app.action('edit_profile', async ({ action, ack, context, client, body }) => {
 app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }) => {
   await ack()
 
-  const modal = await drupal.modal(body.user.id)
+  const modal = await drupalModal(body.user.id)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -339,7 +339,7 @@ app.action({ block_id: 'drupal_profile' }, async ({ context, client, body, ack }
 app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) => {
   await ack()
 
-  const modal = await wp.modal(body.user.id)
+  const modal = await wpModal(body.user.id)
 
   const result = client.views.open({
     token: context.botToken,
@@ -354,7 +354,7 @@ app.action('locality', async ({ context, client, body, ack }) => {
   await ack()
 
   const profile = await getProfile(body.user.id)
-  const modal = location.modal(profile.location)
+  const modal = locationModal(profile.location)
 
   const result = await client.views.open({
     token: context.botToken,
@@ -430,8 +430,8 @@ app.action({ action_id: 'complete_task' }, async ({ client, context, ack, action
   })
 
   // Update user.
-  await tasks.updateUserTasks(body.user.id, action.value)
-  const blocks = await home.view(body.user.id)
+  await updateUserTasks(body.user.id, action.value)
+  const blocks = await viewHome(body.user.id)
 
   await client.views.publish({
     token: context.botToken,
@@ -485,10 +485,10 @@ app.view('update_location', async ({ ack, body, view, context, client }) => {
     user_id: body.user.id,
     view: {
       type: 'home',
-      blocks: await home.view(body.user.id)
+      blocks: await viewHome(body.user.id)
     }
   })
-  location.update(body.user.id, view.state.values)
+  updateLocation(body.user.id, view.state.values)
 
   console.log('Location data updated by user', body.user.id)
 })
@@ -496,7 +496,7 @@ app.view('update_location', async ({ ack, body, view, context, client }) => {
 app.view('update_drupal_profile', async ({ ack, body, view }) => {
   await ack()
 
-  await drupal.updateProfile(body.user.id, view.state.values)
+  await updateDrupalProfile(body.user.id, view.state.values)
 
   console.log('Drupal profile updated by user', body.user.id)
 })
@@ -504,7 +504,7 @@ app.view('update_drupal_profile', async ({ ack, body, view }) => {
 app.view('update_wp_profile', async ({ ack, body, view }) => {
   await ack()
 
-  wp.updateProfile(body.user.id, view.state.values)
+  updateWPProfile(body.user.id, view.state.values)
 
   console.log('WP profile updated by user', body.user.id)
 })
@@ -518,7 +518,7 @@ app.view('edit_profile', async ({ client, body, context, ack }) => {
       user_id: body.user.id,
       view: {
         type: 'home',
-        blocks: await home.view(body.user.id)
+        blocks: await viewHome(body.user.id)
       }
     })
 

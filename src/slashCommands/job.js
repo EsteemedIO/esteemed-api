@@ -5,7 +5,7 @@ import { get as getJob, getAll as getAllJobs, update as updateJob, getNotes as g
 import jobsForm from '../blocks/jobsForm.js'
 import notesForm from '../blocks/notesForm.js'
 import { getUser, isAdmin } from '../util/userProfiles.js'
-import * as slackFormData from '../util/slackUtils.js'
+import { get as getSlackFormData, set as setSlackFormData } from '../util/slackUtils.js'
 
 export async function listJobs(userId) {
   try {
@@ -166,7 +166,7 @@ export async function addJob(job) {
   const date = new Date()
   const created = date.toISOString().split('T')[0]
 
-  const item = slackFormData.get(job)
+  const item = getSlackFormData(job)
   item.id = crypto.createHash('md5').update(created).digest('hex').substring(0, 12)
   item.created = created
 
@@ -199,7 +199,7 @@ export async function editJobForm(jobId, userId) {
   try {
     const job = await getJob(jobId)
     const isAdmin = await isAdmin(userId)
-    const blocks = slackFormData.set(jobsForm(isAdmin), job)
+    const blocks = setSlackFormData(jobsForm(isAdmin), job)
 
     return {
       title: {
@@ -270,7 +270,7 @@ export async function updateNotes(jobId, userId, values) {
     {
       user: userId,
       date: new Date().toISOString(),
-      note: slackFormData.get(values).notes
+      note: getSlackFormData(values).notes
     }
   ]
 
