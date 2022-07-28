@@ -29,7 +29,7 @@ import { getForm as referralForm } from '../blocks/referrals.js'
 import { invoicePeriods } from '../blocks/invoice.js'
 
 import { countryOptions } from '../util/countryCodes.js'
-import * as userProfiles from '../util/userProfiles.js'
+import { setUserJoinDate, getUser, getProfile, loadUserProfile, updateProfile } from '../util/userProfiles.js'
 import * as slackFormData from '../util/slackUtils.js'
 import * as resume from '../util/resume.js'
 import * as tasks from '../util/tasks.js'
@@ -57,7 +57,7 @@ app.event('team_join', async ({ event }) => {
   const bhId = await profiles.getBHIdByEmail(event.user.profile.email)
 
   if (!bhId) {
-    userProfiles.setUserJoinDate(event.user, event.event_ts)
+    setUserJoinDate(event.user, event.event_ts)
   }
   else {
     profiles.update(bhId, { slackId: event.user.id })
@@ -98,7 +98,7 @@ We really appreciate you being here, and look forward to working with you!`
 app.command('/invoice', async ({ command, ack, respond }) => {
   await ack()
 
-  const profile = await userProfiles.getUser(command.user_id)
+  const profile = await getUser(command.user_id)
 
   if (profile.is_admin) {
     const blocks = {
@@ -162,13 +162,13 @@ app.command('/resume', async ({ command, ack, respond }) => {
   const userId = command.text.substring(2).split('|')[0]
 
   // Load user and see if file already exists.
-  const profile = await userProfiles.getProfile(userId)
+  const profile = await getProfile(userId)
 
   if (profile.resume) {
     respond(profile.resume)
   }
   else {
-    const slackProfile = await userProfiles.loadUserProfile(userId)
+    const slackProfile = await loadUserProfile(userId)
     let details = await resume.getDetails(userId)
 
     details.profile.image = slackProfile.profile.image_512
@@ -294,7 +294,7 @@ app.action('generate_invoices', async ({ action, ack, context, client, body }) =
 app.action('edit_profile', async ({ action, ack, context, client, body }) => {
   await ack()
 
-  const profile = await userProfiles.getProfile(body.user.id)
+  const profile = await getProfile(body.user.id)
   const modal = slackFormData.set(await defaultBlocks(), profile)
 
   await client.views.open({
@@ -353,7 +353,7 @@ app.action({ block_id: 'wp_profile' }, async ({ context, client, body, ack }) =>
 app.action('locality', async ({ context, client, body, ack }) => {
   await ack()
 
-  const profile = await userProfiles.getProfile(body.user.id)
+  const profile = await getProfile(body.user.id)
   const modal = location.modal(profile.location)
 
   const result = await client.views.open({
@@ -369,7 +369,7 @@ app.action('add_job_notes', async ({ action, ack, context, client, body }) => {
   await ack()
 
   // Check for user admin level.
-  const profile = await userProfiles.getUser(body.user.id)
+  const profile = await getUser(body.user.id)
 
   if (profile.is_admin) {
     const jobNotesForm = await jobs.addJobNoteForm(action.value)
@@ -400,7 +400,7 @@ app.action('apply_btn', async ({ action, ack, context, client, body }) => {
 app.action(/^(titles|skills|builders|languages|cms|date_available|availability|citizen|english)$/, async ({ ack, body, action, context, client }) => {
   await ack()
 
-  userProfiles.updateProfile(body.user.id, action)
+  updateProfile(body.user.id, action)
 
   console.log(action, 'field updated by user', body.user.id)
 })
@@ -465,7 +465,7 @@ app.view('add_job_notes', async ({ ack, body, view }) => {
   await ack()
 
   // Check for user admin level.
-  const profile = await userProfiles.getUser(body.user.id)
+  const profile = await getUser(body.user.id)
 
   if (profile.is_admin) {
     await addJobNote(view.private_metadata, body.user.id, view.state.values.notes.val.value)

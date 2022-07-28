@@ -4,9 +4,8 @@ import { default as striptags } from 'striptags'
 import { get as getJob, getAll as getAllJobs, update as updateJob, getNotes as getJobNotes, post as postJob, locationFormat } from '../models/jobs.js'
 import jobsForm from '../blocks/jobsForm.js'
 import notesForm from '../blocks/notesForm.js'
-import { getUser } from '../util/userProfiles.js'
+import { getUser, isAdmin } from '../util/userProfiles.js'
 import * as slackFormData from '../util/slackUtils.js'
-import * as userProfiles from '../util/userProfiles.js'
 
 export async function listJobs(userId) {
   try {
@@ -175,7 +174,7 @@ export async function addJob(job) {
 }
 
 export async function addJobForm(userId) {
-  const isAdmin = await userProfiles.isAdmin(userId)
+  const isAdmin = await isAdmin(userId)
 
   return {
     title: {
@@ -199,7 +198,7 @@ export async function addJobForm(userId) {
 export async function editJobForm(jobId, userId) {
   try {
     const job = await getJob(jobId)
-    const isAdmin = await userProfiles.isAdmin(userId)
+    const isAdmin = await isAdmin(userId)
     const blocks = slackFormData.set(jobsForm(isAdmin), job)
 
     return {

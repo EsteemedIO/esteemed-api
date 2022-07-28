@@ -1,4 +1,4 @@
-import * as userProfiles from './util/userProfiles.js'
+import { loadUsers, allProfiles, loadChannelMembers } from './util/userProfiles.js'
 
 export default async (req, res, next) => {
   try {
@@ -11,13 +11,13 @@ export default async (req, res, next) => {
     // Disallow sneaking into unapproved channels.
     if (!allowedChannels.includes(channel)) next('Invalid channel')
 
-    const usersPromise = userProfiles.loadUsers()
-    const profilesPromise = userProfiles.allProfiles()
+    const usersPromise = loadUsers()
+    const profilesPromise = allProfiles()
     const users = await usersPromise
     const profiles = await profilesPromise
 
     // Iterate the conversation.members call due to its pagination limit.
-    const members = await userProfiles.loadChannelMembers(channel)
+    const members = await loadChannelMembers(channel)
 
     res.send(members
       .map(data => users.find(user => data.includes(user.id)))

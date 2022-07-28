@@ -1,7 +1,7 @@
 import * as drupal from '../blocks/drupal.js'
 import * as wp from '../blocks/wp.js'
 import * as jobs from '../slashCommands/job.js'
-import * as userProfiles from '../util/userProfiles.js'
+import { getProfile } from '../util/userProfiles.js'
 import * as tasks from '../util/tasks.js'
 
 export const blocks = [
@@ -54,7 +54,7 @@ export const blocks = [
 export async function view(userId) {
   try {
     let homeBlocks = blocks;
-    const profile = await userProfiles.getProfile(userId)
+    const profile = await getProfile(userId)
 
     // Add buttons for each property.
     if (profile && profile.cms && profile.cms.includes('drupal')) homeBlocks = [...homeBlocks, ...drupal.blocks]
