@@ -1,10 +1,8 @@
-import { leads } from '../models/leads.js'
-import { loadChannelMembers, loadUsers, setUserJoinDate } from './userProfiles.js'
 import fs from 'fs'
-import { submissions } from '../models/jobSubmissions.js'
-import { appointments } from '../models/appointments.js'
+import { getAll as getAllJobSubmissions } from '../models/jobSubmissions.js'
+import { getAll as getAllAppointments } from '../models/appointments.js'
 import placements from '../models/placements.js'
-import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
+import { getAll as getAllJobs } from '../models/jobs.js'
 import { profiles } from '../models/profiles.js'
 import opportunities from '../models/opportunities.js'
 
@@ -56,19 +54,19 @@ function contactsAdded(start, end) {
 }
 
 function clientSubmittals(start, end) {
-  return submissions.getAll({
+  return getAllJobSubmissions({
       query: `isDeleted:FALSE AND dateAdded:[${start} TO ${end}]`
     })
 }
 
 function jobsAdded(start, end) {
-  return dbJobs.getAll({
+  return getAllJobs({
       where: `isOpen=TRUE AND isPublic=1 AND dateAdded > ${start} AND dateAdded < ${end}`
     })
 }
 
 function clientInterviews(start, end) {
-  return appointments.getAll({
+  return getAllAppointments({
       where: `isDeleted=FALSE AND type='Interview' AND dateAdded > ${start} AND dateAdded < ${end}`
     })
 }

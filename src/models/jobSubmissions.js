@@ -1,19 +1,17 @@
 import { depaginate } from 'bullhorn-auth'
 
 // Profile Calls
-export const submissions = {
-  getAll: async (filters) => {
-    const defaults = {
-      fields: Object.keys(profileFields).join(','),
-      query: 'isDeleted:FALSE',
-      sort: '-dateAdded',
-      count: 200
-    }
-
-    const params = {...defaults, ...filters}
-
-    return depaginate('search/JobSubmission', params)
+export async function getAll(filters) {
+  const defaults = {
+    fields: Object.keys(profileFields).join(','),
+    query: 'isDeleted:FALSE',
+    sort: '-dateAdded',
+    count: 200
   }
+
+  const params = {...defaults, ...filters}
+
+  return depaginate('search/JobSubmission', params)
 }
 
 const profileFields = {

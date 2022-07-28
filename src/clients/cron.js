@@ -1,9 +1,8 @@
 import axios from 'axios'
 import { Cron as cron } from 'croner'
 import { default as cache } from '../util/cache.js'
-import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
-import { jobs } from '../models/jobs.js'
-import { leads } from '../models/leads.js'
+import { getAll as getAllJobs, getJobUpdate, locationFormat } from '../models/jobs.js'
+import { getNew as getNewLeads } from '../models/leads.js'
 import report from '../util/report.js'
 import { app } from '../clients/slack.js'
 
@@ -19,7 +18,7 @@ export default function() {
     const key =  '__express__/jobs'
     cache.flush('/jobs')
 
-    dbJobs.getAll()
+    getAllJobs()
       .then(jobs => jobs.map(job => ({
           ...job,
           address: locationFormat(job.address)
@@ -33,13 +32,13 @@ export default function() {
 
   // Add new references as leads.
   cron('*/30 * * * *', async () => {
-    leads.getNew()
+    getNewLeads()
       .then(async newLeads => await Promise.all(newLeads.map(lead => leads.add(lead))))
       .then(res => res.map(lead => console.log(`Reference ${lead.data.data.firstName} ${lead.data.data.lastName} added as a lead.`)))
   })
 
   cron('0 * * * *', async () => {
-    const jobUpdateAvailable = jobs.getJobUpdate()
+    const jobUpdateAvailable = getJobUpdate()
 
     if (jobUpdateAvailable) {
       axios.post(`https://webhooks.amplify.us-east-1.amazonaws.com/prod/webhooks?id=bd8fedcd-d6a6-4eb1-ae2f-ac27dfb32c37&token=${process.env.AMPLIFY_TOKEN}`, {}, { headers: { 'Content-Type': 'application/json' }})

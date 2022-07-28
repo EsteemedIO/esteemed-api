@@ -1,18 +1,22 @@
 import { fetch as bhFetch } from 'bullhorn-auth'
 import { references } from './references.js'
 
-export const leads = {
-  add: async lead => {
-    const params = leadFields(lead)
+export async function add(lead) {
+  const params = leadFields(lead)
 
-    return bhFetch('entity/Lead', 'put', params)
-      .catch(e => console.error(e))
-  },
-  getNew: async () => {
-    return references.getSubscription()
-      .then(async subscription => await Promise.all(subscription.map(referenceId => references.get(referenceId))))
-      .catch(e => console.error(e))
-  }
+  return bhFetch('entity/Lead', 'put', params)
+    .catch(e => console.error(e))
+}
+
+export async function update(bhId, values) {
+  return bhFetch(`entity/Lead/${bhId}`, 'post', reassignSlackValues(leadFields, values))
+    .catch(res => console.error(res))
+}
+
+export async function getNew() {
+  return references.getSubscription()
+    .then(async subscription => await Promise.all(subscription.map(referenceId => references.get(referenceId))))
+    .catch(e => console.error(e))
 }
 
 const leadFields = (lead) => ({

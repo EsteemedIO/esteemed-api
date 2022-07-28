@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { default as striptags } from 'striptags'
 
-import { jobs as dbJobs, locationFormat } from '../models/jobs.js'
+import { get as getJob, getAll as getAllJobs, update as updateJob, getNotes as getJobNotes, post as postJob, locationFormat } from '../models/jobs.js'
 import jobsForm from '../blocks/jobsForm.js'
 import notesForm from '../blocks/notesForm.js'
 import { getUser } from '../util/userProfiles.js'
@@ -12,7 +12,7 @@ export async function listJobs(userId) {
   try {
     const currentUser = await getUser(userId)
 
-    const blocks = await dbJobs.getAll()
+    const blocks = await getAllJobs()
       .then(jobs => jobs.slice(0,15).map(job => {
         const text = [
           {
@@ -154,13 +154,13 @@ export async function saveApplication(jobId, userId) {
     }
   ]
 
-  const job = await dbJobs.get(jobId)
+  const job = await getJob(jobId)
 
   if (job.applicants) {
     applicants = applicants.concat(job.applicants)
   }
 
-  return await dbJobs.update(jobId, { applicants: applicants })
+  return await updateJob(jobId, { applicants: applicants })
 }
 
 export async function addJob(job) {
@@ -171,12 +171,7 @@ export async function addJob(job) {
   item.id = crypto.createHash('md5').update(created).digest('hex').substring(0, 12)
   item.created = created
 
-  return await dbJobs.post(item)
-}
-
-export async function updateJob(jobId, values) {
-  const job = slackFormData.get(values)
-  return await dbJobs.update(jobId, job)
+  return await postJob(item)
 }
 
 export async function addJobForm(userId) {
@@ -203,7 +198,7 @@ export async function addJobForm(userId) {
 
 export async function editJobForm(jobId, userId) {
   try {
-    const job = await dbJobs.get(jobId)
+    const job = await getJob(jobId)
     const isAdmin = await userProfiles.isAdmin(userId)
     const blocks = slackFormData.set(jobsForm(isAdmin), job)
 
@@ -232,7 +227,7 @@ export async function editJobForm(jobId, userId) {
 
 export async function addJobNoteForm(jobId) {
   try {
-    const blocks = await dbJobs.getNotes(jobId)
+    const blocks = await getJobNotes(jobId)
       .then(notes => notes.map(note => ({
         type: 'section',
         text: {
@@ -280,13 +275,13 @@ export async function updateNotes(jobId, userId, values) {
     }
   ]
 
-  const job = await dbJobs.get(jobId)
+  const job = await getJob(jobId)
 
   if (job.notes) {
     notes = notes.concat(job.notes)
   }
 
-  return await dbJobs.update(jobId, { notes: notes })
+  return await updateJob(jobId, { notes: notes })
 }
 
 export function apiFormat(jobs) {

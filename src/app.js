@@ -7,7 +7,7 @@ import { default as jimp } from 'jimp'
 import { createInvoices } from './models/invoice.js'
 import { profiles } from './models/profiles.js'
 
-import { jobs as dbJobs, locationFormat } from './models/jobs.js'
+import { getAll as getAllJobs, locationFormat } from './models/jobs.js'
 
 receiver.router.use(bodyParser.json());
 receiver.router.use(bodyParser.urlencoded({ extended: true }));
@@ -35,7 +35,7 @@ receiver.router.get('/resume-image', async (req, res, next) => {
   }
 })
 
-receiver.router.get('/jobs', cache.middleware, async (req, res, next) => dbJobs.getAll()
+receiver.router.get('/jobs', cache.middleware, async (req, res, next) => getAllJobs()
   .then(jobs => jobs.map(job => ({
       ...job,
       address: locationFormat(job.address)

@@ -12,7 +12,7 @@ const app = new App({
   receiver
 })
 
-import { jobs as dbJobs } from '../models/jobs.js'
+import { addNote as addJobNote } from '../models/jobs.js'
 import { profiles } from '../models/profiles.js'
 import { createInvoices, getPayPeriods } from '../models/invoice.js'
 
@@ -468,7 +468,7 @@ app.view('add_job_notes', async ({ ack, body, view }) => {
   const profile = await userProfiles.getUser(body.user.id)
 
   if (profile.is_admin) {
-    await dbJobs.addNote(view.private_metadata, body.user.id, view.state.values.notes.val.value)
+    await addJobNote(view.private_metadata, body.user.id, view.state.values.notes.val.value)
   }
 })
 
