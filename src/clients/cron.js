@@ -88,7 +88,7 @@ export default function() {
   })
 
   // Daily update of sales numbers.
-  cron('0 8 * * *', async () => {
+  cron('0 8 * * 2-6', async () => {
     const now = new Date().setHours(0, 0, 0, 0)
     const start = new Date(now)
     start.setDate(start.getDate() - 1)
