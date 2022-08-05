@@ -68,7 +68,19 @@ export async function getPriorityJobs(temp) {
     .catch(e => console.log(e.response.data.errorMessage))
 }
 
-export async function getNotes (item) {
+export async function getSubscription(subscriptionId = null) {
+  let params = { maxEvents: 200 }
+
+  if (subscriptionId) {
+    params.requestId = subscriptionId
+  }
+
+  return bhFetch('event/subscription/newJobPosts?' + stringify(params))
+    .then(subscription => subscription.data != '' ? subscription.data.events.map(event => event.entityId) : [])
+    .catch(e => console.error(e))
+}
+
+export async function getNotes(item) {
   const params = {
     fields: 'notes(id,dateAdded,commentingPerson,comments)'
   }

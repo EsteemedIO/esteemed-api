@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Cron as cron } from 'croner'
 import { default as cache } from '../util/cache.js'
-import { getAll as getAllJobs, getJobUpdate, locationFormat } from '../models/jobs.js'
+import { getAll as getAllJobs, getJobUpdate, locationFormat, getSubscription as getNewJobSubscription } from '../models/jobs.js'
 import { getNew as getNewLeads } from '../models/leads.js'
 import report from '../util/report.js'
 import { app } from '../clients/slack.js'
@@ -12,6 +12,29 @@ export default function() {
   if (process.env.NODE_ENV !== 'production' || !isInternal) {
     return
   }
+
+  // Get newly added jobs and post to Slack.
+  cron('*/30 * * * *', async () => {
+    const newJobs = await getNewJobSubscription()
+      .then(jobs => {
+        console.log(jobs)
+        return jobs
+      })
+
+    app.client.chat.postMessage({
+      token: process.env.SLACK_TOKEN_BOT,
+      channel: 'C03SKQJCKD0',
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: JSON.stringify(newJobs)
+          }
+        },
+      ]
+    })
+  })
 
   // Update jobs cache.
   cron('*/30 * * * *', async () => {
