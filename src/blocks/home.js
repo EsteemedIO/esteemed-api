@@ -3,6 +3,7 @@ import { blocks as wpBlocks } from '../blocks/wp.js'
 import { listJobs } from '../slashCommands/job.js'
 import { getProfile } from '../util/userProfiles.js'
 import { userTaskBlocks } from '../util/tasks.js'
+import { getAll as getAllJobs } from '../models/jobs.js'
 
 export const blocks = [
   {
@@ -61,7 +62,8 @@ export async function view(userId) {
     if (profile && profile.cms && profile.cms.includes('wordpress')) homeBlocks = [...homeBlocks, ...wpBlocks]
 
     // Add job board.
-    const allJobs = await listJobs(userId)
+    const jobs = await getAllJobs()
+    const allJobs = await listJobs(jobs, userId)
     homeBlocks = [
       ...homeBlocks,
       {

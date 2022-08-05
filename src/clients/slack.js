@@ -12,7 +12,7 @@ const app = new App({
   receiver
 })
 
-import { addNote as addJobNote } from '../models/jobs.js'
+import { addNote as addJobNote, getAll as getAllJobs } from '../models/jobs.js'
 import { profiles } from '../models/profiles.js'
 import { createInvoices, getPayPeriods } from '../models/invoice.js'
 
@@ -213,7 +213,8 @@ app.command('/profiles-latest', async ({ ack, command, respond }) => {
 app.command('/jobs-list', async ({ ack, command, respond }) => {
   await ack()
 
-  const jobsAll = await jobs.listJobs(command.user_id)
+  const jobs = await getAllJobs()
+  const jobsAll = await jobs.listJobs(jobs, command.user_id)
 
   await respond(jobsAll)
 })

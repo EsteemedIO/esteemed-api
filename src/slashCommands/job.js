@@ -7,112 +7,110 @@ import notesForm from '../blocks/notesForm.js'
 import { getUser, isAdmin } from '../util/userProfiles.js'
 import { get as getSlackFormData, set as setSlackFormData } from '../util/slackUtils.js'
 
-export async function listJobs(userId) {
+export async function listJobs(jobs, userId) {
   try {
     const currentUser = await getUser(userId)
 
-    const blocks = await getAllJobs()
-      .then(jobs => jobs.slice(0,15).map(job => {
-        const text = [
-          {
-            key: 'Title',
-            value: job.title
-          },
-          {
-            key: 'Location',
-            value: locationFormat(job.address)
-          },
-          {
-            key: 'Employment Type',
-            value: job.employmentType
-          },
-          {
-            key: 'Start Date',
-            value: job.startDate
-          },
-        ]
+    jobs.slice(0,15).map(job => {
+      const text = [
+        {
+          key: 'Title',
+          value: job.title
+        },
+        {
+          key: 'Location',
+          value: locationFormat(job.address)
+        },
+        {
+          key: 'Employment Type',
+          value: job.employmentType
+        },
+        {
+          key: 'Start Date',
+          value: job.startDate
+        },
+      ]
 
-        /*
-        if (currentUser.is_admin) {
-          text.push({
-            key: keyValue.rate_client,
-            value: `$${job.rate_client}`
-          })
+      /*
+      if (currentUser.is_admin) {
+        text.push({
+          key: keyValue.rate_client,
+          value: `$${job.rate_client}`
+        })
+      }
+      */
+
+      const block = {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: text.reduce((acc, i) => acc + `*${i.key}*: ${i.value}\n`, '')
         }
-        */
+      }
 
-        const block = {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: text.reduce((acc, i) => acc + `*${i.key}*: ${i.value}\n`, '')
+      const button = {
+        type: 'actions',
+        elements: [
+          {
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: `Apply for ${job.title}`
+            },
+            url: `https://talent.esteemed.io/jobs/${job.id}`,
+            action_id: 'job_link'
+          },
+          /*
+          {
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: `Apply for ${job.title}`
+            },
+            value: job.id,
+            action_id: 'apply_btn'
+          },
+          {
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: 'Recommend Applicant'
+            },
+            value: job.id,
+            action_id: 'recommend_btn'
           }
-        }
+          */
+        ]
+      }
 
-        const button = {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: `Apply for ${job.title}`
-              },
-              url: `https://talent.esteemed.io/jobs/${job.id}`,
-              action_id: 'job_link'
-            },
-            /*
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: `Apply for ${job.title}`
-              },
-              value: job.id,
-              action_id: 'apply_btn'
-            },
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Recommend Applicant'
-              },
-              value: job.id,
-              action_id: 'recommend_btn'
-            }
-            */
-          ]
-        }
+      if (currentUser.id == 'UL8N9QSLU') {
+        button.elements.push({
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Job Notes'
+          },
+          value: job.id.toString(),
+          action_id: 'add_job_notes'
+        })
+      }
 
-        if (currentUser.id == 'UL8N9QSLU') {
-          button.elements.push({
-            type: 'button',
-            text: {
-              type: 'plain_text',
-              text: 'Job Notes'
-            },
-            value: job.id.toString(),
-            action_id: 'add_job_notes'
-          })
-        }
+      if (currentUser.is_admin) {
+        button.elements.push({
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Edit Job'
+          },
+          url: `https://cls42.bullhornstaffing.com/BullhornSTAFFING/OpenWindow.cfm?Entity=JobOrder&id=${job.id}`,
+          action_id: 'edit_job'
+        })
+      }
 
-        if (currentUser.is_admin) {
-          button.elements.push({
-            type: 'button',
-            text: {
-              type: 'plain_text',
-              text: 'Edit Job'
-            },
-            url: `https://cls42.bullhornstaffing.com/BullhornSTAFFING/OpenWindow.cfm?Entity=JobOrder&id=${job.id}`,
-            action_id: 'edit_job'
-          })
-        }
-
-        return [block, button]
-      })
-        .flatMap((v, i, a) => a.length - 1 !== i ? [v, { type: 'divider' }] : v)
-        .flat()
-      )
+      return [block, button]
+    })
+      .flatMap((v, i, a) => a.length - 1 !== i ? [v, { type: 'divider' }] : v)
+      .flat()
 
     return { blocks: blocks }
   } catch (err) {
