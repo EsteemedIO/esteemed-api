@@ -34,6 +34,8 @@ import { set as setSlackFormData } from '../util/slackUtils.js'
 import { getDetails as getResumeDetails, format as formatResume } from '../util/resume.js'
 import { updateUserTasks } from '../util/tasks.js'
 
+const isInternal = process.env.HOSTNAME ? process.env.HOSTNAME.startsWith('esteemed-api-internal') : false;
+
 // Events.
 app.event('app_home_opened', async ({ event, client }) => {
   try {
@@ -235,6 +237,23 @@ app.command('/add-job', async ({ ack, command, context, client }) => {
     console.error(error)
   }
 })
+
+if (isInternal) {
+  app.command('/business-details', async ({ ack, respond }) => {
+    await ack()
+
+    respond({
+      response_type: 'in_channel',
+      blocks: [{
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*Business Address*\nEsteemed, Inc\n5430 66TH Ave NW\nOlympia, WA, 98502-9664\n\n*Phone Number*\n+1 (360) 712-3866`
+        }
+      }]
+    })
+  })
+}
 
 // Actions.
 
