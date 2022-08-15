@@ -1,5 +1,5 @@
 import { fetch as bhFetch } from 'bullhorn-auth'
-import { references } from './references.js'
+import { get as getReferences, getSubscription } from './references.js'
 
 export async function add(lead) {
   const params = leadFields(lead)
@@ -14,8 +14,8 @@ export async function update(bhId, values) {
 }
 
 export async function getNew() {
-  return references.getSubscription()
-    .then(async subscription => await Promise.all(subscription.map(referenceId => references.get(referenceId))))
+  return getSubscription()
+    .then(async subscription => await Promise.all(subscription.map(referenceId => getReferences(referenceId))))
     .catch(e => console.error(e))
 }
 

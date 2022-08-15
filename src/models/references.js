@@ -2,39 +2,41 @@ import { fetch as bhFetch, depaginate } from 'bullhorn-auth'
 import qs from 'qs'
 const { stringify } = qs
 
-export const references = {
-  get: async referenceId => {
-    const params = {
-      fields: Object.keys(referenceFields).join(','),
-    }
+export async function get(referenceId) {
+  const params = {
+    fields: Object.keys(referenceFields).join(','),
+  }
 
-    return bhFetch(`entity/CandidateReference/${referenceId}?` + stringify(params))
-      .then(reference => reference.data.data)
-      .catch(e => console.error(e))
-  },
-  getAll: async (filters) => {
-    const defaults = {
-      fields: Object.keys(referenceFields).join(','),
-      where: 'isDeleted=FALSE',
-    }
+  return bhFetch(`entity/CandidateReference/${referenceId}?` + stringify(params))
+    .then(reference => reference.data.data)
+    .catch(e => console.error(e))
+}
 
-    const params = {...defaults, ...filters}
+export async function getAll(filters) {
+  const defaults = {
+    fields: Object.keys(referenceFields).join(','),
+    where: 'isDeleted=FALSE',
+  }
 
-    return depaginate('query/CandidateReference', params)
-      .catch(e => console.error(e))
-  },
-  getSubscription: async (subscriptionId = null) => {
-    let params = { maxEvents: 200 }
+  const params = {...defaults, ...filters}
 
-    if (subscriptionId) {
-      params.requestId = subscriptionId
-    }
+  return depaginate('query/CandidateReference', params)
+    .catch(e => console.error(e))
+}
 
-    return bhFetch('event/subscription/newCandidateReference?' + stringify(params))
-      .then(subscription => subscription.data != '' ? subscription.data.events.map(event => event.entityId) : [])
-      .catch(e => console.error(e))
-  },
-  getLeads: async (referenceId = null) => referenceId ? [ await references.get(referenceId) ] : await references.getAll(),
+export async function getSubscription(subscriptionId = null) {
+  let params = { maxEvents: 200 }
+
+  if (subscriptionId) {
+    params.requestId = subscriptionId
+  }
+
+  return bhFetch('event/subscription/newCandidateReference?' + stringify(params))
+    .then(subscription => subscription.data != '' ? subscription.data.events.map(event => event.entityId) : [])
+    .catch(e => console.error(e))
+}
+export async function getLeads(referenceId = null) {
+  return referenceId ? [ await references.get(referenceId) ] : await references.getAll()
 }
 
 const referenceFields = {
