@@ -6,7 +6,7 @@ import { getAll as getAllJobs } from '../models/jobs.js'
 import { profiles } from '../models/profiles.js'
 import opportunities from '../models/opportunities.js'
 
-export default async function (start, end) {
+export async function salesReport(start, end) {
   const startQuery = start.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
   const startSearch = start.getTime()
   const endQuery = end.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')

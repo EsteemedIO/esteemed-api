@@ -3,7 +3,7 @@ import { Cron as cron } from 'croner'
 import { default as cache } from '../util/cache.js'
 import { getAll as getAllJobs, getJobUpdate, locationFormat, getSubscription as getNewJobSubscription } from '../models/jobs.js'
 import { getNew as getNewLeads } from '../models/leads.js'
-import report from '../util/report.js'
+import { salesReport } from '../util/report.js'
 import { app } from '../clients/slack.js'
 
 export default function() {
@@ -78,7 +78,7 @@ export default function() {
     const end = new Date(now)
     end.setDate(end.getDate() - end.getDay())
 
-    report(start, end)
+    salesReport(start, end)
       .then(data => {
         const dataFormatted = Object.keys(data).map(function(key, index) {
           return `*${key}*: ${data[key]}`
@@ -117,7 +117,7 @@ export default function() {
     start.setDate(start.getDate() - 1)
     const end = new Date(now)
 
-    report(start, end)
+    salesReport(start, end)
       .then(data => {
         const dataFormatted = Object.keys(data).map(function(key, index) {
           return `*${key}*: ${data[key]}`
