@@ -1,4 +1,4 @@
-import { fetch as bhFetch } from 'bullhorn-auth'
+import { fetch as bhFetch, depaginate } from 'bullhorn-auth'
 import qs from 'qs'
 const { stringify } = qs
 
@@ -12,14 +12,15 @@ export const references = {
       .then(reference => reference.data.data)
       .catch(e => console.error(e))
   },
-  getAll: async () => {
-    const params = {
+  getAll: async (filters) => {
+    const defaults = {
       fields: Object.keys(referenceFields).join(','),
       where: 'isDeleted=FALSE',
     }
 
-    return bhFetch('query/CandidateReference?' + stringify(params))
-      .then(references => references.data.data)
+    const params = {...defaults, ...filters}
+
+    return depaginate('query/CandidateReference', params)
       .catch(e => console.error(e))
   },
   getSubscription: async (subscriptionId = null) => {
