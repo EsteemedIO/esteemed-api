@@ -166,7 +166,7 @@ export async function convertClockifyToQBInvoice(entries, placements, invoiceDat
       CustomerRef: CustomerRef,
       Line: Line,
       CustomerMemo: {
-        value: "Please include reference of invoice numbers paid with your payment.\n\nFor proper credit, please remit payment via ACH to:\nPNC Bank, NA, Checking account\nPaychex Advance LLC fbo Esteemed Inc\nAccount: 1029148695\nRouting: 043000096\n\nFor Paper Checks:\nPNC Bank C/O Paychex Advance LLC\nLockbox #912434\nPasadena Tech Center\n465 N. Halstead St. Ste 160\nPasadena, CA 91107\n\nThis account receivable has been assigned to and is owned by or subject to security interest of Paychex Advance LLC, doing business as Advance Partners, and is payable only in United States Dollars"
+        value: "Please include reference of invoice numbers paid with your payment.\n\nFor proper credit, please remit payment via ACH to:\nPNC Bank, NA, Checking account\nPaychex Advance LLC fbo Esteemed Inc\nAccount: 1029148695\nRouting: 043000096\n\nFor Paper Checks:\nAP FBO Esteemed Inc.\nPO BOX 31001-2434\nPasadena, CA 91110-2434\n\nThis account receivable has been assigned to and is owned by or subject to security interest of Paychex Advance LLC, doing business as Advance Partners, and is payable only in United States Dollars"
       },
     }
   })
