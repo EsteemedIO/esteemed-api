@@ -6,6 +6,7 @@ import fileupload from 'express-fileupload'
 import { default as jimp } from 'jimp'
 import { createInvoices } from './models/invoice.js'
 import { profiles } from './models/profiles.js'
+import Recaptcha from 'recaptcha-verify'
 
 import { getAll as getAllJobs, locationFormat } from './models/jobs.js'
 
@@ -272,6 +273,28 @@ receiver.router.post('/join', async ({ body }, res, next) => {
       return res.json(err.message)
     }
   }
+})
+
+receiver.router.post('/check-human', async ({ body }, res, next) => {
+  const recaptcha = new Recaptcha({
+    secret: process.env.RECAPTCHA_SECRET
+  })
+
+  const userResponse = body['g-recaptcha-response']
+
+  recaptcha.checkResponse(userResponse, (error, response) => {
+    if (error) {
+      return res.status(400).render('400', {
+        message: error.toString()
+      })
+    }
+
+    if (response.success) {
+      return res.status(200).send('human')
+    } else {
+      return res.status(200).send('robot')
+    }
+  })
 })
 
 // Handle invoicing.
