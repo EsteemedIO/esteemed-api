@@ -17,5 +17,5 @@ const credentials = {
 
 fs.writeFileSync(
   'google-api-credentials.json',
-  JSON.stringify(credentials, null, 2)
+  JSON.stringify(credentials, null, 2).replace(/\\\\n/g, '\\n')
 )
