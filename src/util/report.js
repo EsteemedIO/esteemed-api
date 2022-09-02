@@ -5,6 +5,13 @@ import placements from '../models/placements.js'
 import { getAll as getAllJobs } from '../models/jobs.js'
 import { profiles } from '../models/profiles.js'
 import opportunities from '../models/opportunities.js'
+import { getAll as getAllReferences } from '../models/references.js'
+
+export async function referenceReport(start, end) {
+  const { startSearch, endSearch } = formatTimestamps(start, end)
+
+  return referencesAdded(startSearch, endSearch)
+}
 
 export async function salesReport(start, end) {
   const { startQuery, endQuery, startSearch, endSearch } = formatTimestamps(start, end)
@@ -91,6 +98,12 @@ function notInSlack() {
   return profiles.getAll({
       query: 'isDeleted:FALSE AND -customText10:[* TO *]'
     })
+}
+
+function referencesAdded(start, end) {
+  return getAllReferences({
+    where: `isDeleted=FALSE AND dateAdded > ${start} AND dateAdded < ${end}`
+  })
 }
 
 function writeToCsv(data) {
