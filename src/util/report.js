@@ -7,10 +7,7 @@ import { profiles } from '../models/profiles.js'
 import opportunities from '../models/opportunities.js'
 
 export async function salesReport(start, end) {
-  const startQuery = start.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
-  const startSearch = start.getTime()
-  const endQuery = end.toLocaleString('en-ZA').replace(/[\/\s:,]/g, '')
-  const endSearch = end.getTime()
+  const { startQuery, endQuery, startSearch, endSearch } = formatTimestamps(start, end)
 
   return Promise.all([
     // Find new candidate count from the last week.
@@ -105,4 +102,13 @@ function writeToCsv(data) {
       console.log('It\'s saved!');
     }
   })
+}
+
+function formatTimestamps(start, end) {
+  return {
+    startQuery: start.toLocaleString('en-ZA').replace(/[\/\s:,]/g, ''),
+    startSearch: start.getTime(),
+    endQuery: end.toLocaleString('en-ZA').replace(/[\/\s:,]/g, ''),
+    endSearch: end.getTime()
+  }
 }
