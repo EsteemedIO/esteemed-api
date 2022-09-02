@@ -257,7 +257,7 @@ if (isInternal) {
 
 // Actions.
 
-app.action('preview_invoicing', async ({ action, ack, context, client, body }) => {
+app.action('preview_invoicing', async ({ ack, body }) => {
   await ack()
 
   const value = body.state.values.invoice.period.selected_option.value.split('-')[1];
@@ -270,7 +270,7 @@ app.action('preview_invoicing', async ({ action, ack, context, client, body }) =
 
   app.client.chat.postMessage({
     token: process.env.SLACK_TOKEN_BOT,
-    channel: 'C03EVBP5ZCK',
+    channel: body.container.channel_id,
     blocks: [
       {
         type: 'section',
@@ -299,7 +299,7 @@ app.action('preview_invoicing', async ({ action, ack, context, client, body }) =
   })
 })
 
-app.action('generate_invoices', async ({ action, ack, context, client, body }) => {
+app.action('generate_invoices', async ({ ack, body }) => {
   await ack()
 
   const value = body.actions[0].value
@@ -309,6 +309,20 @@ app.action('generate_invoices', async ({ action, ack, context, client, body }) =
     selectedPeriod.startDate.toISOString().split('T')[0],
     selectedPeriod.endDate.toISOString().split('T')[0]
   ], true)
+
+  app.client.chat.postMessage({
+    token: process.env.SLACK_TOKEN_BOT,
+    channel: body.container.channel_id,
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `<https://app.qbo.intuit.com/app/invoices|Invoices generated>`
+        }
+      }
+    ]
+  })
 })
 
 app.action('edit_profile', async ({ action, ack, context, client, body }) => {
