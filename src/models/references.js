@@ -48,5 +48,6 @@ const referenceFields = {
   'referenceEmail': 'referenceEmail',
   'referencePhone': 'referencePhone',
   'companyName': 'companyName',
+  'dateAdded': 'dateAdded',
   'status': 'status'
 }
