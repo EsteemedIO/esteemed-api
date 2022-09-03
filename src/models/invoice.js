@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { getToken } from '../util/quickbooks.js'
-import { getHours, reduceEmails } from '../util/clockify.js'
+import { getHours, reduceEmails, getHoursSortByKey } from '../util/clockify.js'
 import { profiles } from './profiles.js'
 import placements from './placements.js'
 
@@ -12,7 +12,7 @@ const baseUrl = 'https://quickbooks.api.intuit.com'
 
 export async function createInvoices(dates, create = false) {
   // Create invoices.
-  const projectHours = await getHours('projectName', dates)
+  const projectHours = await getHoursSortByKey('projectName', dates)
   const emails = reduceEmails(projectHours)
   const projectPlacements = await placements.getAll()
     .then(p => p.filter(i => emails.includes(i.candidate.email)))

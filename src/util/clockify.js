@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { promises as fs } from 'fs'
+import qs from 'qs'
+const { stringify } = qs
 
 const config = {
   headers: {
@@ -7,7 +8,7 @@ const config = {
   }
 }
 
-export async function getHours(filter, dates) {
+export async function getHours(dates) {
   let allRecords = []
 
   // Set billing interval.
@@ -41,6 +42,11 @@ export async function getHours(filter, dates) {
   }
 
   return doQuery(1)
+    .catch(e => console.error(e))
+}
+
+export async function getHoursSortByKey(filter, dates) {
+  return getHours(dates)
     .then(data => {
       return data.reduce(
         (objectsByKeyValue, obj) => ({
