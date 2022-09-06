@@ -5,6 +5,7 @@ import { getAll as getAllJobs, getJobUpdate, locationFormat } from '../models/jo
 import { getNew as getNewLeads } from '../models/leads.js'
 import { salesReport } from '../util/report.js'
 import { app } from '../clients/slack.js'
+import { findMissingPlacements, findMissingProjects } from '../util/findMissing.js'
 
 export default function() {
   const isInternal = process.env.HOSTNAME ? process.env.HOSTNAME.startsWith('esteemed-api-internal') : false;
@@ -12,6 +13,48 @@ export default function() {
   if (process.env.NODE_ENV !== 'production' || !isInternal) {
     return
   }
+
+  // Check for missing Bullhorn placements and QBO projects.
+  cron('0 8,14 * * 1-5', async () => {
+    // Trishia Slack.
+    const slackAlertChannel = 'U01U1NSD5UZ'
+    // Albert Slack.
+    //const slackAlertChannel = 'U01TCSHNCRJ'
+
+    findMissingPlacements()
+      .then(missing => {
+        // Alert Trishia via DM.
+        app.client.chat.postMessage({
+          token: process.env.SLACK_TOKEN_BOT,
+          channel: slackAlertChannel,
+          text: 'Placement not found in Bullhorn',
+          blocks: missing.map(miss => ({
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `Placement not found: ${miss.email} at ${miss.project}`
+              }
+          }))
+        })
+      })
+
+    findMissingProjects()
+      .then(missing => {
+        // Alert Trishia via DM.
+        app.client.chat.postMessage({
+          token: process.env.SLACK_TOKEN_BOT,
+          channel: slackAlertChannel,
+          text: 'Projects missing from QBO',
+          blocks: missing.map(miss => ({
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `<https://app.qbo.intuit.com/app/projects|${miss}>`
+              }
+          }))
+        })
+      })
+  })
 
   // Update jobs cache.
   cron('*/30 * * * *', async () => {
