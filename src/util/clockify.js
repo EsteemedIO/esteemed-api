@@ -54,6 +54,51 @@ export async function getHoursSortByKey(filter, dates) {
           [obj[filter]]: (objectsByKeyValue[obj[filter]] || []).concat(obj)
         }), {})
     })
+}
+
+export async function getUsers() {
+  let allRecords = []
+
+  const request = {
+    "page-size": 5000,
+    "memberships": "PROJECT"
+  }
+
+  async function doQuery(page) {
+    request.page = page
+
+    return axios.get(`https://api.clockify.me/api/v1/workspaces/${process.env.CLOCKIFY_WORKSPACE}/users?${stringify(request)}`, config)
+      .then(({ data }) => {
+        allRecords = allRecords.concat(data)
+        return data.length > 0 ? doQuery(++page) : allRecords
+      })
+      .catch(e => console.error(e))
+  }
+
+  return doQuery(1)
+    .catch(e => console.error(e))
+}
+
+export async function getProjects() {
+  let allRecords = []
+
+  const request = {
+    "page-size": 5000,
+    "archived": false,
+  }
+
+  async function doQuery(page) {
+    request.page = page
+
+    return axios.get(`https://api.clockify.me/api/v1/workspaces/${process.env.CLOCKIFY_WORKSPACE}/projects?${stringify(request)}`, config)
+      .then(({ data }) => {
+        allRecords = allRecords.concat(data)
+        return data.length > 0 ? doQuery(++page) : allRecords
+      })
+      .catch(e => console.error(e))
+  }
+
+  return doQuery(1)
     .catch(e => console.error(e))
 }
 
