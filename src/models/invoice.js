@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { getToken } from '../util/quickbooks.js'
-import { getHours, reduceEmails, getHoursSortByKey } from '../util/clockify.js'
+import { reduceEmails, getHoursSortByKey } from '../util/clockify.js'
 import { profiles } from './profiles.js'
 import placements from './placements.js'
 
@@ -220,7 +220,7 @@ export async function convertClockifyToQBBill(entries, placements) {
   }))
 }
 
-async function getProjects() {
+export async function getProjects() {
   const accessToken = await getToken()
   const params = {
     headers: {
