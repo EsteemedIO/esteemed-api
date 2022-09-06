@@ -289,29 +289,36 @@ async function getVendor(email) {
 }
 
 export function getPayPeriods() {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const priorMonthCount = currentDate.getMonth();
-  const currentDay = currentDate.getDate();
+  const currentDate = new Date()
+  const currentYear = currentDate.getFullYear()
+  const priorMonthCount = currentDate.getMonth()
+  const currentDay = currentDate.getDate()
 
-  let dates = [...Array(priorMonthCount)].flatMap((_, i) => ([
+  // Get date ranges for prior months.
+  let dates = [...Array(priorMonthCount)].flatMap((_, i) => [
       {
-        id: i + (i * 2),
+        id: i * 2,
         startDate: new Date(currentYear, i, 1),
         endDate: new Date(currentYear, i, 15),
       },
       {
-        id: i + (i * 2) + 1,
+        id: (i * 2) + 1,
         startDate: new Date(currentYear, i, 16),
         endDate: new Date(currentYear, i + 1, 0),
       }
-  ]));
+    ])
 
-  if (currentDay > 11) {
+  dates = [...dates, {
+      id: dates.length,
+      startDate: new Date(currentYear, priorMonthCount, 1),
+      endDate: new Date(currentYear, priorMonthCount, 15),
+  }]
+
+  if (currentDay > 15) {
     dates = [...dates, {
-        id: ((priorMonthCount + 1) * 2) + 1,
-        startDate: new Date(currentYear, priorMonthCount, 1),
-        endDate: new Date(currentYear, priorMonthCount, 15),
+        id: dates.length + 1,
+        startDate: new Date(currentYear, priorMonthCount, 16),
+        endDate: new Date(currentYear, priorMonthCount, 0),
     }];
   }
 
