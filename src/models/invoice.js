@@ -248,7 +248,7 @@ export async function getProjects() {
         }
       })
     })
-    .catch(({ response }) => console.log(response.data.Fault.Error))
+    .catch(({ response }) => console.log(response))
 }
 
 async function getCompanies() {
