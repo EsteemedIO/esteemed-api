@@ -15,7 +15,7 @@ export default function() {
   }
 
   // Check for missing Bullhorn placements and QBO projects.
-  cron('0 8,14 * * 1-5', async () => {
+  cron('0 8,14,16 * * 1-5', async () => {
     // Trishia Slack.
     const slackAlertChannel = 'U01U1NSD5UZ'
     // Albert Slack.
