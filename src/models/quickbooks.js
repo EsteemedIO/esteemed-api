@@ -1,4 +1,7 @@
 import oAuthClient from 'intuit-oauth'
+import cache from '../util/cache.js'
+
+const cacheKey =  '__express__/qbo'
 
 // Development
 //const baseUrl = 'https://sandbox-quickbooks.api.intuit.com'
@@ -28,7 +31,9 @@ export async function setToken(url) {
   qboClient
     .createToken(url)
     .then(authResponse => {
-      qboClient.setToken(authResponse.json())
+      qboClient.setToken(authResponse.getJson())
+      cache.setKey(cacheKey, authResponse.getJson())
+      cache.save()
     })
     .catch(e => {
       console.error('The error message is :' + e.originalMessage);
@@ -37,12 +42,17 @@ export async function setToken(url) {
 }
 
 export async function refreshToken() {
+  const accessToken = cache.getKey(cacheKey)
+  qboClient.setToken(accessToken)
+
   if (!qboClient.isAccessTokenValid()) {
     qboClient
       .refresh()
       .then(authResponse => {
-        console.log('Tokens refreshed : ' + JSON.stringify(authResponse.json()));
-        qboClient.setToken(authResponse.json())
+        console.log('Tokens refreshed : ' + JSON.stringify(authResponse.getJson()));
+        qboClient.setToken(authResponse.getJson())
+        cache.setKey(cacheKey, authResponse.getJson())
+        cache.save()
       })
       .catch(function (e) {
         console.error('The error message is :' + e.originalMessage);
