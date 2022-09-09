@@ -1,6 +1,7 @@
 import { getHours, getUsers as getClockifyUsers, getProjects as getClockifyProjects, getHoursSortByKey } from './clockify.js'
 import placements from '../models/placements.js'
-import { getPayPeriods, getProjects } from '../models/invoice.js'
+import { getProjects } from '../models/quickbooks.js'
+import { getPayPeriods } from '../models/invoice.js'
 
 // Report a list of projects missing from QBO.
 export async function findMissingProjects() {

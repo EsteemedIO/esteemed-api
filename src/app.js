@@ -7,6 +7,7 @@ import { default as jimp } from 'jimp'
 import { createInvoices } from './models/invoice.js'
 import { profiles } from './models/profiles.js'
 import Recaptcha from 'recaptcha-verify'
+import { setToken as setQBOToken, getAuthUri as getQBOAuthUri } from './models/quickbooks.js'
 
 import { getAll as getAllJobs, locationFormat } from './models/jobs.js'
 
@@ -19,6 +20,15 @@ receiver.router.use(function(req, res, next) {
   next();
 });
 receiver.router.use(fileupload())
+
+receiver.router.get('/intuit/auth', async (req, res, next) => {
+  res.redirect(getQBOAuthUri())
+})
+
+receiver.router.get('/intuit/callback', async (req, res, next) => {
+  setQBOToken(req.url)
+  res.send('')
+})
 
 // Endpoints.
 receiver.router.get('/resume-image', async (req, res, next) => {

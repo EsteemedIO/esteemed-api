@@ -1,14 +1,6 @@
-import axios from 'axios'
-import { getToken } from '../util/quickbooks.js'
+import { getProjects, getCompanies, getVendor } from './quickbooks.js'
 import { reduceEmails, getHoursSortByKey } from '../util/clockify.js'
-import { profiles } from './profiles.js'
 import placements from './placements.js'
-
-// Development
-//const baseUrl = 'https://sandbox-quickbooks.api.intuit.com'
-
-// Production
-const baseUrl = 'https://quickbooks.api.intuit.com'
 
 export async function createInvoices(dates, create = false) {
   // Create invoices.
@@ -43,60 +35,6 @@ export function createInvoiceReport(projectHours, invoiceCount) {
       .sort()
       .map(project => `${project}: ${clientHours[project].toFixed(2)}`)
   }
-}
-
-export async function createInvoice(hours) {
-  const accessToken = await getToken()
-  const params = {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Accept': 'application/json'
-    }
-  }
-
-  axios.post(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/invoice`, hours, params)
-    .then(data => console.log(data))
-    .catch(data => console.log(data.response.data.Fault.Error))
-}
-
-export async function batchInvoices(hours) {
-  // QBO limits batch functions to 30 transactions.
-  const batchCount = 30
-  const accessToken = await getToken()
-  const params = {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Accept': 'application/json'
-    }
-  }
-
-  for (let i = 0; i < hours.length; i += batchCount) {
-    let batch = {
-      BatchItemRequest: hours.slice(i, i + batchCount).map((invoice, index) => ({
-        bId: `invoice${index}`,
-        operation: 'create',
-        Invoice: invoice
-      }))
-    }
-
-    axios.post(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/batch`, batch, params)
-      .then(({ data }) => console.log(data))
-      .catch(data => console.log(data.response.data.Fault.Error))
-  }
-}
-
-export async function createBill(hours) {
-  const accessToken = await getToken()
-  const params = {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Accept': 'application/json'
-    }
-  }
-
-  axios.post(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/bill`, hours, params)
-    .then(data => console.log(data))
-    .catch(data => console.log(data.response.data.Fault.Error))
 }
 
 export async function convertClockifyToQBInvoice(entries, placements, invoiceDate) {
@@ -177,7 +115,6 @@ export async function convertClockifyToQBBill(entries, placements) {
 
   return Promise.all(Object.keys(entries).map(async (email) => {
     const vendorId = await getVendor(email)
-    const bhId = await profiles.getBHIdByEmail(email)
 
     const VendorRef = { value: vendorId }
     const SalesTermRef = { value: 3, name: 'Net 30' }
@@ -218,74 +155,6 @@ export async function convertClockifyToQBBill(entries, placements) {
       Line: Line
     }
   }))
-}
-
-export async function getProjects() {
-  const accessToken = await getToken()
-  const params = {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Accept': 'application/json'
-    }
-  }
-  const selectStatement = "select * from Customer MAXRESULTS 1000"
-
-  return axios.get(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/query?query=${selectStatement}`, params)
-    .then(({ data }) => {
-      const customers = data.QueryResponse.Customer
-      const jobs = customers.filter(customer => customer.Job)
-
-      return jobs.map(job => {
-        const parent = customers.find(customer => customer.Id == job.ParentRef.value)
-        const email = parent.PrimaryEmailAddr ? parent.PrimaryEmailAddr.Address : ''
-        const company = parent.DisplayName ? parent.DisplayName : job.DisplayName
-
-        return {
-          id: job.Id,
-          project: job.DisplayName,
-          company: company,
-          email: email
-        }
-      })
-    })
-    .catch(({ response }) => console.log(response))
-}
-
-async function getCompanies() {
-  const accessToken = await getToken()
-  const params = {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Accept': 'application/json'
-    }
-  }
-  const selectStatement = "select * from Customer"
-
-  return axios.get(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/query?query=${selectStatement}`, params)
-    .then(({ data }) => data.QueryResponse.Customer)
-    .then(customers => customers.map(customer => ({
-      id: customer.Id,
-      name: customer.CompanyName,
-    })))
-    .catch(data => console.log(data))
-}
-
-async function getVendor(email) {
-  const accessToken = await getToken()
-  const params = {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Accept': 'application/json'
-    }
-  }
-  const selectStatement = "select * from Vendor"
-
-  return axios.get(`${baseUrl}/v3/company/${process.env.QBO_COMPANY_ID}/query?query=${selectStatement}`, params)
-    .then(({ data }) => data.QueryResponse.Vendor)
-    .then(data => {
-      const vendor = data.find(vendor => vendor.PrimaryEmailAddr ? vendor.PrimaryEmailAddr.Address == email : false)
-      return vendor ? vendor.Id : false
-    })
 }
 
 export function getPayPeriods() {
