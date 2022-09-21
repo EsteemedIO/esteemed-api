@@ -1,7 +1,5 @@
 import oAuthClient from 'intuit-oauth'
-import cache from '../util/cache.js'
-
-const cacheKey =  '__express__/qbo'
+import flatCache from 'flat-cache'
 
 // Development
 //const baseUrl = 'https://sandbox-quickbooks.api.intuit.com'
@@ -10,6 +8,9 @@ const cacheKey =  '__express__/qbo'
 const baseUrl = 'https://quickbooks.api.intuit.com'
 
 const qboClient = getClient()
+
+const cache = flatCache.load('esteemed-api')
+const cacheKey =  '__express__/qbo'
 
 export function getClient() {
   return new oAuthClient({
