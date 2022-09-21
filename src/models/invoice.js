@@ -187,7 +187,7 @@ export function getPayPeriods() {
     dates = [...dates, {
         id: dates.length + 1,
         startDate: new Date(currentYear, priorMonthCount, 16),
-        endDate: new Date(currentYear, priorMonthCount, 0),
+        endDate: new Date(currentYear, priorMonthCount + 1, 0),
     }];
   }
 
