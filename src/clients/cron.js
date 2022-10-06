@@ -68,7 +68,7 @@ export default function() {
       })))
       .then(jobs => {
         cache.setKey(key, JSON.stringify(jobs))
-        cache.save()
+        cache.save(true)
         console.log('Jobs cache refreshed')
       })
   })

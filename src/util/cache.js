@@ -13,7 +13,7 @@ cache.middleware = (req, res, next) => {
     res.sendResponse = res.send
     res.send = (body) => {
       cache.setKey(key,body)
-      cache.save()
+      cache.save(true)
       res.sendResponse(body)
     }
 

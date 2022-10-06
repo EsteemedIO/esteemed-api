@@ -34,7 +34,7 @@ export async function setToken(url) {
     .then(authResponse => {
       qboClient.setToken(authResponse.getJson())
       cache.setKey(cacheKey, authResponse.getJson())
-      cache.save()
+      cache.save(true)
     })
     .catch(e => {
       console.error('The error message is :' + e.originalMessage);
@@ -53,7 +53,7 @@ export async function refreshToken() {
         console.log('Tokens refreshed : ' + JSON.stringify(authResponse.getJson()));
         qboClient.setToken(authResponse.getJson())
         cache.setKey(cacheKey, authResponse.getJson())
-        cache.save()
+        cache.save(true)
       })
       .catch(function (e) {
         console.error('The error message is :' + e.originalMessage);
