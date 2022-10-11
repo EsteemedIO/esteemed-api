@@ -46,20 +46,18 @@ export async function refreshToken() {
   const accessToken = cache.getKey(cacheKey)
   qboClient.setToken(accessToken)
 
-  if (!qboClient.isAccessTokenValid()) {
-    qboClient
-      .refresh()
-      .then(authResponse => {
-        console.log('Tokens refreshed : ' + JSON.stringify(authResponse.getJson()));
-        qboClient.setToken(authResponse.getJson())
-        cache.setKey(cacheKey, authResponse.getJson())
-        cache.save(true)
-      })
-      .catch(function (e) {
-        console.error('The error message is :' + e.originalMessage);
-        console.error(e.intuit_tid);
-      });
-  }
+  qboClient
+    .refresh()
+    .then(authResponse => {
+      console.log('Tokens refreshed : ' + JSON.stringify(authResponse.getJson()));
+      qboClient.setToken(authResponse.getJson())
+      cache.setKey(cacheKey, authResponse.getJson())
+      cache.save(true)
+    })
+    .catch(function (e) {
+      console.error('The error message is :' + e.originalMessage);
+      console.error(e.intuit_tid);
+    });
 }
 
 export async function createInvoice(hours) {
