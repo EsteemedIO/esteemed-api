@@ -6,6 +6,7 @@ import { getNew as getNewLeads } from '../models/leads.js'
 import { salesReport } from '../util/report.js'
 import { app } from '../clients/slack.js'
 import { findMissingPlacements, findMissingProjects } from '../util/findMissing.js'
+import { refreshToken } from '../models/quickbooks.js'
 
 export default function() {
   const isInternal = process.env.HOSTNAME ? process.env.HOSTNAME.startsWith('esteemed-api-internal') : false;
@@ -167,5 +168,10 @@ export default function() {
           ]
         })
       })
+  })
+
+  // Refresh Intuit token every half hour.
+  cron('*/30 * * * *', async () => {
+    await refreshToken()
   })
 }
