@@ -68,7 +68,7 @@ app.event('team_join', async ({ event }) => {
   console.log('New user joined:', event.user.real_name)
 
   // Send welcome message.
-  const message = `Welcome <@${event.user.id}>! We’re glad to have you with us. Our members would love to learn more about you! What’s your current role? Any <http://esteemed.io/jobs|specific jobs> you’re interested in applying for?\n\nTo join one (or more) of our many networks, hover over "Channels" tab, click the "+" symbol on the sidebar, and choose your channels (<#CUN3PEEAY>, <#C0377KRAMHR>, <#CSEHM34EN>, for example).\n\nAs a member of Colleagues, you have the opportunity to refer friends and earn up to $1500. <https://esteemed.staffingreferrals.com/company/join|Join our referral program here>.`
+  const message = `Welcome <@${event.user.id}>! We’re glad to have you with us. Our members would love to learn more about you! What’s your current role? Any <http://esteemed.io/jobs|specific jobs> you’re interested in applying for?\n\nTo join one (or more) of our many networks, hover over "Channels" tab, click the "+" symbol on the sidebar, and choose your channels (<#CUN3PEEAY>, <#C0377KRAMHR>, <#CSEHM34EN>, for example).\n\nAs a member of Colleagues, you have the opportunity to refer friends and earn up to $1500. <https://esteemed.io/member-compensation-plan/|Join our referral program here>.`
 
   app.client.chat.postMessage({
     token: process.env.SLACK_TOKEN_BOT,
