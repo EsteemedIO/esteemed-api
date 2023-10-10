@@ -11,6 +11,8 @@ import { setToken as setQBOToken, getAuthUri as getQBOAuthUri } from './models/q
 
 import { getAll as getAllJobs, locationFormat } from './models/jobs.js'
 
+console.log('process.env.SLACK_TOKEN_BOT', process.env.SLACK_TOKEN_BOT);
+
 receiver.router.use(bodyParser.json());
 receiver.router.use(bodyParser.urlencoded({ extended: true }));
 receiver.router.use(function(req, res, next) {
